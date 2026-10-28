@@ -14,13 +14,13 @@
 html,body{height:100%;background:#c8d7e1;overflow:hidden;overscroll-behavior:none}
 body{font-family:var(--hand);color:var(--ink);user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;background-image:radial-gradient(rgba(30,50,80,.09) 1.5px,transparent 1.7px);background-size:26px 26px}
 button{font:inherit;color:inherit;cursor:pointer}
-#app{position:absolute;left:50%;top:0;width:480px;height:600px;transform-origin:top center;overflow:hidden;background:#cfd6dc;box-shadow:0 0 0 3px var(--ink);border-radius:6px}
-#cv{position:absolute;inset:0;width:480px;height:600px;touch-action:none}
+#app{position:absolute;left:50%;top:0;width:100%;height:600px;transform-origin:top center;overflow:hidden;background:linear-gradient(180deg,#e4eef4 0%,#d5e3ec 62%,#c8d7e1 100%)}
+#cv{position:absolute;left:0;top:0;width:100%;height:600px;touch-action:none}
 .btn{font-family:var(--round);font-weight:600;font-size:16px;padding:10px 18px;border:2.5px solid var(--ink);border-radius:12px;background:var(--orange);box-shadow:0 4px 0 var(--ink)}
 .btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
 .btn.big{width:100%;font-size:18px;padding:12px;margin-top:8px}
 .btn.ghost{background:#e9edf5}.btn.on{background:var(--warn)}
-#hud{position:absolute;left:0;right:0;top:0;padding:8px 52px 0 8px;pointer-events:none;z-index:5}
+#hud{position:absolute;left:50%;top:0;width:min(calc(100% - 104px),520px);transform:translateX(-50%);padding:8px 0 0;pointer-events:none;z-index:5}
 .chip{display:inline-block;padding:3px 12px;background:#2b303c;color:#fff;border:2.5px solid var(--ink);border-radius:99px;font-family:var(--round);font-weight:600;font-size:13px;margin-bottom:5px}
 .ms{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .m{background:#2b303c;border:2.5px solid var(--ink);border-radius:10px;padding:3px 7px 5px;color:#fff;font-family:var(--round);font-size:11.5px}
@@ -29,7 +29,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 #prog{height:5px;background:rgba(0,0,0,.35);margin-top:6px;border-radius:3px;overflow:hidden}#prog i{display:block;height:100%;width:0;background:var(--warn)}
 #ovl{position:absolute;inset:0;z-index:20;display:none;place-items:center;padding:16px;background:rgba(4,6,12,.6)}
 #ovl.show{display:grid}
-.paper{position:relative;width:100%;max-height:560px;overflow:hidden;padding:16px 16px 14px 36px;background:repeating-linear-gradient(transparent 0 29px,#dde6f3 29px 30px),var(--paper);border:3px solid var(--ink);border-radius:18px;box-shadow:0 7px 0 var(--ink)}
+.paper{position:relative;width:min(100%,480px);max-height:560px;overflow:hidden;padding:16px 16px 14px 36px;background:repeating-linear-gradient(transparent 0 29px,#dde6f3 29px 30px),var(--paper);border:3px solid var(--ink);border-radius:18px;box-shadow:0 7px 0 var(--ink)}
 .paper::before{content:"";position:absolute;top:0;bottom:0;left:19px;width:2px;background:#ff9b9b}
 .paper h1,.paper h2{font-weight:400;line-height:1.02;margin-bottom:6px}.paper h1{font-size:34px}.paper h2{font-size:28px}
 .paper p{font-size:18px;line-height:1.22;margin-bottom:8px}
@@ -44,8 +44,21 @@ input.err{border-color:var(--red)}
 .who{display:inline-block;font-family:var(--round);font-weight:600;font-size:12px;background:var(--orange);border:2px solid var(--ink);border-radius:99px;padding:0 9px;margin-bottom:4px}
 .tag{display:inline-block;font-family:var(--round);font-weight:600;font-size:14px;border:2.5px solid var(--ink);border-radius:99px;padding:2px 12px;margin-bottom:6px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 8px}
-.box{border:2.5px solid var(--ink);border-radius:12px;text-align:center;padding:4px;font-family:var(--round);font-size:12px}.box b{display:block;font-size:26px;font-family:var(--hand);font-weight:400}
+.box{border:2.5px solid var(--ink);border-radius:12px;text-align:center;padding:2px 4px;font-family:var(--round);font-size:12px}.box b{display:block;font-size:24px;line-height:1.1;font-family:var(--hand);font-weight:400}
 .qs{font-size:17px;line-height:1.15;margin:0 0 6px 18px}
+#hud{z-index:5}
+#app.gs1 #hud{z-index:16}#app.gs1 .ms{border-radius:10px;animation:gMeter 1.1s ease-in-out infinite}
+@keyframes gMeter{50%{box-shadow:0 0 0 4px #ffd34d,0 0 18px 6px rgba(255,211,77,.8)}}
+.g-dim{position:absolute;inset:0;z-index:15;background:rgba(4,6,12,.55);cursor:pointer}
+.g-tip{position:absolute;z-index:17;left:0;right:0;margin:0 auto;width:min(420px,calc(100% - 28px));background:#fffdf7;border:3px solid var(--ink);border-radius:14px;box-shadow:0 4px 0 var(--ink);padding:8px 12px;font-size:18px;line-height:1.2;cursor:pointer;animation:gTipIn .35s cubic-bezier(.3,1.6,.5,1) both}
+.g-tip small{display:block;font-family:var(--round);font-size:12px;color:#6b6858;margin-top:3px}
+.g-tip::before{content:"";position:absolute;left:calc(50% - 10px);border:10px solid transparent}
+.g-tip.up::before{bottom:100%;border-bottom-color:var(--ink)}.g-tip.dn::before{top:100%;border-top-color:var(--ink)}
+@keyframes gTipIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+.g-hand{position:absolute;z-index:18;left:calc(50% - 22px);top:440px;font-size:44px;pointer-events:none;animation:gHand 1.6s ease-in-out infinite}
+@keyframes gHand{0%,100%{transform:translateX(-90px)}50%{transform:translateX(70px)}}
+@media (prefers-reduced-motion:reduce){.g-tip,.g-hand,#app.gs1 .ms{animation:none!important}}
+.dbf{width:min(100%,680px)}.dbf .spr{width:76px;height:230px}.dbf .bub p{font-size:16.5px;margin-bottom:4px}.dbf .bub{padding:6px 12px 4px}
 #aud{position:absolute;top:7px;right:7px;z-index:30;width:38px;height:38px;padding:0;border-radius:50%;background:var(--warn);border:2.5px solid var(--ink);box-shadow:0 3px 0 var(--ink);font-size:18px}
 #copy{position:absolute;left:0;right:0;bottom:3px;z-index:25;text-align:center;font-family:var(--round);font-size:10px;pointer-events:none}
 #copy span{padding:2px 10px;border-radius:99px;background:rgba(20,21,27,.62);color:#fff}
@@ -72,8 +85,9 @@ const SPR='data:image/webp;base64,UklGRnolAABXRUJQVlA4WAoAAAAQAAAAYwAAKwEAQUxQSP
 document.documentElement.style.setProperty('--spr','url('+SPR+')');
 const $=id=>document.getElementById(id),esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const img=new Image();img.src=SPRB;
-const W=480,H=600,HY=190,PY=515,LW=105;
-const cv=$('cv'),cx=cv.getContext('2d');cx.scale(2,2);
+let W=480;const H=600,HY=190,PY=515,LW=105;
+const cv=$('cv'),cx=cv.getContext('2d');
+function size(w){W=w;cv.width=w*2;cv.height=H*2;cx.setTransform(2,0,0,2,0,0)}
 /* ===== Audio (tanpa file) ===== */
 let AC,aOn=1,mus,si=0;const SC=[262,330,392,330,294,349,440,349];
 function snd(f,d=.12,t='square',v=.05){if(!aOn)return;try{AC=AC||new(window.AudioContext||webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=t;o.frequency.value=f;g.gain.value=v;g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
@@ -90,7 +104,7 @@ const LSN=[
  ['Kabar buruk tetap harus naik.','Fokus leader: tangani masalah dan dapatkan fakta, <b>bukan menyerang orang yang membawa laporan</b>.','Di babak 2 permen makin banyak dan pancingan emosi makin sering. Siap?'],
  ['Kalau respons keras terus berulang, tim belajar "mengemas" laporan.','Yang bagus dilaporkan, yang jelek ditahan. Itulah budaya <b>ABS (Asal Bapak/Ibu Senang)</b>: kondisi lapangan jadi tidak ketahuan.','Babak 3 paling cepat. Ingat: tarik napas, jeda 3 detik ⏳.']];
 /* ===== State ===== */
-let g=null,salam='',nama='',tot={c:0,v:0,h:0,sc:0},last=0,swx=0,swy=0;
+let guided=0,gs=0,g=null,salam='',nama='',tot={c:0,v:0,h:0,sc:0},last=0,swx=0,swy=0;
 const R=(x,y,w,h,f)=>{cx.fillStyle=f;cx.fillRect(x,y,w,h)};
 const tz=z=>1/(1+z*.1),GY=t=>HY+(PY-HY)*t,LX=(l,t)=>W/2+(l-1)*LW*t;
 /* ===== Layar / kartu ===== */
@@ -107,12 +121,9 @@ function loginScreen(){
 function pick(s){salam=s;$('sB').classList.toggle('on',s==='Bapak');$('sI').classList.toggle('on',s==='Ibu')}
 function go(){const n=$('nm').value.trim();if(!salam||!n){$('nm').classList.add('err');$('nm').placeholder='Pilih sapaan & tulis nama dulu ya';return}nama=n;brief()}
 function brief(){show(`<div class="paper"><div class="guide"><i class="spr"></i><div class="bub"><span class="who">Host · Supervisor DC</span>
- <p>Halo ${salam} ${esc(nama)}! Hari ini kita keliling DC. Tim akan "melempar" pesan ke arah kita:</p>
- <p>🍬 <b>Permen</b> = pesan manis. Enak didengar, tapi kalau kebanyakan bikin <b>gendut & loyo</b>: masalahnya tersembunyi.</p>
- <p>🥦 <b>Sayuran</b> = kabar buruk yang jujur. Kurang enak, tapi bikin <b>sehat</b>.</p>
- <p>😠 <b>Emosi</b> = kalau kepancing, tim jadi takut lapor.</p>
- <p>⏳ <b>Jam</b> = jeda 3 detik: waktu melambat, kebal dari emosi.</p></div></div>
- <p class="mini" style="font-size:15px">⬅️➡️ geser jalur · ⬆️ lompat. Di HP: geser atau ketuk layar.</p>
+ <p>Halo ${salam} ${esc(nama)}! Hari ini kamu jadi Supervisor yang berkeliling di area DC.</p>
+ <p>Sepanjang perjalanan, kamu akan bertemu banyak hal di jalur. Kumpulkan dan hadapi apa yang ada, tapi tetap jaga kondisimu ya!</p>
+ <p>Ada <b>3 babak</b>, makin lama makin menantang. Siap?</p></div></div>
  <button class="btn big" onclick="startBabak(0)">Yuk, jalan! →</button></div>`)}
 /* ===== Permainan ===== */
 function startBabak(b){
@@ -120,7 +131,27 @@ function startBabak(b){
  const keep=g?{h:g.h,o:g.o}:null;
  g={b,st:'run',t:0,dist:0,lane:1,px:1,j:0,vy:0,h:Math.max(60,keep?keep.h:100),o:keep?keep.o:60,sg:0,boost:0,slow:0,inv:0,fire:0,fl:1,sp:0,sp0:0,items:[],gapAcc:0,c:0,v:0,hit:0,stt:0};
  if(b===0)tot={c:0,v:0,h:0,sc:0};
- music(LV[b].ms);last=performance.now();requestAnimationFrame(loop);
+ music(LV[b].ms);last=performance.now();if(b===0&&!guided){draw();startGuide()}else requestAnimationFrame(loop);
+}
+/* ===== Guide langsung di permainan (babak 1) ===== */
+const GS=[
+ {c:'up',top:112,h:'<b>Tiga meteran</b> kamu: ❤️ Sehat, 🗣️ Terbuka, 🍬 Gula. Nilainya akan berubah selama bermain, jadi perhatikan terus ya!'},
+ {c:'dn',bot:270,hand:1,h:'👆 <b>Geser kiri/kanan</b> untuk pindah jalur, <b>geser ke atas</b> untuk lompat.<small>Bisa juga ketuk sisi kiri/kanan atau tengah layar, atau tombol ← → ↑</small>'},
+ {c:'',top:210,h:'🍬 🥦 ⏳ <b>Kumpulkan</b> yang ada di jalur, lalu perhatikan apa yang terjadi pada meteranmu.'},
+ {c:'',top:210,h:'📦 <b>Pindah jalur</b> untuk menghindari tumpukan barang. Pallet dan 😠 bisa <b>dilompati</b>.'}];
+function startGuide(){g.st='guide';gs=0;const d=document.createElement('div');d.className='g-dim';d.onclick=nextGuide;$('app').appendChild(d);showGuide()}
+function showGuide(){
+ document.querySelectorAll('.g-tip,.g-hand').forEach(e=>e.remove());
+ const s=GS[gs],a=$('app'),e=document.createElement('div');
+ a.classList.toggle('gs1',gs===0);e.className='g-tip '+s.c;e.onclick=nextGuide;
+ if(s.top!=null)e.style.top=s.top+'px';else e.style.bottom=s.bot+'px';
+ e.innerHTML=s.h+'<small>Ketuk untuk '+(gs<GS.length-1?'lanjut':'mulai')+' · '+(gs+1)+'/'+GS.length+'</small>';a.appendChild(e);
+ if(s.hand){const h=document.createElement('div');h.className='g-hand';h.textContent='👆';a.appendChild(h)}
+}
+function nextGuide(){gs++;gs>=GS.length?endGuide():showGuide()}
+function endGuide(){
+ document.querySelectorAll('.g-dim,.g-tip,.g-hand').forEach(e=>e.remove());$('app').classList.remove('gs1');
+ guided=1;if(!g)return;g.st='run';g.t=0;last=performance.now();requestAnimationFrame(loop);
 }
 function add(k,l,z){g.items.push({k,l,z,d:0,r:Math.random()})}
 function spawn(){
@@ -178,11 +209,11 @@ cv.addEventListener('pointerup',e=>{const dx=e.clientX-swx,dy=e.clientY-swy;
 function drawBg(){
  const B=LV[g?g.b:0],d=g?g.dist:0;
  R(0,0,W,H,B.sky);R(0,HY-90,W,90,B.wall);
- for(let i=0;i<4;i++){R(24+i*115,HY-62,72,62,B.acc);R(24+i*115,HY-62,72,8,'rgba(0,0,0,.25)')}
+ for(let i=-5;i<=5;i++){const x=W/2-36+i*115;if(x<-80||x>W)continue;R(x,HY-62,72,62,B.acc);R(x,HY-62,72,8,'rgba(0,0,0,.25)')}
  cx.fillStyle=B.fl;cx.beginPath();cx.moveTo(W/2-10,HY);cx.lineTo(W/2+10,HY);cx.lineTo(W/2+215,H);cx.lineTo(W/2-215,H);cx.fill();
  for(let k=9;k>=0;k--){const z=k*8-(d%8),t=tz(Math.max(z,0)),y=GY(t),h=190*t,w=95*t,id=Math.floor(d/8)+k;
-  for(const s of[-1,1]){const x=s<0?W/2-195*t-w:W/2+195*t;R(x,y-h,w,h,B.w2);R(x,y-h,w,h*.1,B.acc);R(x,y-h*.55,w,h*.05,'#14151b55');
-   R(x+w*.1,y-h*.45,w*.38,h*.25,(id+k+(s>0))%2?'#d9a35f':'#e8645a');R(x+w*.52,y-h*.8,w*.36,h*.22,(id+k)%3?'#5fb4e8':'#ffc94d');R(x+w*.15,y-h*.2,w*.5,h*.18,'#c99c6c')}}
+  for(const s of[-1,1])for(let c=0;c<3;c++){const x=s<0?W/2-195*t-w-c*(w+8*t):W/2+195*t+c*(w+8*t);if(x>W||x+w<0)continue;R(x,y-h,w,h,B.w2);R(x,y-h,w,h*.1,B.acc);R(x,y-h*.55,w,h*.05,'#14151b55');
+   R(x+w*.1,y-h*.45,w*.38,h*.25,(id+k+(s>0)+c)%2?'#d9a35f':'#e8645a');R(x+w*.52,y-h*.8,w*.36,h*.22,(id+k)%3?'#5fb4e8':'#ffc94d');R(x+w*.15,y-h*.2,w*.5,h*.18,'#c99c6c')}}
  for(const l of[.5,1.5]){cx.strokeStyle='rgba(255,255,255,.55)';for(let k=0;k<14;k++){const z1=k*5-(d%5),z2=z1+2.5;if(z2<0)continue;const t1=tz(Math.max(z1,0)),t2=tz(z2);cx.lineWidth=4*t1+1;cx.beginPath();cx.moveTo(LX(l,t1),GY(t1));cx.lineTo(LX(l,t2),GY(t2));cx.stroke()}}
  cx.strokeStyle=B.acc;cx.lineWidth=4;for(const s of[-1,1]){cx.beginPath();cx.moveTo(W/2+s*10,HY);cx.lineTo(W/2+s*215,H);cx.stroke()}
 }
@@ -240,21 +271,42 @@ function over(){
  show(`<div class="paper"><h2>Kesehatan habis 😵</h2><p>${why}</p><p class="mini" style="font-size:15px">Tips: ambil 🥦 untuk pulih, lompati 😠 dan pallet, pakai ⏳ untuk menenangkan diri.</p>
  <button class="btn big" onclick="startBabak(${g.b})">Coba lagi babak ini ↻</button></div>`);
 }
+function notifyLMS(){
+ try{window.parent.postMessage('scoreBarFound','*')}catch(e){console.warn('LMS postMessage (parent) gagal.',e)}
+ try{window.top.postMessage('scoreBarFound','*')}catch(e){console.warn('LMS postMessage (top) gagal.',e)}
+}
+let prof=null;
 function finale(){
- const n=tot.c+tot.v,r=n?tot.v/n:0;let p=['PEMIMPIN TERBUKA','#d9ecff','Kamu rajin "makan sayur": kabar buruk naik dan kamu tetap fokus ke masalahnya.'];
- if(r<.5||g.o<55)p=['MASIH TERGODA YANG MANIS','#fff0bd','Kadang kamu masih memilih yang enak didengar. Ingat: yang manis belum tentu menyehatkan.'];
- if(r<.3)p=['ABS: ASAL BAPAK/IBU SENANG','#ffd9d9','Terlalu banyak permen: laporan manis, kondisi lapangan tidak ketahuan.'];
- try{parent.postMessage('scoreBarFound','*');top.postMessage('scoreBarFound','*')}catch(e){}
- show(`<div class="paper"><span class="tag" style="background:${p[1]}">${p[0]}</span>
- <div class="grid3"><div class="box" style="background:#fff0bd"><b>${tot.c}</b>🍬 Permen</div><div class="box" style="background:#d8f5e2"><b>${tot.v}</b>🥦 Sayuran</div><div class="box" style="background:#ffd9d9"><b>${tot.h}</b>😠 Kepancing</div></div>
+ const n=tot.c+tot.v,r=n?tot.v/n:0;prof=['PEMIMPIN TERBUKA','#d9ecff','Kamu rajin "makan sayur": kabar buruk naik dan kamu tetap fokus ke masalahnya.'];
+ if(r<.5||g.o<55)prof=['MASIH TERGODA YANG MANIS','#fff0bd','Kadang kamu masih memilih yang enak didengar.'];
+ if(r<.3)prof=['ABS: ASAL BAPAK/IBU SENANG','#ffd9d9','Terlalu banyak permen: laporan manis, kondisi lapangan tidak ketahuan.'];
+ $('hud').style.display='none';notifyLMS();deb1();
+}
+function deb1(){
+ show(`<div class="paper dbf"><span class="kick">Debriefing 1/2 · Analogi</span> <span class="tag" style="background:${prof[1]}">${prof[0]}</span>
+ <div class="grid3"><div class="box" style="background:#fff0bd"><b>${tot.c}</b>🍬 Permen</div><div class="box" style="background:#d8f5e2"><b>${tot.v}</b>🥦 Sayuran</div><div class="box" style="background:#ffd9d9"><b>${tot.h}</b>😠 Emosi</div></div>
  <div class="guide"><i class="spr"></i><div class="bub"><span class="who">Host · Supervisor DC</span>
- <p>${p[2]}</p>
- <p><b>Saat kabar buruk datang, jeda 3 detik lalu tanya:</b> ① Apa faktanya? ② Apa yang harus dicapai dan tetap dijaga? ③ Apa respons paling tepat sekarang?</p>
- <p>Tegas tetap boleh! Tapi <b>jangan serang orang yang membawa kabar</b>. Jangan langsung dimarahi, supaya tim berani jujur.</p></div></div>
- <button class="btn big" onclick="loginScreen()">Main lagi ↻</button></div>`);
+ <p>${prof[2]} Ini maksud dari semua yang kamu temui tadi:</p>
+ <p>🍬 <b>Permen</b> = pesan baik dari tim. Enak didengar, tapi kalau kebanyakan, masalahnya tersembunyi dan kita jadi "loyo".</p>
+ <p>🥦 <b>Sayuran</b> = pesan buruk yang jujur. Kurang enak, tapi manfaatnya terasa: masalah ketahuan dan bisa ditangani.</p>
+ <p>😠 <b>Emosi</b> = respons marah saat dengar kabar buruk. Tim jadi takut melapor, sayuran makin jarang datang.</p>
+ <p>⏳ <b>Jam</b> = jeda 3 detik sebelum bereaksi.</p></div></div>
+ <button class="btn big" onclick="deb2()">Lanjut: Poin Pembelajaran →</button></div>`);
+}
+function deb2(){
+ show(`<div class="paper dbf"><span class="kick">Debriefing 2/2 · Poin Pembelajaran</span>
+ <div class="guide"><i class="spr"></i><div class="bub"><span class="who">Host · Supervisor DC</span>
+ <p>1️⃣ <b>Kabar buruk tetap harus naik.</b> Fokus ke masalah dan fakta, bukan menyerang orang yang melapor.</p>
+ <p>2️⃣ Kalau respons keras terus berulang, tim belajar menyaring laporan: yang jelek ditahan. Itulah budaya <b>ABS (Asal Bapak/Ibu Senang)</b>.</p>
+ <p>3️⃣ Saat kabar buruk datang, <b>jeda 3 detik</b> lalu tanya: ① Apa faktanya? ② Apa yang harus dicapai dan tetap dijaga? ③ Apa respons paling tepat sekarang?</p>
+ <p>4️⃣ Tegas tetap boleh! Tapi <b>jangan langsung dimarahi</b>, supaya tim berani jujur.</p></div></div>
+ <div class="row2"><button class="btn ghost" onclick="deb1()">← Kembali</button><button class="btn" onclick="loginScreen()">Main lagi ↻</button></div></div>`);
 }
 /* ===== Fit layar ===== */
-function fit(){const s=Math.min(1.4,innerHeight/606,innerWidth/486),a=$('app');a.style.top=Math.max(0,(innerHeight-606*s)/2)+'px';a.style.transform='translateX(-50%) scale('+s+')'}
+const STAGE_H=600,STAGE_MAX_W=900;
+function fit(){const a=$('app'),vw=innerWidth,vh=innerHeight,sc=Math.min(1,vh/STAGE_H),w=Math.round(Math.min(vw/sc,STAGE_MAX_W));
+ a.style.width=w+'px';a.style.top=Math.max(0,(vh-STAGE_H*sc)/2)+'px';a.style.transform='translateX(-50%) scale('+sc+')';
+ if(w!==W||!cv.dataset.s){cv.dataset.s=1;size(w);g?draw():drawIdle()}}
 addEventListener('resize',fit);fit();
 img.onload=()=>{if(g)draw()};
 document.fonts&&document.fonts.ready.then(()=>{});
