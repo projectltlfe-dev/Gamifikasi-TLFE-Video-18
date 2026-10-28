@@ -2,315 +2,340 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Permen atau Sayuran? – Gamifikasi V18</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dokter Jaga: Simulasi RS Sehat Sentosa</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#14151b;--paper:#fffdf7;--orange:#f2792b;--blue:#3d7fd9;--good:#5fd68c;--red:#ff5a5a;--warn:#ffc94d;
---hand:"Patrick Hand","Comic Sans MS",cursive;--round:"Fredoka","Trebuchet MS",system-ui,sans-serif}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#c8d7e1;overflow:hidden;overscroll-behavior:none}
-body{font-family:var(--hand);color:var(--ink);user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;background-image:radial-gradient(rgba(30,50,80,.09) 1.5px,transparent 1.7px);background-size:26px 26px}
-button{font:inherit;color:inherit;cursor:pointer}
-#app{position:absolute;left:50%;top:0;width:100%;height:600px;transform-origin:top center;overflow:hidden;background:linear-gradient(180deg,#e4eef4 0%,#d5e3ec 62%,#c8d7e1 100%)}
-#cv{position:absolute;left:0;top:0;width:100%;height:600px;touch-action:none}
-.btn{font-family:var(--round);font-weight:600;font-size:16px;padding:10px 18px;border:2.5px solid var(--ink);border-radius:12px;background:var(--orange);box-shadow:0 4px 0 var(--ink)}
-.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
-.btn.big{width:100%;font-size:18px;padding:12px;margin-top:8px}
-.btn.ghost{background:#e9edf5}.btn.on{background:var(--warn)}
-#hud{position:absolute;left:50%;top:0;width:min(calc(100% - 104px),520px);transform:translateX(-50%);padding:8px 0 0;pointer-events:none;z-index:5}
-.chip{display:inline-block;padding:3px 12px;background:#2b303c;color:#fff;border:2.5px solid var(--ink);border-radius:99px;font-family:var(--round);font-weight:600;font-size:13px;margin-bottom:5px}
-.ms{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.m{background:#2b303c;border:2.5px solid var(--ink);border-radius:10px;padding:3px 7px 5px;color:#fff;font-family:var(--round);font-size:11.5px}
-.m .row{display:flex;justify-content:space-between;gap:4px;white-space:nowrap}
-.bar{height:8px;border-radius:5px;background:#14151b;margin-top:3px;overflow:hidden}.bar i{display:block;height:100%;width:50%;background:var(--good);transition:width .15s}
-#prog{height:5px;background:rgba(0,0,0,.35);margin-top:6px;border-radius:3px;overflow:hidden}#prog i{display:block;height:100%;width:0;background:var(--warn)}
-#ovl{position:absolute;inset:0;z-index:20;display:none;place-items:center;padding:16px;background:rgba(4,6,12,.6)}
-#ovl.show{display:grid}
-.paper{position:relative;width:min(100%,480px);max-height:560px;overflow:hidden;padding:16px 16px 14px 36px;background:repeating-linear-gradient(transparent 0 29px,#dde6f3 29px 30px),var(--paper);border:3px solid var(--ink);border-radius:18px;box-shadow:0 7px 0 var(--ink)}
-.paper::before{content:"";position:absolute;top:0;bottom:0;left:19px;width:2px;background:#ff9b9b}
-.paper h1,.paper h2{font-weight:400;line-height:1.02;margin-bottom:6px}.paper h1{font-size:34px}.paper h2{font-size:28px}
-.paper p{font-size:18px;line-height:1.22;margin-bottom:8px}
-.kick{display:inline-block;font-family:var(--round);font-size:12px;background:#e9edf5;border:2px solid var(--ink);border-radius:99px;padding:1px 10px;margin-bottom:6px}
-.row2{display:flex;gap:8px;margin:6px 0}.row2 .btn{flex:1}
-input{width:100%;font-family:var(--hand);font-size:19px;padding:8px 12px;border:2.5px solid var(--ink);border-radius:10px;background:#fff;user-select:text;-webkit-user-select:text}
-input.err{border-color:var(--red)}
-.guide{display:flex;gap:10px;align-items:flex-end;margin-bottom:4px}
-.spr{flex:none;width:84px;height:252px;background:var(--spr) center bottom/contain no-repeat}
-.bub{flex:1;background:#fff;border:3px solid var(--ink);border-radius:16px;box-shadow:0 4px 0 var(--ink);padding:7px 12px 6px;margin-bottom:6px}
-.bub p{font-size:17px;margin-bottom:5px}.bub p:last-child{margin:0}
-.who{display:inline-block;font-family:var(--round);font-weight:600;font-size:12px;background:var(--orange);border:2px solid var(--ink);border-radius:99px;padding:0 9px;margin-bottom:4px}
-.tag{display:inline-block;font-family:var(--round);font-weight:600;font-size:14px;border:2.5px solid var(--ink);border-radius:99px;padding:2px 12px;margin-bottom:6px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 8px}
-.box{border:2.5px solid var(--ink);border-radius:12px;text-align:center;padding:2px 4px;font-family:var(--round);font-size:12px}.box b{display:block;font-size:24px;line-height:1.1;font-family:var(--hand);font-weight:400}
-.qs{font-size:17px;line-height:1.15;margin:0 0 6px 18px}
-#hud{z-index:5}
-#app.gs1 #hud{z-index:16}#app.gs1 .ms{border-radius:10px;animation:gMeter 1.1s ease-in-out infinite}
-@keyframes gMeter{50%{box-shadow:0 0 0 4px #ffd34d,0 0 18px 6px rgba(255,211,77,.8)}}
-.g-dim{position:absolute;inset:0;z-index:15;background:rgba(4,6,12,.55);cursor:pointer}
-.g-tip{position:absolute;z-index:17;left:0;right:0;margin:0 auto;width:min(420px,calc(100% - 28px));background:#fffdf7;border:3px solid var(--ink);border-radius:14px;box-shadow:0 4px 0 var(--ink);padding:8px 12px;font-size:18px;line-height:1.2;cursor:pointer;animation:gTipIn .35s cubic-bezier(.3,1.6,.5,1) both}
-.g-tip small{display:block;font-family:var(--round);font-size:12px;color:#6b6858;margin-top:3px}
-.g-tip::before{content:"";position:absolute;left:calc(50% - 10px);border:10px solid transparent}
-.g-tip.up::before{bottom:100%;border-bottom-color:var(--ink)}.g-tip.dn::before{top:100%;border-top-color:var(--ink)}
-@keyframes gTipIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
-.g-hand{position:absolute;z-index:18;left:calc(50% - 22px);top:440px;font-size:44px;pointer-events:none;animation:gHand 1.6s ease-in-out infinite}
-@keyframes gHand{0%,100%{transform:translateX(-90px)}50%{transform:translateX(70px)}}
-@media (prefers-reduced-motion:reduce){.g-tip,.g-hand,#app.gs1 .ms{animation:none!important}}
-.dbf{width:min(100%,680px)}.dbf .spr{width:76px;height:230px}.dbf .bub p{font-size:16.5px;margin-bottom:4px}.dbf .bub{padding:6px 12px 4px}
-#aud{position:absolute;top:7px;right:7px;z-index:30;width:38px;height:38px;padding:0;border-radius:50%;background:var(--warn);border:2.5px solid var(--ink);box-shadow:0 3px 0 var(--ink);font-size:18px}
-#copy{position:absolute;left:0;right:0;bottom:3px;z-index:25;text-align:center;font-family:var(--round);font-size:10px;pointer-events:none}
-#copy span{padding:2px 10px;border-radius:99px;background:rgba(20,21,27,.62);color:#fff}
+:root{--ink:#22314d;--muted:#5d6b85;--teal:#2f8f83;--teal-d:#1f6f6a;--orange:#e07b3c;--red:#e5484d;--good:#1f9e5a;--disp:'Baloo 2',Nunito,system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overscroll-behavior:none;overflow:hidden}
+body{font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:linear-gradient(160deg,#cfeee9,#e8f4f2);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+button{font-family:inherit;cursor:pointer}
+#bd{position:fixed;inset:0;z-index:0}#bd svg{position:absolute;left:-14px;top:-14px;width:calc(100% + 28px);height:calc(100% + 28px);filter:blur(5px)}#bd::after{content:"";position:absolute;inset:0;background:rgba(20,50,50,.35)}
+#app{position:absolute;left:50%;top:0;width:100%;height:600px;transform-origin:top center;overflow:hidden;z-index:1;background:#e4f5f2;box-shadow:0 10px 40px rgba(31,111,106,.35)}
+.hide{display:none!important}
+.scene{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;overflow:hidden}.scene.active{opacity:1;visibility:visible}
+.scene>svg.bg{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* HUD */
+#hud{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;align-items:center;z-index:50;pointer-events:none;gap:6px}
+#hr{display:flex;gap:6px;align-items:center;pointer-events:auto}
+.chip{background:rgba(255,255,255,.92);border-radius:999px;padding:6px 12px;font-weight:800;font-size:13px;box-shadow:0 3px 10px rgba(0,0,0,.12);display:flex;gap:6px;align-items:center;white-space:nowrap;color:var(--ink);border:0}
+.chip.hit{animation:hit .5s}.chip.warn{background:#ffe3e3;animation:warn .8s infinite}
+@keyframes hit{30%{transform:scale(1.18)}}@keyframes warn{50%{box-shadow:0 0 0 4px rgba(229,72,77,.55)}}
+.mb{display:inline-block;width:46px;height:8px;border-radius:5px;background:#dfe6ee;overflow:hidden}.mb b{display:block;height:100%;transition:width .6s,background .3s}
+.chip u{display:inline-block;width:9px;height:9px;border-radius:50%;background:#dfe6ee;text-decoration:none}.chip u.on{background:var(--orange)}.chip.warn u.on{background:var(--red)}
+/* tombol */
+.btn{font-family:var(--disp);font-weight:800;font-size:17px;border:none;border-radius:16px;padding:10px 22px;color:#fff;background:linear-gradient(180deg,#3fb5a6,#2a8f83);box-shadow:0 5px 0 #1d6b62,0 8px 18px rgba(31,111,106,.3);transition:transform .1s,box-shadow .1s;line-height:1.1}
+.btn.orange{background:linear-gradient(180deg,#f0954f,#d86f2c);box-shadow:0 5px 0 #a8531c,0 8px 18px rgba(224,123,60,.35)}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #1d6b62}.btn:disabled{opacity:.5}
+.btn.pop{animation:pop .35s}@keyframes pop{50%{transform:scale(1.07)}}
+/* start */
+.card{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(93%,430px);background:rgba(255,255,255,.96);border-radius:26px;padding:16px 20px;text-align:center;box-shadow:0 18px 40px rgba(31,111,106,.28);z-index:5;max-height:96%;overflow:auto}
+.card h1{font-family:var(--disp);font-size:34px;line-height:1;color:var(--teal-d)}.card h1 span{color:var(--orange);display:block;font-size:26px}
+.card .sub{color:var(--muted);font-weight:700;font-size:14px;margin:5px 0 8px}.lbl{font-weight:900;font-size:14px;margin-bottom:6px}
+.chars{display:flex;gap:10px;justify-content:center;margin-bottom:10px}
+.cc{width:110px;background:#f1f8f7;border:3px solid transparent;border-radius:18px;padding:4px;font-weight:900;color:var(--ink);display:flex;flex-direction:column;align-items:center}.cc svg{width:70px;height:70px}.cc.sel{border-color:var(--teal);background:#dff3ef}
+#nameIn{width:100%;border:3px solid #cfe0dd;border-radius:14px;padding:9px 12px;font:800 17px Nunito;text-align:center;margin-bottom:10px;color:var(--ink);user-select:text;-webkit-user-select:text}
+/* story box */
+.story{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);width:min(94%,560px);background:rgba(255,255,255,.97);border-radius:22px;padding:12px 16px;box-shadow:0 10px 28px rgba(0,0,0,.18);display:none;flex-direction:column;gap:8px;align-items:center;text-align:center;z-index:30}.story.on{display:flex}
+.spk{display:flex;gap:8px;align-items:center}.av{width:38px;height:38px;border-radius:50%;background:#dff3ef;border:2px solid var(--teal);overflow:hidden;display:block}.av svg{width:100%;height:100%;display:block}
+.who{font-family:var(--disp);font-weight:800;font-size:16px;color:var(--teal-d)}
+.story p{font-weight:800;font-size:17px;line-height:1.3}.story p.fade{animation:fd .4s}@keyframes fd{from{opacity:0;transform:translateY(5px)}}
+/* ruang */
+#pt{position:absolute;left:50%;bottom:86px;height:420px;aspect-ratio:100/156;transform:translateX(-50%);z-index:2}#pt svg{width:100%;height:100%;display:block;overflow:visible}
+#pt.idle svg{animation:bob 3s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-4px)}}
+#pt.shake svg{animation:shk .5s}@keyframes shk{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+#pt.hop svg{animation:hop .6s}@keyframes hop{40%{transform:translateY(-14px)}}
+.zn{fill:transparent;cursor:pointer}.zn:hover{fill:rgba(255,255,255,.22)}
+.ping{position:absolute;width:36px;height:36px;margin:-18px;border-radius:50%;border:4px solid #2f9e95;animation:ping .7s ease-out forwards;pointer-events:none}@keyframes ping{to{transform:scale(2.4);opacity:0}}
+#desk{position:absolute;left:0;right:0;bottom:0;height:132px;z-index:4;background:linear-gradient(#c99564,#a8774a);border-top:6px solid #e0b98a;box-shadow:0 -8px 20px rgba(0,0,0,.15)}
+#plate{position:absolute;left:12px;top:10px;background:#fff;border-radius:6px;padding:3px 10px;font:800 11px Nunito;color:var(--teal-d);box-shadow:0 2px 4px rgba(0,0,0,.2)}
+#tray{position:absolute;inset:14px 24px 22px;display:flex;gap:12px;justify-content:center;align-items:stretch;opacity:0;pointer-events:none;transition:opacity .3s}#tray.on{opacity:1;pointer-events:auto}
+.tool{flex:1;max-width:200px;background:#fffdf7;border:0;border-radius:18px;box-shadow:0 5px 0 #8a5d35,0 8px 14px rgba(0,0,0,.2);font-family:var(--disp);font-weight:800;font-size:15px;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:transform .1s;line-height:1.05}
+.tool i{font-style:normal;font-size:34px}.tool:active{transform:translateY(4px);box-shadow:0 1px 0 #8a5d35}
+.tool.rc{background:#d7f7e8;animation:glw 1s 3}@keyframes glw{50%{box-shadow:0 5px 0 #8a5d35,0 0 0 6px #5fd68c}}
+#ptag{position:absolute;top:46px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.92);border-radius:14px;padding:4px 14px;font-weight:900;font-size:13px;z-index:6;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.12)}
+#coach{position:absolute;top:84px;left:10px;width:min(30%,220px);background:rgba(255,255,255,.95);border-radius:14px;padding:8px 10px;font-weight:800;font-size:12.5px;z-index:16;box-shadow:0 6px 16px rgba(0,0,0,.22);display:none}#coach.on{display:block}
+#syms{position:absolute;top:46px;right:10px;width:min(34%,250px);display:flex;flex-direction:column;gap:6px;z-index:16}
+.sym{background:rgba(255,255,255,.96);border-left:5px solid var(--teal);border-radius:12px;padding:6px 9px;font-weight:700;font-size:12.5px;line-height:1.22;box-shadow:0 5px 14px rgba(0,0,0,.2);animation:fd .4s}.sym b{color:var(--teal-d);font-family:var(--disp)}.sym.shut{border-color:var(--red);background:#fff0f0}
+#notif{position:absolute;top:46px;left:10px;width:min(40%,290px);background:#fff;border-radius:16px;padding:8px 11px;display:none;gap:8px;z-index:40;box-shadow:0 10px 24px rgba(0,0,0,.28);font-weight:700;font-size:13px;line-height:1.25}#notif.on{display:flex;animation:sl .4s}@keyframes sl{from{opacity:0;transform:translateY(-14px)}}
+#notif small{display:block;font-size:11px;color:var(--muted);font-weight:900}
+.toast{position:absolute;top:34%;left:50%;transform:translate(-50%,-50%) scale(.85);background:#fff;padding:10px 18px;border-radius:16px;font-weight:900;font-size:16px;opacity:0;transition:.25s;z-index:45;box-shadow:0 10px 26px rgba(0,0,0,.3);pointer-events:none;text-align:center;max-width:84%}
+.toast.on{opacity:1;transform:translate(-50%,-50%) scale(1)}.toast.good{color:var(--good)}.toast.bad{color:var(--red)}
+/* modal & cine */
+#modal{position:absolute;inset:0;z-index:60;background:rgba(15,30,40,.6);display:none;place-items:center;padding:16px}#modal.on{display:grid}
+.mcard{width:min(100%,380px);background:#fff;border-radius:24px;padding:18px;text-align:center;box-shadow:0 18px 40px rgba(0,0,0,.4);animation:pop .4s}.mcard .ic{font-size:44px}.mcard h3{font-family:var(--disp);font-size:24px;color:var(--red);margin:2px 0 4px}.mcard p{font-weight:700;line-height:1.3;margin-bottom:6px;font-size:15px}
+.pen{display:inline-block;background:#ffe3e3;color:var(--red);font-weight:900;border-radius:99px;padding:2px 12px;margin-bottom:10px;font-size:13px}
+#cine{position:absolute;inset:0;z-index:58;background:linear-gradient(160deg,#173d42,#0e2328);display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .45s;text-align:center;color:#fff}#cine.on{opacity:1}
+#cine small{display:block;font-weight:900;letter-spacing:.14em;color:#8fd8cd;font-size:14px}#cine b{display:block;font-family:var(--disp);font-size:38px;line-height:1.05;margin:4px 0}#cine span{font-weight:700;color:#cfe3e1}
+/* kilas balik */
+.fbt{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,rgba(255,240,210,.12) 35%,rgba(110,70,25,.4));z-index:3}
+#rwrap{position:absolute;inset:50px 14px 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5}
+.flip{width:min(100%,520px);height:370px;perspective:1200px;cursor:pointer}.fc{position:relative;width:100%;height:100%;transition:transform .75s cubic-bezier(.3,1.2,.4,1);transform-style:preserve-3d}.flip.flipped .fc{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;border-radius:24px;padding:12px 18px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;box-shadow:0 18px 40px rgba(0,0,0,.28);overflow:hidden}.face.back{transform:rotateY(180deg);background:#fffbe8}
+.k{font-weight:900;font-size:12px;background:#dff3ef;color:var(--teal-d);border-radius:99px;padding:2px 12px}
+.face h3{font-family:var(--disp);font-size:23px;line-height:1.05}.face p{font-weight:700;font-size:15.5px;line-height:1.28;color:#3b4660}
+.vid{background:#e9f1ff;border:2px dashed #7aa0d8;border-radius:12px;padding:5px 9px;font-weight:700;font-size:14.5px;line-height:1.25}
+.ill{width:100px;height:100px;background:#dff3ef;border-radius:50%;overflow:hidden}.ill svg{width:100%;height:100%}.tap{font-size:12.5px;font-weight:800;color:var(--orange)}
+.rnav{display:flex;align-items:center;justify-content:space-between;gap:12px;width:min(100%,520px);margin-top:10px}.dots{display:flex;gap:6px}.dots i{width:11px;height:11px;border-radius:50%;background:#fff;opacity:.5}.dots i.on{opacity:1;background:var(--orange)}.dots i.ok{opacity:1;background:#5fd68c}
+/* final */
+.fcard{position:absolute;left:50%;top:50%;transform:translate(-50%,-47%);width:min(94%,500px);max-height:calc(100% - 20px);overflow:auto;background:#fff;border-radius:26px;padding:14px 18px;text-align:center;box-shadow:0 18px 40px rgba(31,111,106,.3);z-index:3}
+.fcard h2{font-family:var(--disp);font-size:28px;color:var(--teal-d)}.stars{display:flex;justify-content:center;gap:6px;font-size:32px}.stars span{filter:grayscale(1);opacity:.3;transition:.4s}.stars span.on{filter:none;opacity:1;transform:scale(1.15)}
+.ending{display:inline-block;font-weight:900;font-size:13px;padding:4px 12px;border-radius:12px;margin:4px 0}.ending.good{background:#d7f7e8;color:#157a45}.ending.mid{background:#fff0bd;color:#8a6200}.ending.bad{background:#ffe3e3;color:#b02a2f}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}.st{background:#f1f8f7;border-radius:12px;padding:5px 2px}.st b{display:block;font-family:var(--disp);font-size:22px}.st span{font-size:11.5px;font-weight:800}
+.fcard p{font-weight:700;font-size:14.5px;line-height:1.3;margin-bottom:8px;color:#3b4660}
+.confetti{position:absolute;top:-10px;width:8px;height:12px;animation:fall linear forwards;z-index:70}@keyframes fall{to{transform:translateY(620px) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
 <body>
+<div id="bd"></div>
 <div id="app">
-  <canvas id="cv" width="960" height="1200"></canvas>
-  <div id="hud" style="display:none">
-    <span class="chip" id="chip"></span>
-    <div class="ms">
-      <div class="m"><div class="row"><span>❤️ Sehat</span><b id="hv"></b></div><div class="bar"><i id="hb"></i></div></div>
-      <div class="m"><div class="row"><span>🗣️ Terbuka</span><b id="ov"></b></div><div class="bar"><i id="ob" style="background:var(--blue)"></i></div></div>
-      <div class="m"><div class="row"><span>🍬 Gula</span><b id="sv"></b></div><div class="bar"><i id="sb"></i></div></div>
-    </div>
-    <div id="prog"><i></i></div>
-  </div>
-  <div id="ovl"></div>
-  <button id="aud" onclick="toggleAudio()" aria-label="Suara">🔊</button>
-  <div id="copy"><span>© Education and Training Department 2026</span></div>
+  <div id="hud"><div class="chip hide" id="place"></div><div id="hr"><div class="chip hide" id="trust"></div><div class="chip hide" id="hab"></div><button class="chip" id="bgm" aria-label="Suara">🔊</button></div></div>
+
+  <section class="scene active" id="sc-start"><div class="card">
+    <h1>Dokter Jaga <span>RS Sehat Sentosa</span></h1><p class="sub">Satu shift, lima pasien, banyak keputusan kecil.</p>
+    <div class="lbl">Kamu mau dipanggil apa?</div>
+    <div class="chars"><button class="cc" data-s="Bapak" id="cM"><span></span><span>Bapak</span></button><button class="cc" data-s="Ibu" id="cF"><span></span><span>Ibu</span></button></div>
+    <input id="nameIn" maxlength="20" placeholder="Tulis namamu di sini" autocomplete="off" aria-label="Nama">
+    <button class="btn orange" id="btnStart" disabled>Mulai Shift Jaga ▶</button></div></section>
+
+  <section class="scene" id="sc-open"><div id="openFerdi" style="position:absolute;left:50%;bottom:150px;height:340px;aspect-ratio:100/156;transform:translateX(-50%)"></div></section>
+
+  <section class="scene" id="sc-room">
+    <div id="roomBg"></div><div id="ptag"></div><div id="pt" class="idle"></div>
+    <div id="coach">💡 Pilih tindakan di meja dokter.</div><div id="syms"></div>
+    <div id="desk"><div id="plate"></div><div id="tray"></div></div>
+  </section>
+
+  <section class="scene" id="sc-reflect"><div class="fbt"></div><div id="rwrap"></div></section>
+
+  <section class="scene" id="sc-final"><div class="fcard">
+    <div style="width:84px;height:84px;margin:0 auto" id="fAv"></div><h2 id="fT"></h2><div class="stars" id="stars"><span>⭐</span><span>⭐</span><span>⭐</span></div>
+    <div class="ending" id="fEnd"></div><div class="stats" id="fSt"></div><p id="fTx"></p>
+    <button class="btn orange" onclick="location.reload()">↻ Main Lagi</button></div></section>
+
+  <div class="story" id="story"><div class="spk"><span class="av" id="sAv"></span><span class="who" id="sWho"></span></div><p id="sTxt"></p><button class="btn orange hide" id="sBtn"></button></div>
+  <div id="notif"><span class="av" id="nAv" style="flex:none"></span><div><small>dr. Ferdi · sekarang</small><span id="nTx"></span></div></div>
+  <div class="toast" id="toast"></div>
+  <div id="modal"><div class="mcard"><div class="ic" id="mIc"></div><h3 id="mT"></h3><p id="mP"></p><div class="pen" id="mPen"></div><br><button class="btn orange" id="mBtn">Lanjut ▶</button></div></div>
+  <div id="cine"><div><small id="cT"></small><b id="cP"></b><span id="cS"></span></div></div>
 </div>
 <script>
-const SPR='data:image/webp;base64,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',SPRB='data:image/webp;base64,UklGRtwgAABXRUJQVlA4WAoAAAAQAAAAYwAAKwEAQUxQSPoPAAAB52cgbZu1/o1vv4CIyPBLjqWVbwmHAdu2DQmyu/8/LNsdF0T0fwIkxbY7d16xApDgT5pFHkNg+50s1DrZJW4XiRPb7mrd+5Hvd04qYGeO0AHrP/NZzwB6ElXYsGGBgRP/Gz/iD9YjyaYt2JJkuw/4wrZtkdto247zrpZkhoDDYAgz0zAzMzMz8zzMzMz8PMPMnIlRQaMcW8YxKZFji7rrPhfUqr6r7n7WI2ICaKACJcy75LpzbzzvGgvAGt2844d374GipB8qlLD8jqfdcPFSevWhb3zuW47qA4oUj3/hE1cBNtJcNgH43p/i7CSKN7z+xoCjJHp2DOLZy1FeKrnjo0+FUoHUpTjPOCex6MmPGyolUaMjDkXIiOWPHqIsqFlweKwkZHPp2ZRB1O4w/b3llCgPnQqioTt/+B9ENS9w0jTWiOmnLMJNEzt30+ToYuixp9JwhdY+Gu4Og4+EZhW8ATcMwU/GcIOCztpSxKZhTX8DNYnf6Zjmx+JnP1BsjFi+qx0zQPGPy+CmBJ57rsnR4ZWYpkaepzwCjz43qiHyaVejLOSzLiM0JHD1eZkQuZLmXq8yE7gMN8RcTq7iuqGoRijqMpQJDIqmeoZ8TWMHBjNqrFhzOep3Zv8o7ndwfIx83RwVGbWaQysbc/9McCMsj+JM4EAUzQxsId+TNPdBlElgXWPM5k5wFtb4TtyYkV1kwsE9zQnjw9ncMxGagriTPMWdFo3VVoc8yp2isfY9h+UMrLG1dlMUV/zeqVYG8tIPKqohDPzVKwuR5cDH/miAZhZ+0XPaIktRvvOZLhoReQGBTIVfjJsQfNZt+SCtVFQDYN58cu7w/6GaMjWZlZsRdfBOx2zM3Q5uAIVf8wIXmRTxHS9woIkql32UXM0Hh2ioeP4lHWUR4o2PdWhMeDo4BxePxm4IeMkQlKUb5TIWDIBorqd+PlGIZhcc3Ytp9tQtf/S5A7gx1u7P/fF3aXz40EvP/12VjSmLj/7mNoKbRhgM96HGyA+FQdP82ImbJ4Ib4mLs3hmyNNt20JSoO3EmxeR3GyO+TpEH5guTwY1wcWw9IRfdtZbYiBi+SiCXwD+KJloznyPfGP73q0XZgDjwj4RONgQuPhhVm3jiKgcyLnjb6Q41yedfapGzQnE5uB44m9xFFKrDSDg3JJngZFYQoh/G4RnsRByepm+OPkChFIGd99I3xdq/22Mn4AfDqE84avKvX/kNJbD+5gcDlP0BXLzuGYiE4i0vJfQHq5whmqSx5Fhb7gfiB5j009+iH1g/3xXqKHaNhPykgz+QqdF87UCImanFv7brmr4ThYxUCB7cHai5+MVW2i5CFgqOcO6qP8d1xfB3P75zNyhENyyEEpY9+9mPnvdLR3BNlMeXH/nJV3+wFwrH5ii4ZP5jXnPDGmDmuGqDGODwD//558dRaEqI5sL3vOAGiA4sQdRuOSrA9v/73D3EQg0IJtz6K++/AUcFwDTVMYjJz/87LlWXiDzrN158GqUCzY8u8DteJFA95vrnP2aAMgTydAx61kuvI6oWbnwBLoPIOEae/ppTcQ26eiGxEHkXZt6tCwmpQjBloA+GDjOHlcaU99IvBevbSqMfHpL7BA5lYSWI2vGDYPqmww3jJP3zSfURfFpxUj1JGzcF00ej1uxwT8XMH9Nvl7VPFj1IX/1ZKPtLZMk6eiz4Q0R/DZw9EFVNgz8Jsc/gsPp+Vyp4rum78vLdZVEl8O+h7DvEQlvxXIGLHircfxQu3GXNVfDxjulDcXDiF8HdxGkjndiHIJw1bLoHbr8w0qc/PVZ0s16E+1MZvv4/6hLiymcS+pOLh95LmCWeuDSqP2H+gGJW1DMxfboM6wYlKHzdEwn9ysX0jRQAz5hfql8R+QQFigNPRfSvYv1SSb76+n4G113pIJ42VPaz0s/CZfE0RB+PesHiyLXX9zd71W3i1qGyrxH1VLeejOjr4imnXvO4fhd8yVOevSjG/hbL8NSvfD0U/a3TWf/0jc959rc77l8u73vnYgLfeMa3VfarqJGzIEQVi85D/QqGFhcBKBevoG+LFTdTQOCy0x36iFElL3jWLDg9mL4d+Uy3W6gU+c/fIOYTw6b1b7UqwB93G6LHrwjnY7Z/wVQVq1tRKgduQBUcJh64mqwXjjwiV4CVLQMLT6GqObLHeRWHRqkizlqDApdfgCptPjGYV2tyRyVYshSBC6ofsvIKrKeqolcDrMCqtJbMzXglrMtm3USkcsFgXoMcjqEKTMyKVA7lg8uvJOQTuOL0DRNypQswPVpTD8wfJOuhVqtFVXFViFE3VoIY7Lxi6+geXAFKYZ2KKpgHDgzlphN7eymBDlXNdOmY17wzKKl+6jJQqAT7WNjKSXH+NdxVSay6AMpOD5u5cXFUPkBkqhLYcMY5lcRxBsh+UyxcZfZZ56C5HMoNxNwiR2bouSypPN0m+xYPbsO9SFXM9h208zKXMhmpuT3NsrzgXOKuesyGDrfivCJxB64DxiGQ/zFUzwz5R9hIqKNgLSgvcfkSZtrUaKaPQSe3MxaweTexjtFtzF+JcoJOpN2m1pmSJdkJJjfidGZ4EnfIXfgktR42KLfYhrtRusBd9MFl58GhOmAGOs5LcdFq2PeInMo6fB+sOcVZAR0YfYQepbmgcxLOnW9lJjRzGFcbfRB3MwemAh2yF60TW6vY8PAx5jQjJwuUXwk8QsWigKI1FzwM/eAUxF2om9l/EOy5xFpEmZu5FZim4v5DVPc0cA3Oa3ZkeDx4jlYBaA6HE8NELqAvTpTMHU2IG3EXeHgcaOcnzOGteI4WiMN0j2w+LBPya4Omj8xhjlkwOAdMAbRzE5cMxMB65t7gAFMV7qJwcVZucOE8i5MVuv6cwt0mIM6/CuXWMXAwqtoUXV20h2UoyTxaYA1PBXfTLHVTbF1pATGzljpGvnTIAhy4c1ZFvW9pSSxCXuWXx1YMEhe8rzDdW7PiHCFe/EoXk2/5l+B8zMyPP/nZqPjsx8cwS5FbZi3CXYB3LC2LH32DjIBf+dpfjTP4Gps546xbieoS4qWvIoSF5CwP3VgM+sYnq5hLswaY274cYswKF6eWcFuIzN2e5QrSylZJ9h1gNa5wuSIVbVg1L6LcBBRgdxEr5SoStA3t3KAzdCOSuoAB3MU8dFJcsNJchHOLS5ah49txl3EDLXf7yG+os+AWuILMDWvOL/XvH2O22eACtkmA2Pyfk4GLoJ3bAFwp+O9tMzLAFLi89E8RwNI9O+Q2KC9zB6y2Dj+8bKcihTtPo4gu/nRBKQD9TJpH/gvBCt+aefbRYOy9ZyAKv/vxsQAW6B+OcHcfiPBDjvzRjtcBIZ71lwRQueK9FpGnxOGnPe3fQ34QvvW0p93zzd9TSYivuHIW4gXnxRD8gpu457uA8oPv3qO/HiusuPBFBLoUT8TyaX+1rGgBnX5QtPwdDNy8IGgWiqdfQyeU17yvjPLg2f2AzstswyXnxsDcZ59sRfuNZ8fgZZcS6olSfYpDHyw6geOLqGp2/2unM93+NVq4Q81B1Bwg+DXXhsD9u6kueNX6duePaYHqMT/diusQ1yyL4hR507fG6NVi3pNfv4xA/Z/+5boWDxL5g5d++v+Qe4GC2aoratfwppPBNUA0pv25KYJJqKJQfWb7if1bqaeriiKSXti1wN1MjTTBpalloKhF3gz3kHvBNSusdA5xM+yzMoP5wdR56Cg8EINrURMidZr9e+HoAWqNnSbUa0YU2H8Q17H8QpQXPOggHa1DcWF2gc04+D7q7ZC3xR6AUasWNcG1sGcXETYruI5GFnXAw2NgDh4h99txOrOpHWz2HsWZLaXWkxYO5dZ61IROHeJuAJV7qbXTBNXzi1kwjOpY3YQ6reMH8KxjdZgrM2N89ywzOi4ng3ZuWyfVZd84dagJqgGOzAiwJh6opZHtWnbTVe2HyDoOrK5BbEazYAfKSJ63BqWyJnfjWWI7ebtDek2M0tXsPBmcLjYApYtsewjPggPTJBdXDpWqrdaxKXUxJ/bjVHDWIFmPILro+GgdHfcHxFFqFDkrHmFOMVxHE6OTOUzfj7vBvlI5LZyXDE7MMKfZOhOcTeCK8xwSRUZ2E7vB1HFylkTygxbdI6M7iMmk+mq9mzAHMEH6spORmKBiwYYalp+Zj0Nci+eCQyhR8IrVhFygnKai2RCD0yA6ZGtGduC5YKZDetWnZDA9QUWzYydO1sB2MnNvDJ4LJsbIeDUxERyxmNtF3IDzuRInEiP0OE161dcmdYK7CMna9SmVdXiUWO0RUptz6ktuThyicuTBg3KayPXZwGhbleDoJIkgZmN2zgRX0sxO+vAxqju0R3E2SiU29AAcIt92sjjV2zDKJGplImvsXmIvk2UmcnEZSsPRE/QYueeonMg1AW3Sms3jwdWgPUPqgfqUCCbp1Rq7l5hE3FSUqim1uBP1gHyE1AtFrpP0LNaiRJE8HU7eg3uBKXKV0kA5Ts9m+ERwHp1OGjNyFPcCJyKZnn56qmMn1JM5vB3nIC44H6WA3YieNHEkVYz1QIwk3paAwEYSL1pcV2KHcgT3Bg+nEWvWoAxQ+SAJzZZOcIKMp2IK2G/RP83ICE7x0EHyVBo41Elh9h/EWXTSmHsoSCBty0Jc1YpKIPaTNHgPiVUPnI/p3YF70sABlKZdV5u0U1M4zf0EJ3CxCtWjJGbX1jRmYoKEirqcLGc6JDXbduPegHYOZv1McAoop0mrHGASkdLFzHqcpHYnERtJPkmWRaJj6Tai5kVuSWE9PIpTHXIGZkkSxvelimw+qJgi1gNlmgcmlQgm2iS9jliPUsBYW6S1TtyLU5yN60kqRkiFynGStslxO8nFFpRCGaj9UDrYRX+0jj+A0x2ZVn/gRDud2XZSbljg/MsICe47ohqO76ZpsGCRSThDeuvEvhQua9JCpVhLSIY4ZHrXqa06zNgXj+EeXPowNYp71XEPDmPDA1I6WofeNKxeNDizEaeDPR5SL1r/9slAahXuXP/NJzlUimz4zPN2ENOVfPMZn15LrBT81K9fX7pQCoWSM552Eb2ajb/xnTa1lt/5zYdxpdk3PH6AMqgXhZIVr3/jUtyLuH1xoXoUllyEeoksfc4rz6AMqhRKVrz+TRdQit7nu6SmuGpFb4TIHZ963QrKMJcip7/2TRdSSvQszr4E1cRpixIgSi5802tPJ6qLzMvfvJJSgYRiwfK6oEPaoJKVb34ynmVW3LiKUoHUHWpXIggqWfXUMwGpcx4dBdKrPjsVBJWcdkyEsc/hQHq7AS2lA5m/a4eop8dASnfphF+cg+oJ8fK1gw6apQTEF/8xts6UqtiAAHWBfw+iZulfX0p3AwZClfLC10KIm+QqYs5HpuVifPvGJdTnJb993pkXduShxSQsVy4nwK/9qPAcZueWFv7Z0RYbj7ZimNhPU5eeUYbOaTfQOe2O0Fl2W5jLDI1iVlA4ILwQAACQSwCdASpkACwBPmEqkUWkIqGU2Z48QAYEsZOAs3vx7TABU/P7r2+6/r/N8Db9tv+f6L1L+YB4xHqa8yH66/sr7q/+v9S28fegB/DP+H6bHskf2b/pftv7U///1kLz9/X/xa/UbyV/wP5O9ht5z9oP6znpvv3+k/M32r7/fjbqBfjP8z/w+9egD/NP6R/sPCO/zvQf6t/8D3AP5t/Of7565f6Dw0foX+n9gD+Jfzb/Df279wP7h///td/pP+p/pfx29yX5//jv+v/ifgG/j/9L/2398/KL50vX9+5PsO/qig7V3W9bXIxcnwSXwaa5wNlqhL1rVBIud5eWaF2EBZzGuNfs27pjaVgVxGTSHrATlIhyg9u6/bOmjt5JGcRhucqWheBLeve+43+qat2k7WMZb7XvJ9hNPAa/U/j9cXn4UUYdbUfqxsU2ik0IWgJP/VW3rOnzlDpD97yFbOEMDApQXgt183kBwHRWhAFnEjhEgGmSg8WvgZRc5XpjhRI2f2a8YxwYJq/UmjP6oswMcSB6eACY2uMNAyBW3MyTrXoB2GqNntT+ed+jOuP6IYK+vta8UI8MAtE6yj/yucLpu5UGrx3aeKzT2/L95bM+b36tLqADvwtzY4Ue89SBEfe06bqJrBglrIUk40IA48Pzlrsliu23zf02cWHwOzfqfyFPOHldwZaY/qMxAm7CSD4t6u1hWZ5L4xHt2XwAQ9HQWh4uX+79o8ppdNUNrdbCAVq1LlgyKGx+eLppWQhptvSlpLjEpDI+S4NWnu/L9fJcRECSHU81jmjvYgo389Bvd+5wTf/bOrEAAP79borkxqhfx6rzocwZsNzUCfliYAjRUVZhvK8IcFu7vbqLanKBw7GkSE+Wlx3/kI6Kqfp3qogGyjha50ka4KX8UStcGK2H3wZvwQC9eqAIv7T6aNEL6TOU6CLWf4uId18IPqnG5t7U5g9itg8GrympJ1LG4ypEdzq18T8RtbkQXau9mpE2RxG+opWPJOYwBXiBS7IOGKzDYbsZ7UKk+j2vMsPXzm0ARybhHM5lbFjS6t0Shm1mB0yy+wXOiLNwhZ5pYFtapbDXf9bvEtQvFg81au88hI+tnLgz41dBkBut8PTnRMY35VlMLpdt/aaTmUPYW7pIu5j+NXfFyOjKx/yp6GHaAW1RxZqKmwifVBe/7PGv5GjtpBDFZ4+cU1w/dVOAStjOoOberFoyQJ+pWLD1QBKWgDbEduUBWRmyKFYd5QD9FoQx+J+anyH6zo085fLu/9eUUdzXR/C/3/9UgXJxysxL8tJIH23apW6xtXhjH3kZkmivPDJeLMvnP+LZwo1IoneGoM7a22xCSRg1oXxLtb3XusqIc3Rp2MJncl/gfugKc6cc/QLzte3FiTdYL56/KLIQ6WgmKUAAOOK+6sYoo3XnN79D13R8QJUCkjdod4C3Afg2hvRKYB7sg4XBEj7KWD12oObpg/xbYOVmPHhaLT5xPyRv3gNWJjQpLfCJ9Ki79xjziMo4F5l5V7FEBZHOQWvvugMs1M10zWAmPtm8d0ohnJOQ9ko2Npm3BdLt+K/WZX4FLGDsFMB60d5+zuDlptttZXKtoRWMAm1hAFypJ2MLWUg51/iEVsTNhbcPJYNpkPLRgto5NMxLUdy6LkoETU439n3zneom7OGp5onuRoPio2FroiXUTH+aQJZ8zkQLkTy929ZQ47r0KiUYmhLqukuTxo7sQ1AAe2QYPeUtfMmuDsbsYkBp3U+jIPy5EF4BAcgmY3GpSkUqEYMU3lFWDG4cqeqJCu6itc13iSEMser8WUkIPLumpSfzPXNJlTgoGfyuQAa44IRsk/5xledzs/KL0DaN4LyvGHXkh78LLlrjsm4Cs/LQ3CyOUJ9WvUtnzV0xNdoVCRDkSnqdzqf9X+X5BbcfJYy0DRIY9LQKB7xWGRkp+cFe7bqakgsXP0r2Bfwh6GULA7Eq+EN/xVZrzuZMvvSJK+neMxTzS8+DrIdHU+ejbtstiEEpm7zMAW2sd5B7vVqMmxgIcyoJzlWWlHTfMqWrLcssPVEGtHoOq/z7IBR9yzGf2GXYI1Uj6EOR7KP7IPb9OkZLHv7dRQ/qf3dhvDIQi5xMrQxTuRhyG/ErLV5XNRk8mofOYq+gpHkbJCCQeP6uA39ERr7SsRsrLSjpBcyOEdccxsjGqlzyWjfHFhEcvVynlnk1UmYX+E0MucI3xxwU/ayqeMstpVLITcJ9Jk5zACWBPXw+UFMxO8Pwb40KI/dpjNO3cxSe8JURtdaWdpUwT1JlpukAAr/hvTyCTSDy4N7sNHL9FTVJTQTJz89whwY80F2+0uFMcXIzYb+xZQEduy36TzefCx//jbfDV5ItP1knlBCsWvgHct1r0ePyfZ22/S3Wxy/TD2BgquOgurLTAa4FEbkrsvl67dJJ/P19Gj07TNoWL/kAt9cY2kuyv5GyQOXK4MtqLiBoYSHY+jUvfXtGpGG8Rq07KBn33OROQ73VV1CK95ppzZz5ZJqMDD7ejl/q6iyj1kAVnNmkA/z28lY92sY4QaHRXeK2OnCJz6jxEh49kfOrRhD85YqzGgqc1/EZm/eds/G/DFdDPgb1S4xFY8jY7Ok0Dq6UVsaQhc1jLH0cb50zmpTPM9rAJsYe5K2dkxu3ZJQ9nRCdF4vUzG71MmvFoeHasZIKt+oipnzc6xaiDji9ZIFTb32kxrrszZDS1p3C5DAia0HriAYXKBAZpBsixxJOXIjFJi35t3HhwbUn8j7sSpI9QBEqP6z8chXUG31Mf4cWk8I5JzVhtQ95BsX3WPQ/aHQoJnNYOLhKBGiCBc+9W9K+ViniXslry4LCrIAk5YS11PIHONiJsOZQsG7yaMY8I/kzuQdkOj9rQNZKCk/r5DiiluUL67/eY9PwdQYt/9ZDH6So00E6yJ54JGih9wn9WChm4ym3qLkGQXm3MSb2QWWeRG87vP6Mo0jx0D5Y6gbaRXIK2dlZqZlhxmx6A1qfC2xr7FixsXlk6H3c7JT2oadtzh+1rD5oxnS1ASg2SxjDHlSAGLrrV0yEDiVuDERz/J8KZw4DnQXLqA60UweeAkKw40eTXfvvWeVNzeakkpgjCTe+hSRIZwKo0Rm54BJeFU9HCc9iDmzq62xqAZlOK8cx/w5p5XJoUsLaQ75VlCnOYZL1wFYrwggWiWbQ5JRizYtSMaBbSHjaiXfVRyvCBFS/pr1fyDrjCflWHqp/BboUPCKHTn7pu8TupBzy/IE3KgIj1WMcsEYFrT11yl5BpOTNHaIKa/JuqX4BCIhrfP9/d2IOLcL3KSAU3CxF71vI1Eq4mz858pBVVgvnyrOVwANSFxp3mjBwzNzBYOlGYLbKGsTCXG9fxWxw78XR3rGrI8oimZMA5KNRxTao+hTdNdo8phNRFA5RIS5Ews1LOTJoD9JLIuydPt++ozQDwi+ZzteIRCDVdTfo9cEAmd+biSW4Oq1w4NiUY8w+wlfUPJe4keCAjEv+S+BfdZFaS6Ilft3DYTTNNO5E/NSMxDo6mkaebNSHoCXD5lULhDa0yRQ8crLjtMeJ0v+hGLtsM33RKk1uTQ4WAoMfjcYISLIQGKxq5lt2pS+aN1XpL+tbZKswx5O2UIMPY5dv9E6PDO1qiAGPOrK3vXRqsU6hByGoen8oE6flYwWqxj1C/g1/FEPkZZa2qRYJBF43qM6SsxGk2YZ1yf4NrSNQA/ykuVG8Av2+PGV2YuBLFi+Rtu85X0eUQzwYLI+6uV0vgWPiq4Z9q0J8eeIClfD6R9qIG+0XtUspDdb5g7IlnZ+3PIHDzgNjkmKpbhyrA2SYKWiBGIr5NB/r0egm06R/4VhhF8VeQlB/i0xSjQEIBQd74JIPZpSodzEuLYER/AwX1UK6X3tZmtZOvLg6JiTklOZre0nLy3zEjK1TW+Gw8wlTnzQImMV0B7XtMXxvSCdBh1Wpk34hgP4VDLlm1mWios9FO5ArBgbprXbMZ+mSJ4B5sdpxSsRcyNTcCsvmkRCgs2WtpNibkqfGtn8uUBtMLf+piewODt/ChgDOMf4NdTbzwU20v1GOghRsraz6cot+RR7sEjXBnjSlOq/UCrfaL+hvbq4CsA2pbx4ygmZIZF1NMWL/wlSb5Q2gqZFAAdwMk/xeeFoWI/lLE6VUeYsjoanqbBcVbDz2Y8CBFEsnIEq5mYfpJw0EuS2b2ZY3g9m3dGuFLFAv1fjvzFmae3WfkwBtXF8Z2MSxhuc8uJsO1cydb7DV42lJRZhIDYXIa7Pg+z+IsZUNDf8q0JGPKLd57/kh6SIuAZ2tAEKDzzvwRbcbEdjo5Gv0tJFYy5DdEaKEEcfnPc0E4YcMqvg2kmiTMoE6MzmdHHnFuaUPcnrwRtO+EYMKO/ql1X11l4QjnCYBcWhjlcZ1mO8IRjZDR7ZLHjM+mhJIupxPXcbYhuNz+CObnlpjS+P7q8GSImnA6gkqdg57aAypEHuto5XOXxWJ5I2yQm7wW3pFmQilOCE0JW0jK/5HMDYJ9L2z8z4z1FaagUWjEig/rdBDaNGUnN1ymI9qCtI8FGWdnO6cKqyKW/OoI5bugODOblybNoMcxOzBrfnuyfNALm8avYAVTa4Jck63W70fz0OUG5i40By9bgw66tx8UPtWt02wyfYlpTDTDwbRIISHDBnnhv5TwJumYqcjzf+GK4/wOPNeEkuR0v4YqFfBnqD+Wwe8wH8brzqwSitHOwiyrt9BuH38i9PW8e2sYirMTDV53ThpmPHszQSWfUEk89o86kq8UD0CjNoQ5lHh6W1eC351Kq68O/PUBnubRXSUG9LHzue575YrYOHWOISzc4cQVBCVUIBR8ZgdNLtL6vqLxJUUspS8EP8TqS8x9wAMgEtdWE30Yly/Z+zKY2UofzB9kq44rNNEgfZRM8hjs+WUXnejpCJU3cDjuQo5W75wNFPc1AxAebGtUWcRrjBazAPxKpjnyKz70PpK2q/LUagtpAKFGOpDG02OJpW8Fc7x34ZFDF3BFdJ2opaWJrJCZ4XHOYeLmaaspn/7WAwi1BokAFpeV26uxBHr93/u8CGbJZz4nNtedugv9Ns0bYa04Oqnn24j6V7o9PFrh3jkI6O0v6jrnbHMx13VxZVt47VA7DZKC/wWPuA0/u0tjLJ+Pm5oO3SQt68gnMOi0CCWSc/kJhmGklWiVItmmJN97v9I/dgfZV6EhsIgYo7VpYewxq8vaGWGjISgr14kO/KVgbUFyuMlj08NiGoJ6oCtUf/qZb2pybGagEjE2Xf6Jvxa0q/UKXVMPP+rNhHqAKHsXrz+dQ5vevOSTMbvFngfLCCL/v831LSPUaMAYOb65jZ0kVBClTAd/j+NUiPjoHLbuOWOhCBbhbUIg2hfxuuVvtrR94m+xh13F+0s+uKnvUT03BNqx4P+QbvI/KxjLEDJStGS9lDZFyqpkSqqaXEIoPDHeYSVPdRbkuV7t3FwRlXt/fN40O3IvGWzdtA+BSAcDGQLYJRN504OElNixQOX6lE3XiaqDA6T/XsV9VYsJ98znHExd6SlA+QVDJzWJi3IwH7XvHD99OSxB4D7W80zV2cvk8AXT1febl1eO15NCvWvtGaLZmv03tYUAtOstydEpsExWb0onyohMGp2jjSbiwsDCZ6HTAJje1EHWuK2YvakvYrNZx+8TqVoJ6wswUBvF5QCRChyi7f4pV356eh2wdHP2T44AAA=';
-document.documentElement.style.setProperty('--spr','url('+SPR+')');
-const $=id=>document.getElementById(id),esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const img=new Image();img.src=SPRB;
-let W=480;const H=600,HY=190,PY=515,LW=105;
-const cv=$('cv'),cx=cv.getContext('2d');
-function size(w){W=w;cv.width=w*2;cv.height=H*2;cx.setTransform(2,0,0,2,0,0)}
-/* ===== Audio (tanpa file) ===== */
-let AC,aOn=1,mus,si=0;const SC=[262,330,392,330,294,349,440,349];
-function snd(f,d=.12,t='square',v=.05){if(!aOn)return;try{AC=AC||new(window.AudioContext||webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=t;o.frequency.value=f;g.gain.value=v;g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
-function music(ms){clearInterval(mus);if(ms&&aOn)mus=setInterval(()=>snd(SC[si++%8]/2,.2,'triangle',.07),ms)}
-function toggleAudio(){aOn=!aOn;$('aud').textContent=aOn?'🔊':'🔇';music(aOn&&g&&g.st==='run'?LV[g.b].ms:0)}
-/* ===== Data babak & pesan ===== */
-const LV=[
- {n:'Babak 1 · Gudang DC',len:480,s:11,c:.5,o:.25,f:.3,gap:20,ms:300,sky:'#cfd6dc',wall:'#8d99a6',w2:'#a9b4bf',fl:'#6b7280',acc:'#f2792b'},
- {n:'Babak 2 · Loading Dock',len:600,s:13,c:.62,o:.36,f:.5,gap:18,ms:260,sky:'#ffe3b8',wall:'#c98a47',w2:'#e0a461',fl:'#5d5a56',acc:'#3d7fd9'},
- {n:'Babak 3 · Area Pengiriman',len:720,s:15,c:.75,o:.46,f:.7,gap:16,ms:220,sky:'#bcd8f5',wall:'#5b7fb0',w2:'#7c9cc8',fl:'#4a5260',acc:'#ffc94d'}];
-const CANDY=['"Aman kok, semuanya beres!"','"Tenang, nggak ada masalah kok."','"Semua laporan bagus-bagus!"','"Yang itu nanti aja laporinnya..."'];
-const VEG=['"Izin lapor, barang rusak naik."','"Ada selisih SO yang besar."','"Pengiriman hari ini terlambat."','"Tim picking lagi ada kendala."'];
-const LSN=[
- ['Kabar buruk tetap harus naik.','Fokus leader: tangani masalah dan dapatkan fakta, <b>bukan menyerang orang yang membawa laporan</b>.','Di babak 2 permen makin banyak dan pancingan emosi makin sering. Siap?'],
- ['Kalau respons keras terus berulang, tim belajar "mengemas" laporan.','Yang bagus dilaporkan, yang jelek ditahan. Itulah budaya <b>ABS (Asal Bapak/Ibu Senang)</b>: kondisi lapangan jadi tidak ketahuan.','Babak 3 paling cepat. Ingat: tarik napas, jeda 3 detik ⏳.']];
-/* ===== State ===== */
-let guided=0,gs=0,g=null,salam='',nama='',tot={c:0,v:0,h:0,sc:0},last=0,swx=0,swy=0;
-const R=(x,y,w,h,f)=>{cx.fillStyle=f;cx.fillRect(x,y,w,h)};
-const tz=z=>1/(1+z*.1),GY=t=>HY+(PY-HY)*t,LX=(l,t)=>W/2+(l-1)*LW*t;
-/* ===== Layar / kartu ===== */
-function show(h){const o=$('ovl');o.innerHTML=h;o.classList.add('show');const p=o.firstElementChild;let z=1;p.style.zoom=1;while(p.scrollHeight>p.clientHeight+1&&z>.5){z=Math.round((z-.03)*100)/100;p.style.zoom=z}}
-function hide(){$('ovl').classList.remove('show')}
-function loginScreen(){
- $('hud').style.display='none';music(0);g=null;drawIdle();
- const d=new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
- show(`<div class="paper"><span class="kick">🕒 ${d}</span>
- <h1>Permen atau Sayuran?</h1><p>Game belajar V18: <b>Ketika Kabar Buruk Sampai kepada Kita</b></p>
- <div class="row2"><button class="btn ghost" id="sB" onclick="pick('Bapak')">Bapak</button><button class="btn ghost" id="sI" onclick="pick('Ibu')">Ibu</button></div>
- <input id="nm" maxlength="30" placeholder="Ketik nama di sini" autocomplete="off" onkeydown="if(event.key==='Enter')go()">
- <button class="btn big" onclick="go()">Mulai Permainan →</button></div>`);}
-function pick(s){salam=s;$('sB').classList.toggle('on',s==='Bapak');$('sI').classList.toggle('on',s==='Ibu')}
-function go(){const n=$('nm').value.trim();if(!salam||!n){$('nm').classList.add('err');$('nm').placeholder='Pilih sapaan & tulis nama dulu ya';return}nama=n;brief()}
-function brief(){show(`<div class="paper"><div class="guide"><i class="spr"></i><div class="bub"><span class="who">Host · Supervisor DC</span>
- <p>Halo ${salam} ${esc(nama)}! Hari ini kamu jadi Supervisor yang berkeliling di area DC.</p>
- <p>Sepanjang perjalanan, kamu akan bertemu banyak hal di jalur. Kumpulkan dan hadapi apa yang ada, tapi tetap jaga kondisimu ya!</p>
- <p>Ada <b>3 babak</b>, makin lama makin menantang. Siap?</p></div></div>
- <button class="btn big" onclick="startBabak(0)">Yuk, jalan! →</button></div>`)}
-/* ===== Permainan ===== */
-function startBabak(b){
- hide();$('hud').style.display='block';
- const keep=g?{h:g.h,o:g.o}:null;
- g={b,st:'run',t:0,dist:0,lane:1,px:1,j:0,vy:0,h:Math.max(60,keep?keep.h:100),o:keep?keep.o:60,sg:0,boost:0,slow:0,inv:0,fire:0,fl:1,sp:0,sp0:0,items:[],gapAcc:0,c:0,v:0,hit:0,stt:0};
- if(b===0)tot={c:0,v:0,h:0,sc:0};
- music(LV[b].ms);last=performance.now();if(b===0&&!guided){draw();startGuide()}else requestAnimationFrame(loop);
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const INK='#22314d',REDUCED=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let salam='',nameP='',audioOn=true,actx=null;
+const fill=s=>String(s).replace(/\{s\}/g,salam).replace(/\{n\}/g,esc(nameP));
+
+/* ===== Suara ===== */
+function sfx(f,d=.12,t='sine',to){if(!audioOn)return;try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain(),n=actx.currentTime;o.type=t;o.frequency.setValueAtTime(f,n);if(to)o.frequency.exponentialRampToValueAtTime(to,n+d);g.gain.setValueAtTime(.12,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(actx.destination);o.start();o.stop(n+d)}catch(e){}}
+const snd={click:()=>sfx(520,.08),whoosh:()=>sfx(200,.5,'sawtooth',900),good:()=>{sfx(660,.15);setTimeout(()=>sfx(880,.2),120)},bad:()=>sfx(180,.35,'sawtooth',90),pop:()=>sfx(760,.1)};
+$('#bgm').onclick=()=>{audioOn=!audioOn;$('#bgm').textContent=audioOn?'🔊':'🔇'};
+
+/* ===== Karakter ===== */
+const MOUTH={sad:'M43 48Q50 42 57 48',worry:'M43 47Q46 43 50 47T57 47',neutral:'M44 46H56',happy:'M43 43Q50 52 57 43',scared:'M44 47Q50 41 56 47'};
+function person(o={},att='viewBox="0 0 100 156"'){const{sk='#f1c9a0',hr='#2b1d14',sh='#3d7fd9',m='neutral',coat=0,gl=0,fem=0}=o,body=coat?'#fff':sh;
+  let s=`<svg ${att} aria-hidden="true"><g stroke="${INK}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">`;
+  s+=`<rect x="36" y="118" width="11" height="34" rx="4" fill="#3a4050"/><rect x="53" y="118" width="11" height="34" rx="4" fill="#3a4050"/>`;
+  if(fem)s+=`<rect x="26" y="20" width="48" height="52" rx="20" fill="${hr}"/>`;
+  s+=`<rect x="17" y="64" width="14" height="48" rx="7" fill="${body}"/><rect x="69" y="64" width="14" height="48" rx="7" fill="${body}"/><rect x="31" y="58" width="38" height="64" rx="12" fill="${body}"/><circle cx="24" cy="114" r="6" fill="${sk}"/><circle cx="76" cy="114" r="6" fill="${sk}"/>`;
+  if(coat)s+=`<path d="M42 62Q42 92 50 92Q58 92 58 62" fill="none" stroke="#5b6275" stroke-width="3"/><circle cx="50" cy="95" r="4" fill="#9aa0aa"/><path d="M44 60L50 76L56 60Z" fill="#2f9e95"/>`;
+  s+=`<circle cx="50" cy="36" r="21" fill="${sk}"/><path d="M29 34Q28 12 50 13Q72 12 71 34Q62 24 50 25Q38 24 29 34Z" fill="${hr}"/><circle cx="43" cy="37" r="2" fill="${INK}" stroke="none"/><circle cx="57" cy="37" r="2" fill="${INK}" stroke="none"/>`;
+  if(gl)s+=`<circle cx="43" cy="37" r="6.5" fill="none"/><circle cx="57" cy="37" r="6.5" fill="none"/>`;
+  if(m==='scared')s+=`<path d="M38 29L46 31M62 29L54 31" fill="none"/>`;
+  s+=`<path d="${MOUTH[m]||MOUTH.neutral}" fill="none"/>`;
+  if(m==='worry'||m==='scared')s+=`<path d="M70 26q-4 6 0 7q4-1 0-7" fill="#6fbdf0" stroke="none"/>`;
+  if(m==='sad')s+=`<circle cx="40" cy="44" r="2.2" fill="#6fbdf0" stroke="none"/>`;
+  return s+`</g></svg>`}
+const head=o=>person(o,'viewBox="27 10 46 46"');
+const DOC={coat:1,gl:1,sk:'#e8b98a',hr:'#8a909c',m:'happy'};
+const myP=()=>({coat:1,sk:'#f1c9a0',hr:'#2b1d14',fem:salam==='Ibu'?1:0,m:'happy'});
+const ME=()=>({who:'Dokter '+salam+' '+nameP,av:head(myP())});
+const FER={who:'dr. Ferdi · Kepala RS',av:head(DOC)};
+const ptZones=`<rect class="zn" data-z="0" x="28" y="10" width="44" height="50"/><rect class="zn" data-z="1" x="30" y="60" width="40" height="60"/><rect class="zn" data-z="2" x="12" y="62" width="19" height="58"/><rect class="zn" data-z="2" x="69" y="62" width="19" height="58"/>`;
+const ptSVG=p=>person(p).replace('</svg>',ptZones+'</svg>');
+
+/* ===== Latar ===== */
+function hallSVG(){const R=(x,y,w,h,f,r=3)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${f}"/>`,T=(x,y,t,z=10,c='#fff')=>`<text x="${x}" y="${y}" font-size="${z}" fill="${c}" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800">${t}</text>`;
+  let fl='';for(let i=-4;i<=8;i++)fl+=`<path d="M200 190L${i*60-20} 300" stroke="rgba(34,49,77,.12)" stroke-width="1.5"/>`;[206,224,250,285].forEach(y=>fl+=`<path d="M0 ${y}H400" stroke="rgba(34,49,77,.12)" stroke-width="1.5"/>`);
+  const door=(x,w,l,c)=>R(x,64,w,126,'#c4def0')+R(x+w/2-12,80,24,40,'#eaf6ff',4)+R(x,40,w,16,c,5)+T(x+w/2,52,l,9);
+  return `<svg class="bg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">${R(0,0,400,30,'#f4f7f7',0)}${[40,165,290].map(x=>R(x,8,70,10,'#fffbe8',5)).join('')}${R(0,30,400,162,'#e3f1ef',0)}${R(0,126,400,14,'#2f9e95',0)}<path d="M0 156H400" stroke="#9aa9a9" stroke-width="4"/>${door(18,60,'IGD','#e5484d')}${door(322,60,'FARMASI','#2f9e95')}${R(130,52,140,138,'#9fd0ea',4)}<path d="M200 52V190" stroke="#7aa9c4" stroke-width="3"/>${R(142,70,46,52,'#eaf6ff',4)}${R(212,70,46,52,'#eaf6ff',4)}${R(140,30,120,18,'#3d7fd9',6)}${T(200,43,'RUANG PERIKSA')}${R(100,76,18,18,'#fff',4)}<path d="M109 79V91M103 85H115" stroke="#e5484d" stroke-width="4"/><circle cx="292" cy="84" r="13" fill="#fff"/><path d="M292 84V76M292 84L298 87" stroke="${INK}" stroke-width="2"/>${R(90,168,56,12,'#8fa8b8',3)}<circle cx="330" cy="176" r="11" fill="#fff" stroke="#8fa8b8" stroke-width="3"/><circle cx="352" cy="180" r="7" fill="#fff" stroke="#8fa8b8" stroke-width="3"/>${R(0,190,400,110,'#d5e0e0',0)}${fl}</svg>`}
+const RT=[['Poli Jantung','#e8f3f6','#d94f5c'],['Poli Penyakit Dalam','#edf6ea','#2f9e95'],['IGD · Ruang Tindakan','#f6ecec','#e5484d'],['Poli Umum','#f4f0e6','#e07b3c'],['Poli Paru','#ebeff8','#3d7fd9']];
+function roomSVG(i){const[n,w,c]=RT[i];let tl='';for(let x=0;x<=800;x+=80)tl+=`<path d="M${x} 430L${400+(x-400)*1.5} 600" stroke="rgba(34,49,77,.1)" stroke-width="2"/>`;
+  return `<svg class="bg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice"><rect width="800" height="430" fill="${w}"/><rect y="300" width="800" height="26" fill="${c}" opacity=".28"/><rect y="430" width="800" height="170" fill="#c9dcdc"/>${tl}<rect width="800" height="14" fill="#fffbe8"/><rect x="0" y="0" width="64" height="430" fill="#9fd8d0"/><path d="M16 0V430M32 0V430M48 0V430" stroke="#7fc3ba" stroke-width="3"/>
+  <rect x="95" y="80" width="170" height="140" rx="8" fill="#bfe6f5"/><path d="M180 80V220M95 150H265" stroke="#fff" stroke-width="6"/><rect x="95" y="80" width="170" height="140" rx="8" fill="none" stroke="#fff" stroke-width="7"/>
+  <rect x="300" y="26" width="200" height="36" rx="10" fill="${c}"/><text x="400" y="51" text-anchor="middle" font-size="20" fill="#fff" font-family="Baloo 2,sans-serif" font-weight="800">${n}</text>
+  <rect x="590" y="90" width="120" height="170" rx="8" fill="#fff"/><circle cx="650" cy="125" r="14" fill="none" stroke="#e5484d" stroke-width="3"/><path d="M650 140V200M620 160H680M650 200L632 240M650 200L668 240" stroke="#e5484d" stroke-width="3" fill="none"/>
+  <rect x="720" y="230" width="64" height="130" rx="8" fill="#fff"/><path d="M752 258V282M740 270H764" stroke="#e5484d" stroke-width="6"/><rect x="725" y="300" width="54" height="3" fill="#dfe6ee"/>
+  <rect x="280" y="330" width="240" height="60" rx="14" fill="#fff"/><rect x="280" y="372" width="240" height="14" fill="#9fb3bf"/><rect x="300" y="386" width="10" height="46" fill="#9fb3bf"/><rect x="490" y="386" width="10" height="46" fill="#9fb3bf"/>
+  <rect x="110" y="300" width="86" height="64" rx="8" fill="#121722"/><path class="ecg" d="M120 334H140L148 316L160 352L168 334H186" fill="none" stroke="#5fd68c" stroke-width="3"/><rect x="148" y="364" width="10" height="70" fill="#9fb3bf"/>
+  <path d="M600 260V430" stroke="#9fb3bf" stroke-width="5"/><rect x="584" y="262" width="32" height="46" rx="10" fill="#cfe9ff"/><path d="M600 308V350" stroke="#6fbdf0" stroke-width="3"/></svg>`}
+
+/* ===== Alur utilitas ===== */
+function showScene(id){$$('.scene').forEach(s=>s.classList.toggle('active',s.id===id))}
+function setPlace(t){const c=$('#place');c.classList.toggle('hide',!t);c.textContent=t?'🕒 '+t:''}
+function say(L,html){$('#sWho').textContent=L.who;$('#sAv').innerHTML=L.av;const p=$('#sTxt');p.innerHTML=html;p.classList.remove('fade');void p.offsetWidth;p.classList.add('fade')}
+function dialog(lines,final){return new Promise(res=>{const st=$('#story'),b=$('#sBtn');st.classList.add('on');let i=0;
+  const show=()=>{const L=lines[i];if(L.fn)L.fn();say(L,L.t);const last=i===lines.length-1;b.textContent=(last?final:'Lanjut')+' ▶';b.classList.remove('hide','pop');void b.offsetWidth;b.classList.add('pop');
+    b.onclick=()=>{snd.click();if(last){b.onclick=null;st.classList.remove('on');res()}else{i++;show()}}};show()})}
+async function cine(t,p,sub,fn){$('#cT').textContent=t;$('#cP').textContent=p;$('#cS').textContent=sub||'';$('#notif').classList.remove('on');$('#cine').classList.add('on');snd.whoosh();await wait(1400);fn&&fn();await wait(200);$('#cine').classList.remove('on');await wait(600)}
+let toastT;function toast(m,type){const t=$('#toast');t.className='toast on '+type;t.innerHTML=m;clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2300)}
+function modal(ic,t,p,pen){return new Promise(res=>{$('#mIc').textContent=ic;$('#mT').textContent=t;$('#mP').textContent=p;$('#mPen').textContent='🤝 Kepercayaan '+pen+'%';$('#modal').classList.add('on');$('#mBtn').onclick=()=>{snd.click();$('#modal').classList.remove('on');res()}})}
+
+/* ===== Data ===== */
+const PTS=[
+ {name:'Pak Anto',role:'Pasien · 52 th',p:{sh:'#3d7fd9',m:'scared'},time:'08:00 WIB',title:'Nyeri Dada Menetap',
+  say:'Dok… dada saya sesak sejak semalam. Saya sebenarnya takut ke sini, takut disalahkan karena telat periksa.',
+  z:[['Kepala','Pusing. Tapi ia rajin mencatat tensinya selama 3 hari, datanya lengkap.'],['Dada','Jantung berdebar tiap masuk ruang periksa. Ia cemas akan disalahkan karena menunda.'],['Tangan','Menggenggam catatan keluhan dan daftar obat yang sudah ia minum. Ia ingin segera sembuh.']],
+  op:['“Ini sudah parah gara-gara telat periksa! Siapkan ruang bedah sekarang!”','(pucat, menunduk) B-bedah, Dok…? Saya jadi takut…'],
+  rs:['“Pulang dan istirahat saja di rumah. Nanti juga membaik.” (tanpa memeriksa)','Tapi Dok, dadanya… ya sudah, Dok.'],
+  ob:['“Ini obat pereda nyerinya. Kita pantau dan kontrol lagi ya.”','Terima kasih, Dok. Saya minum obatnya dan kontrol besok.'],
+  rc:['“Terima kasih sudah datang. Catatan tensimu sangat membantu. Obatnya saya sesuaikan dan kita jadwalkan kontrol.”','Wah, catatan saya dipakai! Saya lega, Dok.'],
+  rep:'Anggota tim yang takut melapor barang rusak yang membengkak, seperti Ale di video: takut disalahkan, padahal sudah menyiapkan data.'},
+ {name:'Bu Rina',role:'Pasien · 45 th',p:{sh:'#e07b9a',hr:'#3a2418',m:'worry',fem:1},time:'10:00 WIB',title:'Pusing Hebat Sejak Pagi',
+  say:'Dok, kepala saya pusing sekali sejak pagi. Saya takut ini salah saya, kurang jaga pola makan.',
+  z:[['Kepala','Sudah mengukur tekanan darah dua kali. Hasilnya sama-sama tinggi.'],['Perut','Mual karena takut disalahkan soal pola makan.'],['Tangan','Membawa catatan menu makan seminggu. Ia ingin tahu cara memperbaikinya.']],
+  op:['“Pola makanmu berantakan! Sudah, harus operasi!”','(terdiam) …Maaf, Dok.'],
+  rs:['“Istirahat saja di rumah, jangan banyak pikiran.”','…Baik, Dok. Saya coba tahan dulu.'],
+  ob:['“Ini obat penurun tekanan darah. Kurangi garam, kontrol lagi ya.”','Baik, Dok. Saya akan ikuti.'],
+  rc:['“Terima kasih sudah datang cepat. Tekananmu tinggi dua kali, catatan menumu kita lihat bersama, lalu obatnya kita sesuaikan.”','Iya Dok! Saya jadi punya rencana yang jelas.'],
+  rep:'Anggota tim yang melapor hasil SO dengan selisih besar, seperti di video. Ia takut disambut “pagi-pagi udah bawa masalah”.'},
+ {name:'Mas Bima',role:'Pasien · 28 th',p:{sh:'#8a6be0',hr:'#14151b',sk:'#d9a77d',m:'sad'},time:'13:00 WIB',title:'Luka Kecil di Jari',
+  say:'Dok, tangan saya gemetar. Ini cuma luka kecil di jari, tapi saya malu karena sempat saya biarkan.',
+  z:[['Kepala','Memikirkan ejekan temannya: “luka kecil aja dibiarin”. Ia takut dipermalukan.'],['Dada','Tetap datang karena tidak mau lukanya infeksi.'],['Tangan','Gemetar. Hanya satu luka kecil di jari, bagian lainnya sehat.']],
+  op:['“Luka segini dibiarkan! Kamu nggak sayang badan sendiri?!”','(menunduk) …Maaf, Dok.'],
+  rs:['“Sudah, biarkan saja. Nanti juga kering sendiri.”','…Iya, Dok. (tidak sempat cerita jarinya juga sering kesemutan)'],
+  ob:['“Lukanya dibersihkan dan diperban sekarang. Ada keluhan lain?”','Tidak ada, Dok. Terima kasih.'],
+  rc:['“Lukanya kecil, kita bersihkan. Yang penting, ada keluhan lain? Jari yang kesemutan tadi juga saya cek.”','Ada Dok, jarinya memang kesemutan. Makasih sudah ditanya!'],
+  rep:'Anggota tim yang salah menulis tanggal di laporan, seperti di video. Kesalahannya kecil, tapi bisa dipakai untuk menyerang pribadinya.'},
+ {name:'Bu Sari',role:'Pasien · 38 th',p:{sh:'#2f9e95',hr:'#14151b',m:'worry',fem:1},time:'15:30 WIB',title:'Demam Belum Jelas Penyebabnya',
+  say:'Dok, perut saya mual dan demam. Penyebabnya belum ketahuan. Saya tunggu sampai jelas dulu baru periksa, ya?',
+  z:[['Kepala','Sudah punya 2 dugaan penyebab dan hasil lab awal.'],['Perut','Mual. Ia berpikir “kalau belum jelas penyakitnya, jangan dulu ke dokter”.'],['Tangan','Menyiapkan jadwal pemeriksaan 2 hari ke depan. Ia ingin penyebab ketemu dan dokter ikut memantau.']],
+  op:['“Demam belum jelas?! Dua hari ngapain saja?! Siapkan rawat inap!”','(menunduk) …Lain kali saya datang kalau sudah parah saja, Dok.'],
+  rs:['“Ya sudah, kabari kalau sudah jelas penyakitnya.”','Baik, Dok… (lain kali tunggu parah baru periksa)'],
+  ob:['“Dugaan awalnya apa? Minum penurun demam, kabari kalau ada keluhan baru.”','Ada 2 dugaan, Dok. Saya lanjutkan dan kabari lagi.'],
+  rc:['“Bagus kamu datang sebelum jelas. Dugaanmu dua, kita atur cek berkala dan obat sementara. Saya pantau.”','Lega, Dok. Ternyata nggak perlu menunggu parah dulu.'],
+  rep:'Anggota tim yang masalahnya belum ada jawabannya dan tergoda menunda lapor, seperti di video: “yang belum ada jawabannya, ditunda dulu”.'},
+ {name:'Pak Doni',role:'Pasien · 47 th',p:{sh:'#f2792b',hr:'#5b3a1e',sk:'#c99870',m:'scared'},time:'18:00 WIB',title:'Sakit yang Disembunyikan',
+  say:'Dok… sebenarnya batuk saya makin parah. Tapi ke keluarga saya bilang “sehat-sehat saja”. Begitu saja ya?',
+  z:[['Kepala','Kurang tidur karena batuk malam. Hasil rontgen sudah ada di tasnya.'],['Dada','Cemas karena pernah melihat pasien lain dimarahi dokter. Ia takut.'],['Tangan','Menggenggam dua catatan: satu “sehat” untuk keluarga, satu keluhan yang sebenarnya.']],
+  op:['“Mau menyembunyikan sakit?! Pasien macam apa kamu!”','(diam) …Siap, Dok. Saya bilang sehat saja ya.'],
+  rs:['“Terserah, yang penting jangan bikin saya pusing.”','Oke, Dok. (ke keluarga tetap bilang “sehat”)'],
+  ob:['“Ceritakan apa adanya. Ini obat batuknya, kita selesaikan bersama.”','Baik, Dok. Saya cerita jujur ke keluarga.'],
+  rc:['“Terima kasih mau jujur. Rontgenmu kita lihat, obatnya disesuaikan, dan keluargamu kita jelaskan bersama.”','Dok… terima kasih. Saya nggak takut lagi.'],
+  rep:'Anggota tim yang tergoda “memoles” laporan supaya aman, seperti di video: yang jelek ditahan, jawabannya “aman dulu”. Inilah awal budaya ABS.'}
+];
+const ACT={
+ op:{ic:'🔪',lb:'Operasi',tag:'🔪 Operasi',type:'red',d:-12,
+  f:'Hmm, ini <b>Operasi</b>. Terlalu agresif, padahal pasien belum diperiksa. Pasien jadi takut dan mungkin enggan cerita lagi.',
+  mt:'Operasi: respons keras, orangnya yang diserang',mp:'Seperti respons Pak Dedi kepada Ale: laporan dibalas dengan menyalahkan pribadi. Kalau jadi pola, tim belajar menyaring laporan dan tumbuhlah budaya ABS (Asal Bapak/Ibu Senang).'},
+ rs:{ic:'🛏️',lb:'Istirahat',tag:'🛏️ Istirahat',type:'yellow',d:-4,
+  f:'Ini <b>Istirahat</b> saja. Pasien pulang tanpa diperiksa, jadi keluhannya belum tertangani.',
+  mt:'Istirahat: respons acuh, laporan ditinggalkan',mp:'Seperti “udah, tinggalin aja laporannya”. Masalah tidak digarap dan pelapor merasa tidak dianggap. Tim belajar: kalau masalahnya belum kelar, mending jangan lapor dulu.'},
+ ob:{ic:'💊',lb:'Obat',tag:'💊 Obat',type:'blue',d:10,
+  f:'Ini <b>Obat</b>. Pasien tertangani dan lebih tenang. Tapi coba periksa pasiennya dulu, obatnya bisa lebih tepat.',
+  mt:'Obat: respons positif, fokus ke masalah',mp:'Seperti Pak Dedi setelah jeda 3 detik: tanya faktanya, minta koordinasi, minta update. Tegas tetap boleh, asal sasarannya masalah, bukan orang.'},
+ rc:{ic:'🧪',lb:'Obat Racikan',tag:'🧪 Obat Racikan',type:'blue',d:16,
+  f:'Hebat, {s} {n}! Ini <b>Obat Racikan</b>: kamu memeriksa dulu, baru memberi terapi sesuai kondisi pasien.',
+  mt:'Obat Racikan: periksa dulu, baru obati',mp:'Kamu memakai tiga pertanyaan sebelum bereaksi: apa faktanya, apa yang harus dicapai dan dijaga, apa respons paling tepat sekarang. Itu yang membuat orang berani melapor lagi.'}};
+const EFX={
+ op:'⚠️ <b>Efek kebiasaan:</b> tiga kali Operasi berturut-turut! Kabar menyebar bahwa dokter jaga ini menakutkan. Pasien berikutnya akan menutup diri.',
+ rs:'⚠️ <b>Efek kebiasaan:</b> tiga kali Istirahat berturut-turut! Keluhan pasien menumpuk dan kondisinya memburuk.',
+ ob:'⚠️ <b>Efek kebiasaan:</b> tiga kali Obat generik berturut-turut. Pasien mulai kebal terhadap obat yang sama, perlu diperiksa dulu agar tepat.'};
+const EFXD={op:-6,rs:-6,ob:-4};
+
+const START=40,HAB={op:'Operasi',rs:'Istirahat',ob:'Obat'};
+const EFXM={op:['Dokter yang menakutkan','Kabar menyebar bahwa dokter jaga ini menakutkan. Pasien berikutnya akan menutup diri.'],rs:['Keluhan menumpuk','Tiga kali Istirahat berturut-turut. Keluhan pasien menumpuk dan kondisinya memburuk.'],ob:['Kebal obat','Tiga kali Obat generik berturut-turut. Pasien mulai kebal terhadap obat yang sama, perlu diperiksa dulu agar tepat.']};
+const S={safe:START,streak:{c:null,n:0},hist:[],closedNext:false};
+function chips(){const t=$('#trust');t.classList.remove('hide');t.innerHTML=`🤝 <span>${S.safe}%</span><i class="mb"><b style="width:${S.safe}%;background:${S.safe>80?'#1f9e5a':S.safe>=50?'#f5a524':'#e5484d'}"></b></i>`;
+  const h=$('#hab');if(!S.streak.c){h.classList.add('hide');return}h.classList.remove('hide');const n=Math.min(S.streak.n,3);h.innerHTML=`🔁 ${HAB[S.streak.c]} `+[0,1,2].map(i=>`<u class="${i<n?'on':''}"></u>`).join('');h.classList.toggle('warn',S.streak.n>=3)}
+function hit(id){const c=$(id);c.classList.remove('hit');void c.offsetWidth;c.classList.add('hit')}
+
+/* ===== Start ===== */
+$('#cM').firstElementChild.innerHTML=person({coat:1,sk:'#f1c9a0',hr:'#2b1d14',m:'happy'},'viewBox="10 8 80 90"');
+$('#cF').firstElementChild.innerHTML=person({coat:1,sk:'#f1c9a0',hr:'#2b1d14',fem:1,m:'happy'},'viewBox="10 8 80 90"');
+function chk(){$('#btnStart').disabled=!(salam&&$('#nameIn').value.trim())}
+$$('.cc').forEach(b=>b.onclick=()=>{snd.click();salam=b.dataset.s;$$('.cc').forEach(x=>x.classList.toggle('sel',x===b));chk()});
+$('#nameIn').oninput=chk;$('#nameIn').onkeydown=e=>{if(e.key==='Enter'&&!$('#btnStart').disabled)$('#btnStart').click()};
+$('#btnStart').onclick=()=>{nameP=$('#nameIn').value.trim().replace(/\s+/g,' ');snd.good();run()};
+
+/* ===== Pemeriksaan & tindakan ===== */
+let phase='',found=[false,false,false],closed=false,curP=0,order=[];
+function buildRoom(i){const P=PTS[i];$('#roomBg').innerHTML=roomSVG(i);closed=S.closedNext;S.closedNext=false;found=[false,false,false];
+  $('#pt').className='idle';$('#pt').innerHTML=ptSVG(closed?{...P.p,m:'neutral'}:P.p);$('#syms').innerHTML='';
+  $('#ptag').textContent=`${P.name} · ${P.role} · ${P.title}`;$('#plate').textContent='dr. '+nameP;$('#coach').classList.remove('on');
+  order=['op','rs','ob'].sort(()=>Math.random()-.5);
+  $('#tray').innerHTML=order.map(k=>`<button class="tool" data-k="${k}"><i>${ACT[k].ic}</i><span>${k==='op'?'Jadwalkan Operasi':k==='rs'?'Suruh Istirahat':'Resepkan Obat'}</span></button>`).join('')}
+$('#pt').addEventListener('click',e=>{const z=e.target.closest&&e.target.closest('.zn');if(!z||phase!=='choose')return;const i=+z.dataset.z,P=PTS[curP],box=$('#pt'),r=box.getBoundingClientRect(),sc=r.width/box.offsetWidth||1;
+  const pg=document.createElement('i');pg.className='ping';pg.style.left=(e.clientX-r.left)/sc+'px';pg.style.top=(e.clientY-r.top)/sc+'px';box.appendChild(pg);setTimeout(()=>pg.remove(),700);
+  if(found[i])return;found[i]=true;const d=document.createElement('div');
+  if(closed){d.className='sym shut';d.innerHTML=`<b>🩺 ${P.z[i][0]}:</b> Pasien menutup diri dan memilih tidak bercerita. Kepercayaannya sudah retak.`;found=[false,false,false]}
+  else{d.className='sym';d.innerHTML=`<b>🩺 ${P.z[i][0]}:</b> ${fill(P.z[i][1])}`;sfx(700+i*120,.12)}
+  $('#syms').appendChild(d);
+  if(!closed&&found.every(Boolean)){const b=$('.tool[data-k="ob"]');b.classList.add('rc');b.innerHTML='<i>🧪</i><span>Obat Racikan</span>';toast('🧪 Diagnosis lengkap! Resep racikan terbuka','good');snd.good()}});
+function pickAction(){return new Promise(res=>{phase='choose';$('#tray').classList.add('on');$('#coach').classList.add('on');
+  $$('.tool').forEach(b=>b.onclick=()=>{if(phase!=='choose')return;phase='';$('#tray').classList.remove('on');$('#coach').classList.remove('on');res(b.dataset.k)})})}
+
+/* ===== Satu pasien ===== */
+async function playPatient(i){curP=i;const P=PTS[i];
+  await cine(P.time,RT[i][0],`Pasien ${i+1} dari ${PTS.length}`,()=>{buildRoom(i);showScene('sc-room');setPlace(P.time+' · '+RT[i][0])});
+  const pav=m=>head({...P.p,m});
+  await dialog([{who:P.name+' · '+P.role,av:pav(P.p.m),t:closed?'Saya baik-baik saja kok, Dok. Nggak ada keluhan… cuma mampir.':fill(P.say)}],'Lanjut');
+  const k=await pickAction();let act=k;if(k==='ob'&&!closed&&found.every(Boolean))act='rc';
+  const cat=act==='rc'?'ob':act;S.streak=S.streak.c===cat?{c:cat,n:S.streak.n+1}:{c:cat,n:1};
+  let d=ACT[act].d,ex=0;if(S.streak.n>=3&&(cat!=='ob'||act==='ob')){ex=EFXD[cat];d+=ex}if(cat==='op'&&S.streak.n>=3)S.closedNext=true;
+  const A=ACT[act],mood=act==='op'?'scared':act==='rs'?'sad':'happy';
+  await dialog([{...ME(),t:fill(P[act][0])},{who:P.name,av:pav(mood),t:fill(P[act][1]),fn:()=>{
+    const pt=$('#pt');pt.innerHTML=ptSVG({...P.p,m:mood});pt.className=act==='op'?'shake':act==='rc'?'hop':'idle';
+    S.safe=Math.max(0,Math.min(100,S.safe+d));chips();hit('#trust');hit('#hab');
+    toast(`🤝 Kepercayaan ${d>0?'+':''}${d}%`,d>0?'good':'bad');d>0?snd.good():snd.bad();
+    $('#nAv').innerHTML=head(DOC);$('#nTx').innerHTML=fill(A.f);$('#notif').classList.add('on')}}],'Lanjut');
+  S.hist.push({act,i,d,nf:found.filter(Boolean).length});
+  if(ex){$('#notif').classList.remove('on');await modal('⚠️','Efek Kebiasaan: '+EFXM[cat][0],EFXM[cat][1],ex)}
 }
-/* ===== Guide langsung di permainan (babak 1) ===== */
-const GS=[
- {c:'up',top:112,h:'<b>Tiga meteran</b> kamu: ❤️ Sehat, 🗣️ Terbuka, 🍬 Gula. Nilainya akan berubah selama bermain, jadi perhatikan terus ya!'},
- {c:'dn',bot:270,hand:1,h:'👆 <b>Geser kiri/kanan</b> untuk pindah jalur, <b>geser ke atas</b> untuk lompat.<small>Bisa juga ketuk sisi kiri/kanan atau tengah layar, atau tombol ← → ↑</small>'},
- {c:'',top:210,h:'🍬 🥦 ⏳ <b>Kumpulkan</b> yang ada di jalur, lalu perhatikan apa yang terjadi pada meteranmu.'},
- {c:'',top:210,h:'📦 <b>Pindah jalur</b> untuk menghindari tumpukan barang. Pallet dan 😠 bisa <b>dilompati</b>.'}];
-function startGuide(){g.st='guide';gs=0;const d=document.createElement('div');d.className='g-dim';d.onclick=nextGuide;$('app').appendChild(d);showGuide()}
-function showGuide(){
- document.querySelectorAll('.g-tip,.g-hand').forEach(e=>e.remove());
- const s=GS[gs],a=$('app'),e=document.createElement('div');
- a.classList.toggle('gs1',gs===0);e.className='g-tip '+s.c;e.onclick=nextGuide;
- if(s.top!=null)e.style.top=s.top+'px';else e.style.bottom=s.bot+'px';
- e.innerHTML=s.h+'<small>Ketuk untuk '+(gs<GS.length-1?'lanjut':'mulai')+' · '+(gs+1)+'/'+GS.length+'</small>';a.appendChild(e);
- if(s.hand){const h=document.createElement('div');h.className='g-hand';h.textContent='👆';a.appendChild(h)}
+
+/* ===== Alur utama ===== */
+async function run(){
+  $('#hud').style.display='';showScene('sc-open');$('#sc-open').insertAdjacentHTML('afterbegin',hallSVG());$('#openFerdi').innerHTML=person(DOC);
+  await dialog([{...FER,t:`Selamat pagi, Dokter ${salam} <b>${esc(nameP)}</b>! Saya dr. Ferdi, Kepala RS Sehat Sentosa. Hari ini kamu dokter jaga.`},
+    {...FER,t:`Akan ada <b>5 pasien</b> datang bergantian. Pilih tindakan yang paling <b>kamu banget, secara spontan ya</b>!`},
+    {...FER,t:`Satu pesan: pasien kadang <b>nggak cerita semuanya</b>. Kalau penasaran, kamu bisa memeriksanya sendiri. 😉<br>Targetnya: bikin <b>kepercayaan pasien</b> naik!`}],'Mulai Visit');
+  chips();
+  for(let i=0;i<PTS.length;i++)await playPatient(i);
+  $('#trust').classList.add('hide');$('#hab').classList.add('hide');
+  await cine('Akhir shift','Ruang Dokter','Waktunya evaluasi',()=>{setPlace('');showScene('sc-reflect');$('#sc-reflect').insertAdjacentHTML('afterbegin',hallSVG());reflect()});
 }
-function nextGuide(){gs++;gs>=GS.length?endGuide():showGuide()}
-function endGuide(){
- document.querySelectorAll('.g-dim,.g-tip,.g-hand').forEach(e=>e.remove());$('app').classList.remove('gs1');
- guided=1;if(!g)return;g.st='run';g.t=0;last=performance.now();requestAnimationFrame(loop);
-}
-function add(k,l,z){g.items.push({k,l,z,d:0,r:Math.random()})}
-function spawn(){
- const B=LV[g.b],r=Math.random,free=[0,1,2],z=55;
- const take=l=>free.splice(free.indexOf(l),1);
- if(g.fire&&r()<B.f){add('fire',g.fl,z);take(g.fl)}
- else if(r()<B.o){const n=r()<.5?1:2;for(let i=0;i<n;i++){const l=free[Math.floor(r()*free.length)];add(r()<.55?'box':'low',l,z);take(l)}}
- g.fire=0;
- if(!free.length)return;
- const l=free[Math.floor(r()*free.length)];
- if(r()<.06){add('jeda',l,z+2);return}
- const vw=(1-B.c)*(.4+.6*g.o/100),k=r()<vw/(vw+B.c)?'veg':'candy',n=r()<.5?3:2;
- for(let i=0;i<n;i++)add(k,l,z+i*3.2);
-}
-function fx(c){g.fx=[c,.6]}
-function collect(o){
- o.d=1;
- if(o.k==='candy'){g.c++;tot.c++;g.sg=Math.min(10,g.sg+1);snd(880,.08);fx('255,120,190');if(g.sg<=3)g.boost=2.5}
- else if(o.k==='veg'){g.v++;tot.v++;g.sg=Math.max(0,g.sg-2);g.h=Math.min(100,g.h+6);g.o=Math.min(100,g.o+8);g.fire=1;g.fl=g.lane;snd(520,.12,'triangle',.09);fx('70,200,120')}
- else{g.slow=3;snd(660,.3,'sine',.1);fx('61,127,217')}
-}
-function hurt(o){
- if(g.inv>0)return;
- if(o.k==='fire'){if(g.slow>0){o.d=1;return}g.o=Math.max(0,g.o-18);g.h-=10;g.hit++;tot.h++}
- else{g.h-=25;g.sp0=-.6}
- o.d=1;g.inv=1.2;fx('255,70,70');snd(150,.25,'sawtooth',.09);
-}
-function update(dt){
- const B=LV[g.b];g.t+=dt;
- g.sp0=Math.min(1,g.sp0+dt*.5);const ramp=Math.min(1,.4+g.t*.4);
- const stt=g.sg>=8?3:g.sg>=4?2:g.boost>0?1:0;
- g.stt=stt;
- const sp=B.s*ramp*(g.boost>0?1.2:1)*(stt===3?.65:stt===2?.85:1)*(g.slow>0?.55:1)*(g.sp0<0?0:1);
- if(g.sp0<0)g.sp0=Math.min(1,g.sp0+dt*1.6);
- g.sp=sp;g.dist+=sp*dt;tot.sc+=sp*dt*(g.boost>0?2:1);
- g.boost=Math.max(0,g.boost-dt);g.slow=Math.max(0,g.slow-dt);g.inv=Math.max(0,g.inv-dt);g.sg=Math.max(0,g.sg-.08*dt);
- g.h-=dt*(stt===3?2.5:stt===2?.8:0);
- g.px+=(g.lane-g.px)*Math.min(1,dt*(stt===3?7:14));
- if(g.j>0||g.vy>0){g.j+=g.vy*dt;g.vy-=1900*dt;if(g.j<=0){g.j=0;g.vy=0}}
- g.gapAcc+=sp*dt;if(g.gapAcc>=B.gap){g.gapAcc=0;spawn()}
- for(const o of g.items){o.z-=sp*dt;if(!o.d&&o.z<1&&o.z>-1&&Math.abs(g.px-o.l)<.55){
-  if(o.k==='candy'||o.k==='veg'||o.k==='jeda')collect(o);
-  else if(o.k==='box')hurt(o);else if(g.j<35)hurt(o)}}
- g.items=g.items.filter(o=>o.z>-2&&!(o.d&&o.z<8));
- if(g.h<=0){g.st='over';over()}else if(g.dist>=B.len){g.st='end';endBabak()}
-}
-function move(d){if(!g||g.st!=='run')return;g.lane=Math.max(0,Math.min(2,g.lane+d));snd(300,.05,'square',.04)}
-function jump(){if(!g||g.st!=='run'||g.j>0)return;g.vy=g.stt===3?520:720;snd(420,.1,'sine',.08)}
-document.addEventListener('keydown',e=>{const k=e.key;if(k==='ArrowLeft'||k==='a'||k==='A')move(-1);else if(k==='ArrowRight'||k==='d'||k==='D')move(1);else if(k==='ArrowUp'||k==='w'||k==='W'||k===' '){if(g&&g.st==='run')e.preventDefault();jump()}});
-cv.addEventListener('pointerdown',e=>{swx=e.clientX;swy=e.clientY});
-cv.addEventListener('pointerup',e=>{const dx=e.clientX-swx,dy=e.clientY-swy;
- if(Math.abs(dx)>24||Math.abs(dy)>24){if(Math.abs(dx)>Math.abs(dy))move(dx>0?1:-1);else if(dy<0)jump()}
- else{const r=cv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width;if(x<.33)move(-1);else if(x>.67)move(1);else jump()}});
-/* ===== Gambar ===== */
-function drawBg(){
- const B=LV[g?g.b:0],d=g?g.dist:0;
- R(0,0,W,H,B.sky);R(0,HY-90,W,90,B.wall);
- for(let i=-5;i<=5;i++){const x=W/2-36+i*115;if(x<-80||x>W)continue;R(x,HY-62,72,62,B.acc);R(x,HY-62,72,8,'rgba(0,0,0,.25)')}
- cx.fillStyle=B.fl;cx.beginPath();cx.moveTo(W/2-10,HY);cx.lineTo(W/2+10,HY);cx.lineTo(W/2+215,H);cx.lineTo(W/2-215,H);cx.fill();
- for(let k=9;k>=0;k--){const z=k*8-(d%8),t=tz(Math.max(z,0)),y=GY(t),h=190*t,w=95*t,id=Math.floor(d/8)+k;
-  for(const s of[-1,1])for(let c=0;c<3;c++){const x=s<0?W/2-195*t-w-c*(w+8*t):W/2+195*t+c*(w+8*t);if(x>W||x+w<0)continue;R(x,y-h,w,h,B.w2);R(x,y-h,w,h*.1,B.acc);R(x,y-h*.55,w,h*.05,'#14151b55');
-   R(x+w*.1,y-h*.45,w*.38,h*.25,(id+k+(s>0)+c)%2?'#d9a35f':'#e8645a');R(x+w*.52,y-h*.8,w*.36,h*.22,(id+k)%3?'#5fb4e8':'#ffc94d');R(x+w*.15,y-h*.2,w*.5,h*.18,'#c99c6c')}}
- for(const l of[.5,1.5]){cx.strokeStyle='rgba(255,255,255,.55)';for(let k=0;k<14;k++){const z1=k*5-(d%5),z2=z1+2.5;if(z2<0)continue;const t1=tz(Math.max(z1,0)),t2=tz(z2);cx.lineWidth=4*t1+1;cx.beginPath();cx.moveTo(LX(l,t1),GY(t1));cx.lineTo(LX(l,t2),GY(t2));cx.stroke()}}
- cx.strokeStyle=B.acc;cx.lineWidth=4;for(const s of[-1,1]){cx.beginPath();cx.moveTo(W/2+s*10,HY);cx.lineTo(W/2+s*215,H);cx.stroke()}
-}
-function emo(e,x,y,s){cx.fillStyle='#000';cx.font=s+'px serif';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(e,x,y)}
-function drawItem(o){
- const t=tz(Math.max(o.z,0)),x=LX(o.l,t),y=GY(t),b=Math.sin(g.t*3+o.z)*3*t;
- if(o.d)return;
- if(o.k==='box'){const w=92*t,h=112*t;R(x-w/2,y-h,w,h,'#b9824a');R(x-w/2,y-h,w,h*.09,'#d9a35f');R(x-w*.08,y-h,w*.16,h,'#e8cfa0');cx.strokeStyle='#14151b';cx.lineWidth=2.5*t+.5;cx.strokeRect(x-w/2,y-h,w,h);emo('📦',x,y-h*.5,40*t)}
- else if(o.k==='low'){const w=96*t,h=30*t;R(x-w/2,y-h,w,h,'#d9a35f');R(x-w/2,y-h*.55,w,h*.12,'#8a5a2b');cx.strokeStyle='#14151b';cx.lineWidth=2.5*t+.5;cx.strokeRect(x-w/2,y-h,w,h);R(x-w/2,y-h-14*t,w,6*t,'#ffc94d')}
- else if(o.k==='fire'){cx.fillStyle='rgba(255,70,50,.35)';cx.beginPath();cx.ellipse(x,y-6*t,38*t,12*t,0,0,7);cx.fill();emo('😠',x,y-34*t+b,64*t)}
- else{cx.fillStyle='rgba(0,0,0,.18)';cx.beginPath();cx.ellipse(x,y-2*t,18*t,6*t,0,0,7);cx.fill();
-  emo(o.k==='candy'?(o.r<.5?'🍬':'🍭'):o.k==='veg'?(o.r<.33?'🥦':o.r<.66?'🥕':'🥬'):'⏳',x,y-34*t+b,50*t)}
-}
-function drawPlayer(){
- const x=LX(g.px,1),fat=1+(Math.min(g.sg,10)>3?(Math.min(g.sg,10)-3)*.06:0),h=150,w=h*.335*fat;
- cx.fillStyle='rgba(0,0,0,.28)';cx.beginPath();cx.ellipse(x,PY+2,26*fat*(1-g.j/400),8,0,0,7);cx.fill();
- if(g.boost>0){cx.strokeStyle='rgba(255,201,77,.8)';cx.lineWidth=3;for(let i=0;i<6;i++){const a=x-50+i*20,s=(g.t*400+i*50)%70;cx.beginPath();cx.moveTo(a,PY-120+s);cx.lineTo(a,PY-90+s);cx.stroke()}}
- cx.save();cx.translate(x,PY-g.j);
- if(g.inv>0&&Math.floor(g.inv*12)%2)cx.globalAlpha=.4;
- cx.rotate((g.lane-g.px)*.12+Math.sin(g.t*(g.stt===3?4:8))*.025);if(g.stt===3)cx.filter='saturate(.5) brightness(.85)'
- const bob=g.j>0?1:1+Math.sin(g.t*(g.stt===3?5:10))*.02;
- cx.scale(1,bob);if(img.complete)cx.drawImage(img,-w/2,-h,w,h);cx.restore();
- if(g.slow>0){cx.strokeStyle='rgba(61,127,217,.8)';cx.lineWidth=4;cx.beginPath();cx.ellipse(x,PY-g.j-70,52,86,0,0,7);cx.stroke()}
- if(g.stt===3)emo('💤',x+30,PY-g.j-h-6,26);else if(g.stt===2)emo('💦',x+34,PY-g.j-h+10,22);
-}
-function draw(){
- cx.clearRect(0,0,W,H);cx.filter='none';drawBg();
- [...g.items].sort((a,b)=>b.z-a.z).forEach(drawItem);drawPlayer();
- if(g.t<2.4){cx.globalAlpha=Math.min(1,(2.4-g.t)*2);cx.font='700 34px Fredoka,sans-serif';cx.textAlign='center';cx.lineWidth=6;cx.strokeStyle='#14151b';cx.fillStyle='#fff';cx.strokeText(LV[g.b].n,W/2,330);cx.fillText(LV[g.b].n,W/2,330);cx.globalAlpha=1}
- if(g.fx&&g.fx[1]>0){cx.strokeStyle='rgba('+g.fx[0]+','+g.fx[1]+')';cx.lineWidth=10;cx.strokeRect(5,5,W-10,H-10);g.fx[1]-=.03}
- const s=g.sg;$('hv').textContent=Math.max(0,Math.round(g.h))+'%';$('hb').style.width=Math.max(0,g.h)+'%';$('hb').style.background=g.h<35?'var(--red)':'var(--good)';
- $('ov').textContent=Math.round(g.o)+'%';$('ob').style.width=g.o+'%';
- $('sv').textContent=g.stt===3?'Loyo':g.stt===2?'Berat':g.stt===1?'Boost':'Normal';$('sb').style.width=s*10+'%';$('sb').style.background=s>=8?'var(--red)':s>=4?'var(--warn)':'#ff9ac8';
- $('chip').textContent=LV[g.b].n+' · ⭐ '+Math.floor(tot.sc);$('prog').firstChild.style.width=Math.min(100,g.dist/LV[g.b].len*100)+'%';
-}
-function drawIdle(){cx.clearRect(0,0,W,H);cx.filter='none';drawBg()}
-function loop(now){
- if(!g||g.st!=='run')return;
- const dt=Math.min(.05,(now-last)/1000);last=now;if(!document.hidden)update(dt);
- if(g&&g.st==='run'){draw();requestAnimationFrame(loop)}else if(g)draw();
-}
-/* ===== Hasil ===== */
-function endBabak(){
- music(0);snd(784,.4,'triangle',.1);
- const st=1+(g.o>=60)+(g.h>=50),L=LSN[g.b];
- const last=g.b===2;
- show(`<div class="paper"><span class="kick">${LV[g.b].n} selesai</span><h2>${'⭐'.repeat(st)}${'☆'.repeat(3-st)} Mantap, ${salam} ${esc(nama)}!</h2>
- <div class="grid3"><div class="box" style="background:#fff0bd"><b>${g.c}</b>🍬 Permen</div><div class="box" style="background:#d8f5e2"><b>${g.v}</b>🥦 Sayuran</div><div class="box" style="background:#ffd9d9"><b>${g.hit}</b>😠 Kepancing</div></div>
- ${last?'':`<p><b>${L[0]}</b></p><p>${L[1]}</p><p class="mini" style="font-size:14px">${L[2]}</p>`}
- <button class="btn big" onclick="${last?'finale()':'startBabak('+(g.b+1)+')'}">${last?'Lihat hasil akhir →':'Lanjut ke babak '+(g.b+2)+' →'}</button></div>`);
-}
-function over(){
- music(0);snd(120,.6,'sawtooth',.1);
- const why=g.sg>=4?'Kebanyakan permen bikin badan berat dan loyo, sementara masalahnya tidak pernah naik.':'Terlalu banyak tabrakan membuat kondisi jatuh. Tetap tenang dan fokus ke jalur.';
- show(`<div class="paper"><h2>Kesehatan habis 😵</h2><p>${why}</p><p class="mini" style="font-size:15px">Tips: ambil 🥦 untuk pulih, lompati 😠 dan pallet, pakai ⏳ untuk menenangkan diri.</p>
- <button class="btn big" onclick="startBabak(${g.b})">Coba lagi babak ini ↻</button></div>`);
-}
-function notifyLMS(){
- try{window.parent.postMessage('scoreBarFound','*')}catch(e){console.warn('LMS postMessage (parent) gagal.',e)}
- try{window.top.postMessage('scoreBarFound','*')}catch(e){console.warn('LMS postMessage (top) gagal.',e)}
-}
-let prof=null;
-function finale(){
- const n=tot.c+tot.v,r=n?tot.v/n:0;prof=['PEMIMPIN TERBUKA','#d9ecff','Kamu rajin "makan sayur": kabar buruk naik dan kamu tetap fokus ke masalahnya.'];
- if(r<.5||g.o<55)prof=['MASIH TERGODA YANG MANIS','#fff0bd','Kadang kamu masih memilih yang enak didengar.'];
- if(r<.3)prof=['ABS: ASAL BAPAK/IBU SENANG','#ffd9d9','Terlalu banyak permen: laporan manis, kondisi lapangan tidak ketahuan.'];
- $('hud').style.display='none';notifyLMS();deb1();
-}
-function deb1(){
- show(`<div class="paper dbf"><span class="kick">Debriefing 1/2 · Analogi</span> <span class="tag" style="background:${prof[1]}">${prof[0]}</span>
- <div class="grid3"><div class="box" style="background:#fff0bd"><b>${tot.c}</b>🍬 Permen</div><div class="box" style="background:#d8f5e2"><b>${tot.v}</b>🥦 Sayuran</div><div class="box" style="background:#ffd9d9"><b>${tot.h}</b>😠 Emosi</div></div>
- <div class="guide"><i class="spr"></i><div class="bub"><span class="who">Host · Supervisor DC</span>
- <p>${prof[2]} Ini maksud dari semua yang kamu temui tadi:</p>
- <p>🍬 <b>Permen</b> = pesan baik dari tim. Enak didengar, tapi kalau kebanyakan, masalahnya tersembunyi dan kita jadi "loyo".</p>
- <p>🥦 <b>Sayuran</b> = pesan buruk yang jujur. Kurang enak, tapi manfaatnya terasa: masalah ketahuan dan bisa ditangani.</p>
- <p>😠 <b>Emosi</b> = respons marah saat dengar kabar buruk. Tim jadi takut melapor, sayuran makin jarang datang.</p>
- <p>⏳ <b>Jam</b> = jeda 3 detik sebelum bereaksi.</p></div></div>
- <button class="btn big" onclick="deb2()">Lanjut: Poin Pembelajaran →</button></div>`);
-}
-function deb2(){
- show(`<div class="paper dbf"><span class="kick">Debriefing 2/2 · Poin Pembelajaran</span>
- <div class="guide"><i class="spr"></i><div class="bub"><span class="who">Host · Supervisor DC</span>
- <p>1️⃣ <b>Kabar buruk tetap harus naik.</b> Fokus ke masalah dan fakta, bukan menyerang orang yang melapor.</p>
- <p>2️⃣ Kalau respons keras terus berulang, tim belajar menyaring laporan: yang jelek ditahan. Itulah budaya <b>ABS (Asal Bapak/Ibu Senang)</b>.</p>
- <p>3️⃣ Saat kabar buruk datang, <b>jeda 3 detik</b> lalu tanya: ① Apa faktanya? ② Apa yang harus dicapai dan tetap dijaga? ③ Apa respons paling tepat sekarang?</p>
- <p>4️⃣ Tegas tetap boleh! Tapi <b>jangan langsung dimarahi</b>, supaya tim berani jujur.</p></div></div>
- <div class="row2"><button class="btn ghost" onclick="deb1()">← Kembali</button><button class="btn" onclick="loginScreen()">Main lagi ↻</button></div></div>`);
-}
-/* ===== Fit layar ===== */
-const STAGE_H=600,STAGE_MAX_W=900;
-function fit(){const a=$('app'),vw=innerWidth,vh=innerHeight,sc=Math.min(1,vh/STAGE_H),w=Math.round(Math.min(vw/sc,STAGE_MAX_W));
- a.style.width=w+'px';a.style.top=Math.max(0,(vh-STAGE_H*sc)/2)+'px';a.style.transform='translateX(-50%) scale('+sc+')';
- if(w!==W||!cv.dataset.s){cv.dataset.s=1;size(w);g?draw():drawIdle()}}
-addEventListener('resize',fit);fit();
-img.onload=()=>{if(g)draw()};
-document.fonts&&document.fonts.ready.then(()=>{});
-loginScreen();
+
+/* ===== Kilas balik ===== */
+const CLOSING='Rasa aman tim dibangun dari cara kita merespons kabar buruk. Kalau pelapor yang diserang, tim akan belajar menyaring laporan, dan kondisi lapangan yang sebenarnya jadi tidak ketahuan. Fokus ke <b>masalahnya</b>. Tegas tetap boleh, asal bukan menyerang <b>orangnya</b>.';
+let dI=0;function reflect(){dI=0;card()}
+function card(){const N=S.hist.length+2;if(dI>=N)return final();let c,fl=false;
+  if(dI===0)c=`<div class="face"><span class="k">Plot twist 🎬</span><h3>Pasienmu sebenarnya adalah anggota tim.</h3><div class="vid" style="text-align:left">🧑‍⚕️ Dokter = kamu sebagai atasan<br>🧍 Pasien = anggota tim yang membawa kabar buruk<br>🗣️ Keluhan = laporan masalah di pekerjaan<br>🔪 Operasi = respons keras, menyerang orangnya<br>💊 Obat = respons positif, fokus ke masalah<br>🛏️ Istirahat = respons acuh, laporan diabaikan<br>🩺 Memeriksa pasien = bertanya dulu sebelum bereaksi</div><p>Yuk, lihat arti keputusanmu satu per satu.</p><button class="btn orange" id="dn">Mulai kilas balik ▶</button></div>`;
+  else if(dI<=S.hist.length){fl=true;const h=S.hist[dI-1],P=PTS[h.i],A=ACT[h.act];
+    c=`<div class="face"><span class="k">Kilas balik · Pasien ${h.i+1}</span><div class="ill">${head({...P.p,m:h.act==='rc'||h.act==='ob'?'happy':P.p.m})}</div><h3>${P.name}: ${P.title}</h3><p>Keputusanmu: <b>${A.ic} ${A.lb}</b></p><span class="tap">Ketuk kartu untuk melihat maknanya</span></div>
+    <div class="face back"><span class="k">Maknanya</span><h3>${A.mt}</h3><div class="vid">🧍 ${P.rep}</div><p>${A.mp}</p><span class="tap">🩺 Bagian yang kamu periksa: ${h.nf}/3 (tiap bagian = satu pertanyaan sebelum bereaksi)</span></div>`}
+  else c=`<div class="face"><span class="k">Inti Cerita</span><h3>Kabar buruk tetap harus naik.</h3><p>Fokus leader: <b>tangani masalah dan dapatkan fakta</b>, bukan menyerang orang yang membawa laporan.</p><div class="vid" style="text-align:left">Jeda 3 detik, lalu tanya:<br>1️⃣ Apa faktanya?<br>2️⃣ Apa yang harus dicapai dan tetap dijaga?<br>3️⃣ Apa respons paling tepat sekarang?</div><button class="btn orange" id="dn">Lihat hasil ▶</button></div>`;
+  $('#rwrap').innerHTML=`<div class="flip" id="fl"><div class="fc">${c}</div></div><div class="rnav"><div class="dots">${Array.from({length:N},(_,i)=>`<i class="${i<dI?'ok':i===dI?'on':''}"></i>`).join('')}</div><button class="btn" id="nx" ${fl?'disabled':'style="display:none"'}>Berikutnya ▶</button></div>`;
+  const f=$('#fl');if(fl)f.onclick=()=>{snd.pop();f.classList.toggle('flipped');$('#nx').disabled=false};
+  $('#nx').onclick=e=>{e.stopPropagation();snd.click();dI++;card()};if($('#dn'))$('#dn').onclick=e=>{e.stopPropagation();snd.click();dI++;card()}}
+
+/* ===== Hasil akhir ===== */
+function final(){showScene('sc-final');const cnt=k=>S.hist.filter(h=>h.act===k).length,sf=S.safe,st=sf>=80?3:sf>=50?2:1;
+  $('#fAv').innerHTML=head(myP());$('#fT').textContent=`Selamat, ${salam} ${nameP}!`;
+  const e=$('#fEnd');e.className='ending '+(sf>=80?'good':sf>=50?'mid':'bad');e.textContent=sf>=80?'Ending: Dokter Panutan':sf>=50?'Ending: Dokter Berkembang':'Ending: Dokter Perlu Latihan';
+  $('#fSt').innerHTML=`<div class="st"><b>${cnt('op')}</b><span>🔪 Operasi</span></div><div class="st"><b>${cnt('rs')}</b><span>🛏️ Istirahat</span></div><div class="st"><b>${cnt('ob')}</b><span>💊 Obat</span></div><div class="st"><b>${cnt('rc')}</b><span>🧪 Racikan</span></div>`;
+  $('#fTx').innerHTML=`🤝 Nilai akhir (kepercayaan pasien = rasa aman tim): <b>${sf}</b> / 100.<br>${CLOSING}`;
+  $$('#stars span').forEach((s,i)=>{if(i<st)setTimeout(()=>{s.classList.add('on');snd.pop()},400+i*350)});
+  if(st===3&&!REDUCED){const cols=['#3aa79a','#e07b3c','#ffd23f','#ff7ab8','#2ec4a6'];for(let i=0;i<50;i++){const c=document.createElement('i');c.className='confetti';c.style.left=Math.random()*100+'%';c.style.background=cols[i%5];c.style.animationDuration=(2+Math.random()*2)+'s';c.style.animationDelay=Math.random()+'s';$('#app').appendChild(c);setTimeout(()=>c.remove(),5000)}}
+  try{window.parent.postMessage('scoreBarFound','*')}catch(e){}try{window.top.postMessage('scoreBarFound','*')}catch(e){}}
+
+/* ===== Stage ===== */
+const SH=600,SMAX=900;
+function fitStage(){const a=$('#app'),vw=innerWidth,vh=innerHeight,sc=Math.min(1,vh/SH);a.style.width=Math.min(vw/sc,SMAX)+'px';a.style.top=Math.max(0,(vh-SH*sc)/2)+'px';a.style.transform='translateX(-50%) scale('+sc+')'}
+$('#sc-start').insertAdjacentHTML('afterbegin',hallSVG());$('#bd').innerHTML=hallSVG().replace('class="bg"','');
+fitStage();addEventListener('resize',fitStage);
 </script>
 </body>
 </html>
