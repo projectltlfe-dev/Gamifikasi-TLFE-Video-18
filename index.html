@@ -736,11 +736,11 @@ function final(){
   $('#ui').appendChild(b);b.animate([{opacity:0,transform:'scale(.7)'},{opacity:1,transform:'none'}],{duration:450,delay:250,fill:'backwards',easing:'cubic-bezier(.34,1.56,.64,1)'});
   const c=document.createElement('div');c.className='card dCard';
   c.innerHTML=`<ul>
-    <li><i>📣</i><span>Kabar buruk <b>tetap harus tersampaikan/b>. Fokus kita beresin masalah dan cari faktanya, bukan nyerang yang lapor.</span></li>
+    <li><i>📣</i><span>Kabar buruk <b>tetap harus tersampaikan</b>. Fokus kita beresin masalah dan cari faktanya, bukan nyerang yang lapor.</span></li>
     <li><i>🙈</i><span>Kalau tiap lapor kena omel, tim bakal nyembunyiin laporan yang jelek. Itu budaya <b>ABS</b> (Asal Bapak/Ibu Senang), kita jadi nggak tahu kondisi lapangan.</span></li>
     <li><i>⏸️</i><span>Biar nggak kepancing: <b>Tarik napas, kasih jeda 3 detik</b>, terus tanya: Apa faktanya, apa yang harus dicapai & dijaga, dan respons apa yang paling tepat.</span></li>
     <li><i>💪</i><span><b>Tegas tetap boleh</b>, asal yang disasar masalahnya, bukan orangnya.</span></li></ul>
-    <div class="ask">Jadi, ${esc(salam)} ${esc(nameP)}, jangan lupa buat dipraktekin ya.</div>
+    <div class="ask">${esc(salam)} ${esc(nameP)}, jangan lupa buat dipraktekin ya.</div>
     <button class="btn orange wide" id="siap">💪 Ulangi gamifikasi</button>`;
   $('#ui').appendChild(c);c.animate([{opacity:0,transform:'translateY(40px) scale(.95)'},{opacity:1,transform:'none'}],{duration:550,delay:150,fill:'backwards',easing:'cubic-bezier(.34,1.56,.64,1)'});
   $('#siap').onclick=()=>{snd.click();location.reload()};
