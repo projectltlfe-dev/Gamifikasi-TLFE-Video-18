@@ -2,340 +2,775 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Dokter Jaga: Simulasi RS Sehat Sentosa</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Root Cause Clinic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#22314d;--muted:#5d6b85;--teal:#2f8f83;--teal-d:#1f6f6a;--orange:#e07b3c;--red:#e5484d;--good:#1f9e5a;--disp:'Baloo 2',Nunito,system-ui,sans-serif}
+:root{--ink:#22314d;--muted:#5d6b85;--teal:#2f8f83;--teal-d:#1f6f6a;--orange:#e07b3c;--red:#e5484d;--good:#1f9e5a;
+  --disp:'Baloo 2','Nunito',system-ui,sans-serif;--fn:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;--spring:cubic-bezier(.34,1.56,.64,1)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overscroll-behavior:none;overflow:hidden}
-body{font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:linear-gradient(160deg,#cfeee9,#e8f4f2);user-select:none;-webkit-user-select:none;touch-action:manipulation}
-button{font-family:inherit;cursor:pointer}
-#bd{position:fixed;inset:0;z-index:0}#bd svg{position:absolute;left:-14px;top:-14px;width:calc(100% + 28px);height:calc(100% + 28px);filter:blur(5px)}#bd::after{content:"";position:absolute;inset:0;background:rgba(20,50,50,.35)}
-#app{position:absolute;left:50%;top:0;width:100%;height:600px;transform-origin:top center;overflow:hidden;z-index:1;background:#e4f5f2;box-shadow:0 10px 40px rgba(31,111,106,.35)}
+html,body{height:100%;overflow:hidden;background:#e3f1ee;overscroll-behavior:none}
+body{font-family:var(--fn);color:var(--ink);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input{font-family:inherit;user-select:text;-webkit-user-select:text}
 .hide{display:none!important}
-.scene{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;overflow:hidden}.scene.active{opacity:1;visibility:visible}
-.scene>svg.bg{position:absolute;inset:0;width:100%;height:100%;display:block}
-/* HUD */
-#hud{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;align-items:center;z-index:50;pointer-events:none;gap:6px}
-#hr{display:flex;gap:6px;align-items:center;pointer-events:auto}
-.chip{background:rgba(255,255,255,.92);border-radius:999px;padding:6px 12px;font-weight:800;font-size:13px;box-shadow:0 3px 10px rgba(0,0,0,.12);display:flex;gap:6px;align-items:center;white-space:nowrap;color:var(--ink);border:0}
-.chip.hit{animation:hit .5s}.chip.warn{background:#ffe3e3;animation:warn .8s infinite}
-@keyframes hit{30%{transform:scale(1.18)}}@keyframes warn{50%{box-shadow:0 0 0 4px rgba(229,72,77,.55)}}
-.mb{display:inline-block;width:46px;height:8px;border-radius:5px;background:#dfe6ee;overflow:hidden}.mb b{display:block;height:100%;transition:width .6s,background .3s}
-.chip u{display:inline-block;width:9px;height:9px;border-radius:50%;background:#dfe6ee;text-decoration:none}.chip u.on{background:var(--orange)}.chip.warn u.on{background:var(--red)}
-/* tombol */
-.btn{font-family:var(--disp);font-weight:800;font-size:17px;border:none;border-radius:16px;padding:10px 22px;color:#fff;background:linear-gradient(180deg,#3fb5a6,#2a8f83);box-shadow:0 5px 0 #1d6b62,0 8px 18px rgba(31,111,106,.3);transition:transform .1s,box-shadow .1s;line-height:1.1}
-.btn.orange{background:linear-gradient(180deg,#f0954f,#d86f2c);box-shadow:0 5px 0 #a8531c,0 8px 18px rgba(224,123,60,.35)}
-.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #1d6b62}.btn:disabled{opacity:.5}
+
+/* ===== bingkai: isi maks 600px, latar menyambung ===== */
+#app{position:relative;width:100%;height:min(177.78vw,600px);overflow:hidden;background:#e3f1ee}
+#world{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;transition:filter .4s}
+#world .wl{position:absolute;inset:0;opacity:0;transition:opacity .45s}
+#world .wl.on{opacity:1}
+#world svg{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
+#wCine{background:#12343a}
+#stage{position:absolute;left:50%;top:50%;width:360px;height:640px;overflow:hidden;transform:translate(-50%,-50%);transform-origin:50% 50%;z-index:1}
+.layer{position:absolute;inset:0}
+#decor svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+#decor,#actors,#roomUI,#hud{transition:filter .4s,opacity .35s}
+#app.dim #world,#app.dim #decor,#app.dim #actors,#app.dim #roomUI,#app.dim #hud{filter:brightness(.42) saturate(.8)}
+
+/* ===== tokoh ===== */
+.fig{position:absolute;width:170px;height:340px}
+.fig svg{width:100%;height:100%;display:block;overflow:visible}
+#pt{left:178px;top:112px;z-index:3}
+#denny{left:95px;top:110px;z-index:3}
+.fig.idle svg{animation:bob 3.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-3px)}}
+.fig.shake svg{animation:shk .5s}@keyframes shk{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.fig.hop svg{animation:hop .6s}@keyframes hop{40%{transform:translateY(-12px)}}
+.zn{fill:transparent;cursor:pointer}
+#pt.guide .zn:not(.done){fill:rgba(47,158,149,.24);stroke:#fff;stroke-width:1.3;stroke-dasharray:4 3;animation:zp 1s infinite}
+@keyframes zp{50%{fill:rgba(47,158,149,.45)}}
+.ping{position:absolute;width:34px;height:34px;margin:-17px;border-radius:50%;border:4px solid #2f9e95;animation:ping .7s ease-out forwards;pointer-events:none;z-index:6}
+@keyframes ping{to{transform:scale(2.3);opacity:0}}
+
+/* ===== HUD ===== */
+#hud{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;align-items:center;gap:6px;z-index:35}
+#hr{display:flex;gap:6px;align-items:center}
+.chip{background:rgba(255,255,255,.96);border-radius:999px;padding:5px 10px;font:800 12px var(--fn);box-shadow:0 3px 10px rgba(0,0,0,.14);display:flex;gap:6px;align-items:center;white-space:nowrap;color:var(--ink)}
+.chip.hit{animation:hit .5s}@keyframes hit{30%{transform:scale(1.16)}}
+.mb{display:inline-block;width:44px;height:8px;border-radius:5px;background:#dfe6ee;overflow:hidden}
+.mb b{display:block;height:100%;width:0;background:linear-gradient(90deg,#3fb5a6,#2a8f83);transition:width .7s}
+#hab{position:absolute;right:8px;top:44px;z-index:34;font-size:11px;padding:4px 9px}
+#hab u{display:inline-block;width:8px;height:8px;border-radius:50%;background:#dfe6ee}#hab u.on{background:var(--orange)}
+#hab.warn{background:#ffe3e3;animation:warn .8s infinite}#hab.warn u.on{background:var(--red)}
+@keyframes warn{50%{box-shadow:0 0 0 4px rgba(229,72,77,.5)}}
+#bgm{width:40px;height:30px;border-radius:999px;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.16);display:grid;place-items:center}
+#bgm svg{width:26px;height:22px}
+#bgm .eq rect{transform-box:fill-box;transform-origin:50% 100%;animation:eq .8s ease-in-out infinite alternate}
+#bgm .eq rect:nth-child(2){animation-delay:.25s}#bgm .eq rect:nth-child(3){animation-delay:.5s}
+@keyframes eq{from{transform:scaleY(.3)}to{transform:scaleY(1)}}
+#bgm .x{display:none}#bgm.off .eq{display:none}#bgm.off .x{display:inline}
+
+/* ===== tombol ===== */
+.btn{font:800 16px/1.1 var(--disp);border-radius:15px;padding:10px 20px;color:#fff;background:linear-gradient(180deg,#3fb5a6,#2a8f83);box-shadow:0 5px 0 #1d6b62,0 8px 16px rgba(31,111,106,.3);transition:transform .1s,box-shadow .1s,opacity .2s}
+.btn.orange{background:linear-gradient(180deg,#f39a55,#d86f2c);box-shadow:0 5px 0 #a8531c,0 8px 16px rgba(224,123,60,.35)}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #1d6b62}
+.btn:disabled{opacity:.45;pointer-events:none}
 .btn.pop{animation:pop .35s}@keyframes pop{50%{transform:scale(1.07)}}
-/* start */
-.card{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(93%,430px);background:rgba(255,255,255,.96);border-radius:26px;padding:16px 20px;text-align:center;box-shadow:0 18px 40px rgba(31,111,106,.28);z-index:5;max-height:96%;overflow:auto}
-.card h1{font-family:var(--disp);font-size:34px;line-height:1;color:var(--teal-d)}.card h1 span{color:var(--orange);display:block;font-size:26px}
-.card .sub{color:var(--muted);font-weight:700;font-size:14px;margin:5px 0 8px}.lbl{font-weight:900;font-size:14px;margin-bottom:6px}
+.btn.wide{width:100%}
+
+/* ===== rekam medis (clipboard) ===== */
+#chart{position:absolute;left:8px;top:56px;width:164px;height:404px;z-index:4;background:linear-gradient(160deg,#c08a55,#93602f);border-radius:12px;padding:17px 6px 6px;box-shadow:0 6px 14px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.3)}
+#chart .clip{position:absolute;left:50%;top:-7px;width:64px;height:21px;transform:translateX(-50%);background:linear-gradient(#f2f4f6,#9aa5b1);border-radius:7px 7px 4px 4px;box-shadow:0 2px 3px rgba(0,0,0,.35)}
+#chart .clip::after{content:'';position:absolute;left:50%;top:5px;width:24px;height:7px;margin-left:-12px;border-radius:4px;background:#5d6876}
+.paper{height:100%;background:#fffdf8;border-radius:5px;padding:7px 8px;display:flex;flex-direction:column;gap:4px;overflow:hidden;box-shadow:inset 0 0 0 1px #ece4d3}
+.ch-h{display:flex;justify-content:space-between;align-items:center;font:900 8.5px var(--fn);letter-spacing:.8px;color:#9aa5b1}
+.ch-h b{color:var(--red)}
+.ch-n{font:800 14.5px/1.05 var(--disp);color:var(--ink)}
+.ch-r{font:800 9.5px var(--fn);color:var(--muted);margin-top:-3px}
+.ch-k{font:800 10.5px/1.3 var(--fn);color:#6b4f2a;background:#fff1d0;border-radius:6px;padding:3px 6px}
+.slot{display:block;text-align:left;width:100%;border-top:1.5px dashed #d6dde6;padding:5px 3px 3px;border-radius:0;transition:background .3s}
+.slot .sl{display:flex;align-items:center;gap:5px;font:800 12px/1.1 var(--disp);color:var(--teal-d)}
+.slot .sl i{font-style:normal;font-size:13px}
+.slot .sl em{margin-left:auto;font:900 9px var(--fn);font-style:normal;color:#b9c2cd}
+.slot p{font:700 10.4px/1.33 var(--fn);color:#a7b0bc;margin-top:2px;font-style:italic}
+.slot.found p{color:#26324b;font-style:normal;animation:fd .45s}
+.slot.found .sl em{color:var(--good)}
+.slot.shut p{color:var(--red);font-style:normal}
+#chart.nudge .slot:not(.found){background:rgba(224,123,60,.12);border-radius:7px}
+@keyframes fd{from{opacity:0;transform:translateY(4px)}}
+
+/* ===== meja & alat ===== */
+#trayWrap{position:absolute;left:0;right:0;top:470px;height:150px;z-index:5}
+#trayHd{position:absolute;left:12px;top:4px;font:800 11px var(--fn);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.55);opacity:0;transition:opacity .3s}
+#trayHd.on{opacity:1}
+#plate{position:absolute;right:12px;top:2px;background:linear-gradient(#3e475c,#252b3a);color:#fff;font:700 10.5px var(--disp);padding:1px 10px;border-radius:5px;box-shadow:0 2px 0 #12161f;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#tray{position:absolute;left:10px;right:10px;top:26px;height:108px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;opacity:0;pointer-events:none;transform:translateY(14px);transition:opacity .3s,transform .35s var(--spring)}
+#tray.on{opacity:1;pointer-events:auto;transform:none}
+.tool{position:relative;background:linear-gradient(#fffefb,#f2ece0);border-radius:16px;box-shadow:0 5px 0 #6b4424,0 9px 14px rgba(0,0,0,.28);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 4px;transition:transform .1s,box-shadow .1s,opacity .25s,filter .25s}
+.tool svg{width:58px;height:48px}
+.tool b{font:800 12.5px/1.05 var(--disp);color:var(--ink);text-align:center}
+.tool:active{transform:translateY(4px);box-shadow:0 1px 0 #6b4424}
+.tool.x{opacity:.5;pointer-events:none;filter:grayscale(.8)}
+.tool.x::after{content:'✕';position:absolute;inset:0;display:grid;place-items:center;font:800 58px/1 var(--disp);color:rgba(229,72,77,.9)}
+.tool.ok{background:linear-gradient(#e6fbef,#c8f0d8);animation:glw 1s 2}
+@keyframes glw{50%{box-shadow:0 5px 0 #6b4424,0 0 0 6px #5fd68c}}
+
+/* ===== pengingat & pemandu ===== */
+#remind{position:absolute;left:50%;top:438px;transform:translateX(-50%);z-index:26;background:#fff7d6;border:2px solid var(--orange);color:#6a3e12;border-radius:999px;padding:5px 13px;font:800 12px var(--fn);white-space:nowrap;box-shadow:0 5px 14px rgba(0,0,0,.22);display:none}
+#remind.on{display:block;animation:rpop .45s var(--spring)}
+@keyframes rpop{from{transform:translateX(-50%) scale(.6);opacity:0}}
+#hand{position:absolute;left:0;top:0;width:0;height:0;z-index:27;display:none;pointer-events:none;transition:transform .55s ease}
+#hand.on{display:block}
+#hand .rp{position:absolute;left:-17px;top:-17px;width:34px;height:34px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 3px rgba(47,143,131,.55);animation:rp 1.2s ease-out infinite}
+#hand .hd{position:absolute;left:-9px;top:-2px;width:42px;height:42px;filter:drop-shadow(0 4px 3px rgba(0,0,0,.3));animation:press 1.2s ease-in-out infinite}
+@keyframes rp{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.5);opacity:0}}
+@keyframes press{0%,100%{transform:translate(6px,8px)}40%{transform:translate(0,0) scale(.92)}}
+
+/* ===== dialog ===== */
+#story{position:absolute;left:10px;right:10px;bottom:22px;z-index:30;background:#fff;border-radius:20px;padding:11px 14px 12px;box-shadow:0 6px 0 rgba(0,0,0,.08),0 14px 30px rgba(0,0,0,.28);display:none;flex-direction:column;gap:7px}
+#story.on{display:flex;animation:up .35s var(--spring)}
+@keyframes up{from{opacity:0;transform:translateY(24px)}}
+.spk{display:flex;align-items:center;gap:9px}
+.av{width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#f3fbf9,#cfeae5);border:2px solid var(--teal);overflow:hidden;flex:none;display:block}
+.av svg{width:100%;height:100%;display:block}
+.who{font:800 15px/1.05 var(--disp);color:var(--teal-d)}
+.who small{display:block;font:800 10.5px var(--fn);color:var(--muted)}
+#sTxt{font-weight:800;font-size:14px;line-height:1.38}
+#sTxt.fade{animation:fd .35s}
+#sBtn{align-self:flex-end;padding:8px 18px;font-size:15px}
+
+/* ===== notifikasi, toast, modal, cine ===== */
+#notif{position:absolute;left:8px;right:8px;top:46px;z-index:40;background:#fff;border-radius:16px;padding:8px 10px 9px;display:none;gap:9px;align-items:flex-start;box-shadow:0 10px 24px rgba(0,0,0,.3);font:700 12px/1.35 var(--fn);border-left:5px solid var(--teal)}
+#notif.on{display:flex;animation:sl .4s}@keyframes sl{from{opacity:0;transform:translateY(-14px)}}
+#notif.good{border-left-color:var(--good)}#notif.bad{border-left-color:var(--orange)}
+#notif small{display:block;font-size:10px;color:var(--muted);font-weight:900}
+#notif .av{width:34px;height:34px}
+#toast{position:absolute;top:290px;left:50%;transform:translate(-50%,-50%) scale(.85);background:#fff;padding:10px 18px;border-radius:16px;font:900 15px/1.3 var(--fn);opacity:0;transition:.25s;z-index:45;box-shadow:0 10px 26px rgba(0,0,0,.3);pointer-events:none;text-align:center;width:max-content;max-width:300px}
+#toast.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#toast.mid{color:#c46a12}#toast.good{color:var(--good)}
+.ftx{position:absolute;font:800 18px var(--disp);white-space:nowrap;pointer-events:none;z-index:46;text-shadow:0 2px 0 #fff,0 -2px 0 #fff,2px 0 0 #fff,-2px 0 0 #fff}
+#modal{position:absolute;inset:0;z-index:60;display:none;place-items:center;padding:18px}
+#modal.on{display:grid}
+.mcard{width:100%;background:#fff;border-radius:24px;padding:18px;text-align:center;box-shadow:0 18px 40px rgba(0,0,0,.4);animation:pop .4s}
+.mcard .ic{font-size:44px}.mcard h3{font:800 21px/1.15 var(--disp);color:var(--red);margin:4px 0 6px}.mcard p{font-weight:700;line-height:1.35;margin-bottom:8px;font-size:14px}
+.pen{display:inline-block;background:#ffe3e3;color:var(--red);font-weight:900;border-radius:99px;padding:3px 12px;margin-bottom:12px;font-size:12.5px}
+#cine{position:absolute;inset:0;z-index:58;background:#12343a;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .45s;text-align:center;color:#fff}
+#cine.on{opacity:1;pointer-events:auto}
+#cine small{display:block;font-weight:900;letter-spacing:.14em;color:#8fd8cd;font-size:13px}
+#cine b{display:block;font:800 36px/1.05 var(--disp);margin:6px 0}
+#cine span{font-weight:700;color:#cfe3e1;font-size:14px}
+#cine i{display:block;font-style:normal;font-size:40px;margin-bottom:6px}
+
+/* ===== kartu UI ===== */
+#ui{z-index:50;pointer-events:none}
+#ui>*{pointer-events:auto}
+.card{position:absolute;left:14px;right:14px;background:rgba(255,255,255,.98);border-radius:24px;padding:16px 18px;text-align:center;box-shadow:0 8px 0 rgba(0,0,0,.08),0 18px 40px rgba(31,80,80,.3)}
+.sCard{top:50%;transform:translateY(-50%)}
+.sCard .logo{width:54px;height:54px;margin:0 auto 4px;border-radius:16px;background:linear-gradient(160deg,#3fb5a6,#1f6f6a);display:grid;place-items:center;box-shadow:0 4px 0 #165650}
+.sCard .logo svg{width:34px;height:34px}
+.sCard h1{font:800 31px/1 var(--disp);color:var(--teal-d)}
+.sCard h1 span{display:block;color:var(--orange);font-size:21px;margin-top:2px}
+.sub{color:var(--muted);font-weight:800;font-size:13px;margin:6px 0 10px}
+.lbl{font-weight:900;font-size:13.5px;margin-bottom:7px}
 .chars{display:flex;gap:10px;justify-content:center;margin-bottom:10px}
-.cc{width:110px;background:#f1f8f7;border:3px solid transparent;border-radius:18px;padding:4px;font-weight:900;color:var(--ink);display:flex;flex-direction:column;align-items:center}.cc svg{width:70px;height:70px}.cc.sel{border-color:var(--teal);background:#dff3ef}
-#nameIn{width:100%;border:3px solid #cfe0dd;border-radius:14px;padding:9px 12px;font:800 17px Nunito;text-align:center;margin-bottom:10px;color:var(--ink);user-select:text;-webkit-user-select:text}
-/* story box */
-.story{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);width:min(94%,560px);background:rgba(255,255,255,.97);border-radius:22px;padding:12px 16px;box-shadow:0 10px 28px rgba(0,0,0,.18);display:none;flex-direction:column;gap:8px;align-items:center;text-align:center;z-index:30}.story.on{display:flex}
-.spk{display:flex;gap:8px;align-items:center}.av{width:38px;height:38px;border-radius:50%;background:#dff3ef;border:2px solid var(--teal);overflow:hidden;display:block}.av svg{width:100%;height:100%;display:block}
-.who{font-family:var(--disp);font-weight:800;font-size:16px;color:var(--teal-d)}
-.story p{font-weight:800;font-size:17px;line-height:1.3}.story p.fade{animation:fd .4s}@keyframes fd{from{opacity:0;transform:translateY(5px)}}
-/* ruang */
-#pt{position:absolute;left:50%;bottom:86px;height:420px;aspect-ratio:100/156;transform:translateX(-50%);z-index:2}#pt svg{width:100%;height:100%;display:block;overflow:visible}
-#pt.idle svg{animation:bob 3s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-4px)}}
-#pt.shake svg{animation:shk .5s}@keyframes shk{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
-#pt.hop svg{animation:hop .6s}@keyframes hop{40%{transform:translateY(-14px)}}
-.zn{fill:transparent;cursor:pointer}.zn:hover{fill:rgba(255,255,255,.22)}
-.ping{position:absolute;width:36px;height:36px;margin:-18px;border-radius:50%;border:4px solid #2f9e95;animation:ping .7s ease-out forwards;pointer-events:none}@keyframes ping{to{transform:scale(2.4);opacity:0}}
-#desk{position:absolute;left:0;right:0;bottom:0;height:132px;z-index:4;background:linear-gradient(#c99564,#a8774a);border-top:6px solid #e0b98a;box-shadow:0 -8px 20px rgba(0,0,0,.15)}
-#plate{position:absolute;left:12px;top:10px;background:#fff;border-radius:6px;padding:3px 10px;font:800 11px Nunito;color:var(--teal-d);box-shadow:0 2px 4px rgba(0,0,0,.2)}
-#tray{position:absolute;inset:14px 24px 22px;display:flex;gap:12px;justify-content:center;align-items:stretch;opacity:0;pointer-events:none;transition:opacity .3s}#tray.on{opacity:1;pointer-events:auto}
-.tool{flex:1;max-width:200px;background:#fffdf7;border:0;border-radius:18px;box-shadow:0 5px 0 #8a5d35,0 8px 14px rgba(0,0,0,.2);font-family:var(--disp);font-weight:800;font-size:15px;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:transform .1s;line-height:1.05}
-.tool i{font-style:normal;font-size:34px}.tool:active{transform:translateY(4px);box-shadow:0 1px 0 #8a5d35}
-.tool.rc{background:#d7f7e8;animation:glw 1s 3}@keyframes glw{50%{box-shadow:0 5px 0 #8a5d35,0 0 0 6px #5fd68c}}
-#ptag{position:absolute;top:46px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.92);border-radius:14px;padding:4px 14px;font-weight:900;font-size:13px;z-index:6;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.12)}
-#coach{position:absolute;top:84px;left:10px;width:min(30%,220px);background:rgba(255,255,255,.95);border-radius:14px;padding:8px 10px;font-weight:800;font-size:12.5px;z-index:16;box-shadow:0 6px 16px rgba(0,0,0,.22);display:none}#coach.on{display:block}
-#syms{position:absolute;top:46px;right:10px;width:min(34%,250px);display:flex;flex-direction:column;gap:6px;z-index:16}
-.sym{background:rgba(255,255,255,.96);border-left:5px solid var(--teal);border-radius:12px;padding:6px 9px;font-weight:700;font-size:12.5px;line-height:1.22;box-shadow:0 5px 14px rgba(0,0,0,.2);animation:fd .4s}.sym b{color:var(--teal-d);font-family:var(--disp)}.sym.shut{border-color:var(--red);background:#fff0f0}
-#notif{position:absolute;top:46px;left:10px;width:min(40%,290px);background:#fff;border-radius:16px;padding:8px 11px;display:none;gap:8px;z-index:40;box-shadow:0 10px 24px rgba(0,0,0,.28);font-weight:700;font-size:13px;line-height:1.25}#notif.on{display:flex;animation:sl .4s}@keyframes sl{from{opacity:0;transform:translateY(-14px)}}
-#notif small{display:block;font-size:11px;color:var(--muted);font-weight:900}
-.toast{position:absolute;top:34%;left:50%;transform:translate(-50%,-50%) scale(.85);background:#fff;padding:10px 18px;border-radius:16px;font-weight:900;font-size:16px;opacity:0;transition:.25s;z-index:45;box-shadow:0 10px 26px rgba(0,0,0,.3);pointer-events:none;text-align:center;max-width:84%}
-.toast.on{opacity:1;transform:translate(-50%,-50%) scale(1)}.toast.good{color:var(--good)}.toast.bad{color:var(--red)}
-/* modal & cine */
-#modal{position:absolute;inset:0;z-index:60;background:rgba(15,30,40,.6);display:none;place-items:center;padding:16px}#modal.on{display:grid}
-.mcard{width:min(100%,380px);background:#fff;border-radius:24px;padding:18px;text-align:center;box-shadow:0 18px 40px rgba(0,0,0,.4);animation:pop .4s}.mcard .ic{font-size:44px}.mcard h3{font-family:var(--disp);font-size:24px;color:var(--red);margin:2px 0 4px}.mcard p{font-weight:700;line-height:1.3;margin-bottom:6px;font-size:15px}
-.pen{display:inline-block;background:#ffe3e3;color:var(--red);font-weight:900;border-radius:99px;padding:2px 12px;margin-bottom:10px;font-size:13px}
-#cine{position:absolute;inset:0;z-index:58;background:linear-gradient(160deg,#173d42,#0e2328);display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .45s;text-align:center;color:#fff}#cine.on{opacity:1}
-#cine small{display:block;font-weight:900;letter-spacing:.14em;color:#8fd8cd;font-size:14px}#cine b{display:block;font-family:var(--disp);font-size:38px;line-height:1.05;margin:4px 0}#cine span{font-weight:700;color:#cfe3e1}
+.cc{flex:1;max-width:130px;background:#f1f8f7;border:3px solid #e1eeeb;border-radius:18px;padding:4px 4px 6px;font:800 15px var(--disp);color:var(--ink);display:flex;flex-direction:column;align-items:center;transition:all .2s}
+.cc svg{width:74px;height:80px}
+.cc.sel{border-color:var(--teal);background:#dff3ef;transform:translateY(-3px);box-shadow:0 4px 0 var(--teal)}
+#nameIn{width:100%;border:3px solid #cfe0dd;border-radius:14px;padding:9px 12px;font:800 16px var(--fn);text-align:center;margin-bottom:6px;color:var(--ink);outline:none;background:#f7fbfa}
+#nameIn:focus{border-color:var(--teal);background:#fff}
+.pv{font:800 11px var(--fn);color:var(--muted);min-height:15px;margin-bottom:9px}.pv b{color:var(--teal-d)}
+.snd{font:800 10px var(--fn);color:#9aa5b5;margin-top:9px}
+.gCard{top:50%;transform:translateY(-50%);padding:16px 15px}
+.gCard h2{font:800 23px var(--disp);color:var(--teal-d)}
+.steps{display:grid;gap:7px;margin:10px 0;text-align:left}
+.steps>div{display:flex;gap:10px;align-items:center;background:#f1f8f7;border-radius:14px;padding:8px 10px}
+.steps .n{flex:none;width:34px;height:34px;border-radius:11px;background:#fff;display:grid;place-items:center;font-size:19px;box-shadow:0 2px 0 #d5e7e3}
+.steps b{display:block;font:800 13.5px/1.15 var(--disp)}
+.steps span{font:700 11px/1.3 var(--fn);color:#4f5e70}
+.score2{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+.score2 div{border-radius:13px;padding:8px 6px;font:700 11px/1.3 var(--fn);color:#3b4660}
+.score2 b{display:block;font:800 22px/1 var(--disp)}
+.score2 .a{background:#d7f7e8}.score2 .a b{color:#157a45}
+.score2 .b{background:#fff0d6}.score2 .b b{color:#b46412}
+
 /* kilas balik */
-.fbt{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,rgba(255,240,210,.12) 35%,rgba(110,70,25,.4));z-index:3}
-#rwrap{position:absolute;inset:50px 14px 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5}
-.flip{width:min(100%,520px);height:370px;perspective:1200px;cursor:pointer}.fc{position:relative;width:100%;height:100%;transition:transform .75s cubic-bezier(.3,1.2,.4,1);transform-style:preserve-3d}.flip.flipped .fc{transform:rotateY(180deg)}
-.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;border-radius:24px;padding:12px 18px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;box-shadow:0 18px 40px rgba(0,0,0,.28);overflow:hidden}.face.back{transform:rotateY(180deg);background:#fffbe8}
-.k{font-weight:900;font-size:12px;background:#dff3ef;color:var(--teal-d);border-radius:99px;padding:2px 12px}
-.face h3{font-family:var(--disp);font-size:23px;line-height:1.05}.face p{font-weight:700;font-size:15.5px;line-height:1.28;color:#3b4660}
-.vid{background:#e9f1ff;border:2px dashed #7aa0d8;border-radius:12px;padding:5px 9px;font-weight:700;font-size:14.5px;line-height:1.25}
-.ill{width:100px;height:100px;background:#dff3ef;border-radius:50%;overflow:hidden}.ill svg{width:100%;height:100%}.tap{font-size:12.5px;font-weight:800;color:var(--orange)}
-.rnav{display:flex;align-items:center;justify-content:space-between;gap:12px;width:min(100%,520px);margin-top:10px}.dots{display:flex;gap:6px}.dots i{width:11px;height:11px;border-radius:50%;background:#fff;opacity:.5}.dots i.on{opacity:1;background:var(--orange)}.dots i.ok{opacity:1;background:#5fd68c}
-/* final */
-.fcard{position:absolute;left:50%;top:50%;transform:translate(-50%,-47%);width:min(94%,500px);max-height:calc(100% - 20px);overflow:auto;background:#fff;border-radius:26px;padding:14px 18px;text-align:center;box-shadow:0 18px 40px rgba(31,111,106,.3);z-index:3}
-.fcard h2{font-family:var(--disp);font-size:28px;color:var(--teal-d)}.stars{display:flex;justify-content:center;gap:6px;font-size:32px}.stars span{filter:grayscale(1);opacity:.3;transition:.4s}.stars span.on{filter:none;opacity:1;transform:scale(1.15)}
-.ending{display:inline-block;font-weight:900;font-size:13px;padding:4px 12px;border-radius:12px;margin:4px 0}.ending.good{background:#d7f7e8;color:#157a45}.ending.mid{background:#fff0bd;color:#8a6200}.ending.bad{background:#ffe3e3;color:#b02a2f}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}.st{background:#f1f8f7;border-radius:12px;padding:5px 2px}.st b{display:block;font-family:var(--disp);font-size:22px}.st span{font-size:11.5px;font-weight:800}
-.fcard p{font-weight:700;font-size:14.5px;line-height:1.3;margin-bottom:8px;color:#3b4660}
-.confetti{position:absolute;top:-10px;width:8px;height:12px;animation:fall linear forwards;z-index:70}@keyframes fall{to{transform:translateY(620px) rotate(540deg)}}
-@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+#rwrap{position:absolute;left:12px;right:12px;top:16px;bottom:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5}
+.flip{width:100%;height:430px;perspective:1200px}
+.fc{position:relative;width:100%;height:100%;transition:transform .75s cubic-bezier(.3,1.2,.4,1);transform-style:preserve-3d}
+.flip.flipped .fc{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;border-radius:24px;padding:16px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;box-shadow:0 18px 40px rgba(0,0,0,.32);overflow:auto}
+.face.back{transform:rotateY(180deg);background:#fffbe8;justify-content:flex-start;gap:7px}
+.k{font-weight:900;font-size:11.5px;background:#dff3ef;color:var(--teal-d);border-radius:99px;padding:2px 12px}
+.face h3{font:800 20px/1.12 var(--disp)}
+.face p{font-weight:700;font-size:13.5px;line-height:1.36;color:#3b4660}
+.face.back h3{font-size:17px}.face.back p{font-size:12.4px;text-align:left}
+.face p.wr{background:#fff0e6;border-radius:10px;padding:6px 9px}
+.vid{background:#e9f1ff;border:2px dashed #7aa0d8;border-radius:12px;padding:6px 10px;font-weight:700;font-size:12.6px;line-height:1.35;text-align:left}
+.pfig{width:112px;height:150px;border-radius:18px;background:radial-gradient(circle at 50% 30%,#f3fbf9,#cfeae5);border:3px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.15);overflow:hidden;flex:none}.pfig svg{width:100%;height:100%;display:block}
+.prow{display:flex;gap:6px;justify-content:center}.prow span{width:42px;height:42px;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 50% 30%,#f3fbf9,#cfeae5);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.18)}.prow svg{width:100%;height:100%;display:block}
+.dBub{position:absolute;left:116px;right:12px;top:62px;z-index:51;background:#fff;border-radius:18px;padding:10px 12px;font:800 13px/1.4 var(--fn);box-shadow:0 8px 20px rgba(0,0,0,.25)}.dBub::before{content:'';position:absolute;left:-7px;top:34px;width:16px;height:16px;background:#fff;transform:rotate(45deg);border-radius:3px}.dBub b{color:var(--teal-d)}
+.dCard{top:254px;bottom:26px;overflow:auto;padding:10px 12px;text-align:left}.dCard ul{list-style:none;display:grid;gap:6px}.dCard li{display:flex;gap:8px;align-items:flex-start;background:#f1f8f7;border-radius:12px;padding:5px 9px;font:700 11.6px/1.33 var(--fn);color:#2e3b55}.dCard li i{font-style:normal;font-size:16px;flex:none}.dCard li b{color:var(--teal-d)}.dCard .ask{font:800 14px/1.25 var(--disp);color:var(--teal-d);text-align:center;margin:7px 0 7px}
+.ill{width:104px;height:104px;background:radial-gradient(circle at 50% 35%,#f3fbf9,#cfeae5);border-radius:50%;overflow:hidden;border:3px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.ill svg{width:100%;height:100%}
+.res{display:inline-block;border-radius:12px;padding:5px 12px;font:800 13px var(--fn)}
+.res.a{background:#d7f7e8;color:#157a45}.res.b{background:#fff0d6;color:#a15a10}
+.tap{font-size:12px;font-weight:800;color:var(--orange)}
+.rnav{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin-top:12px}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:#fff;opacity:.45}.dots i.on{opacity:1;background:var(--orange)}.dots i.ok{opacity:1;background:#5fd68c}
+/* akhir */
+.fcard{position:absolute;left:12px;right:12px;top:14px;bottom:28px;overflow:auto;background:#fff;border-radius:26px;padding:14px 16px;text-align:center;box-shadow:0 18px 40px rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center;gap:6px}
+.fcard .fav{width:88px;height:88px;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 50% 35%,#f3fbf9,#cfeae5);border:3px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.15);flex:none}
+.fcard .fav svg{width:100%;height:100%}
+.fcard h2{font:800 23px/1.1 var(--disp);color:var(--teal-d)}
+.stars{display:flex;justify-content:center;gap:8px;font-size:30px}
+.stars span{filter:grayscale(1);opacity:.3;transition:.4s}.stars span.on{filter:none;opacity:1;transform:scale(1.15)}
+.ending{display:inline-block;font-weight:900;font-size:12.5px;padding:4px 12px;border-radius:12px}
+.ending.good{background:#d7f7e8;color:#157a45}.ending.mid{background:#fff0bd;color:#8a6200}.ending.bad{background:#ffe3e3;color:#b02a2f}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:100%}
+.st{background:#f1f8f7;border-radius:12px;padding:6px 2px}.st b{display:block;font:800 21px/1.1 var(--disp);color:var(--teal-d)}.st span{font-size:10.5px;font-weight:800;color:#4f5e70}
+.fcard p{font-weight:700;font-size:12.8px;line-height:1.38;color:#3b4660}
+.fcard .closing{background:#12343a;color:#e6f4f1;border-radius:14px;padding:9px 12px;text-align:left}
+.fcard .closing b{color:#ffd28a}
+.confetti{position:absolute;top:-12px;width:8px;height:12px;animation:fall linear forwards;z-index:70;pointer-events:none}
+@keyframes fall{to{transform:translateY(680px) rotate(540deg)}}
+#copy{position:absolute;left:0;right:0;bottom:5px;text-align:center;z-index:66;pointer-events:none}
+#copy span{display:inline-block;font:700 9px var(--fn);color:rgba(255,255,255,.95);background:rgba(18,40,48,.55);padding:2px 9px;border-radius:999px}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important}}
 </style>
 </head>
 <body>
-<div id="bd"></div>
 <div id="app">
-  <div id="hud"><div class="chip hide" id="place"></div><div id="hr"><div class="chip hide" id="trust"></div><div class="chip hide" id="hab"></div><button class="chip" id="bgm" aria-label="Suara">🔊</button></div></div>
-
-  <section class="scene active" id="sc-start"><div class="card">
-    <h1>Dokter Jaga <span>RS Sehat Sentosa</span></h1><p class="sub">Satu shift, lima pasien, banyak keputusan kecil.</p>
-    <div class="lbl">Kamu mau dipanggil apa?</div>
-    <div class="chars"><button class="cc" data-s="Bapak" id="cM"><span></span><span>Bapak</span></button><button class="cc" data-s="Ibu" id="cF"><span></span><span>Ibu</span></button></div>
-    <input id="nameIn" maxlength="20" placeholder="Tulis namamu di sini" autocomplete="off" aria-label="Nama">
-    <button class="btn orange" id="btnStart" disabled>Mulai Shift Jaga ▶</button></div></section>
-
-  <section class="scene" id="sc-open"><div id="openFerdi" style="position:absolute;left:50%;bottom:150px;height:340px;aspect-ratio:100/156;transform:translateX(-50%)"></div></section>
-
-  <section class="scene" id="sc-room">
-    <div id="roomBg"></div><div id="ptag"></div><div id="pt" class="idle"></div>
-    <div id="coach">💡 Pilih tindakan di meja dokter.</div><div id="syms"></div>
-    <div id="desk"><div id="plate"></div><div id="tray"></div></div>
-  </section>
-
-  <section class="scene" id="sc-reflect"><div class="fbt"></div><div id="rwrap"></div></section>
-
-  <section class="scene" id="sc-final"><div class="fcard">
-    <div style="width:84px;height:84px;margin:0 auto" id="fAv"></div><h2 id="fT"></h2><div class="stars" id="stars"><span>⭐</span><span>⭐</span><span>⭐</span></div>
-    <div class="ending" id="fEnd"></div><div class="stats" id="fSt"></div><p id="fTx"></p>
-    <button class="btn orange" onclick="location.reload()">↻ Main Lagi</button></div></section>
-
-  <div class="story" id="story"><div class="spk"><span class="av" id="sAv"></span><span class="who" id="sWho"></span></div><p id="sTxt"></p><button class="btn orange hide" id="sBtn"></button></div>
-  <div id="notif"><span class="av" id="nAv" style="flex:none"></span><div><small>dr. Ferdi · sekarang</small><span id="nTx"></span></div></div>
-  <div class="toast" id="toast"></div>
+ <div id="world"><div class="wl on" id="wLobby"><svg id="wsL"></svg></div><div class="wl" id="wRoom"><svg id="wsR"></svg></div><div class="wl" id="wCine"></div></div>
+ <div id="stage">
+  <div id="decor" class="layer"></div>
+  <div id="actors" class="layer"><div id="denny" class="fig idle hide"></div><div id="pt" class="fig idle hide"></div></div>
+  <div id="roomUI" class="layer hide">
+   <div id="chart"><div class="clip"></div><div class="paper">
+     <div class="ch-h"><b>REKAM MEDIS</b><span id="cNo"></span></div>
+     <div class="ch-n" id="cName"></div><div class="ch-r" id="cRole"></div>
+     <div class="ch-k" id="cKel"></div>
+     <div id="slots"></div></div></div>
+   <div id="trayWrap"><div id="trayHd"></div><div id="plate"></div><div id="tray"></div></div>
+  </div>
+  <div id="hud" class="hide">
+   <div class="chip" id="place">🕗 08:00</div>
+   <div id="hr"><div class="chip" id="trust">😊 <span id="tv">0%</span><i class="mb"><b id="tb"></b></i></div>
+    <button id="bgm" aria-label="Musik latar on/off" title="Musik on/off"><svg viewBox="0 0 44 36"><path d="M4 13h7l9-8v26l-9-8H4z" fill="#1f6f6a"/><g class="eq" fill="#e07b3c"><rect x="25" y="10" width="4" height="16" rx="2"/><rect x="31" y="6" width="4" height="24" rx="2"/><rect x="37" y="12" width="4" height="12" rx="2"/></g><g class="x" stroke="#e5484d" stroke-width="3.5" stroke-linecap="round"><path d="M27 12l12 12M39 12L27 24"/></g></svg></button></div>
+  </div>
+  <div class="chip hide" id="hab"></div>
+  <div id="remind"></div>
+  <div id="hand"><span class="rp"></span><span class="hd"><svg viewBox="0 0 64 64"><path d="M24 31V9a5 5 0 0 1 10 0v16l3-.4a5 5 0 0 1 5 3l.4 1 2.2-.3a5 5 0 0 1 5.4 4l.2 1.3 1.3-.1a5 5 0 0 1 5.3 5V47c0 8.3-6.7 15-15 15h-5c-5 0-9.4-2.4-12.2-6.4L14 45a5 5 0 0 1 7.5-6.5z" fill="#fff" stroke="#22314d" stroke-width="3" stroke-linejoin="round"/></svg></span></div>
+  <div id="story"><div class="spk"><span class="av" id="sAv"></span><span class="who" id="sWho"></span></div><p id="sTxt"></p><button class="btn orange" id="sBtn"></button></div>
+  <div id="notif"><span class="av" id="nAv"></span><div><small>dr. Denny · Kepala Klinik</small><span id="nTx"></span></div></div>
+  <div id="toast"></div>
+  <div id="ui" class="layer"></div>
   <div id="modal"><div class="mcard"><div class="ic" id="mIc"></div><h3 id="mT"></h3><p id="mP"></p><div class="pen" id="mPen"></div><br><button class="btn orange" id="mBtn">Lanjut ▶</button></div></div>
-  <div id="cine"><div><small id="cT"></small><b id="cP"></b><span id="cS"></span></div></div>
+  <div id="cine"><div><i id="cI"></i><small id="cT"></small><b id="cP"></b><span id="cS"></span></div></div>
+  <div id="copy"><span>© Education and Training Department 2026</span></div>
+ </div>
 </div>
 <script>
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+(()=>{
+'use strict';
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-const INK='#22314d',REDUCED=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+const rand=(a,b)=>a+Math.random()*(b-a);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let salam='',nameP='',audioOn=true,actx=null;
+const REDUCED=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+let salam='',nameP='';
 const fill=s=>String(s).replace(/\{s\}/g,salam).replace(/\{n\}/g,esc(nameP));
+const app=$('#app'),stage=$('#stage');
 
-/* ===== Suara ===== */
-function sfx(f,d=.12,t='sine',to){if(!audioOn)return;try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain(),n=actx.currentTime;o.type=t;o.frequency.setValueAtTime(f,n);if(to)o.frequency.exponentialRampToValueAtTime(to,n+d);g.gain.setValueAtTime(.12,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(actx.destination);o.start();o.stop(n+d)}catch(e){}}
-const snd={click:()=>sfx(520,.08),whoosh:()=>sfx(200,.5,'sawtooth',900),good:()=>{sfx(660,.15);setTimeout(()=>sfx(880,.2),120)},bad:()=>sfx(180,.35,'sawtooth',90),pop:()=>sfx(760,.1)};
-$('#bgm').onclick=()=>{audioOn=!audioOn;$('#bgm').textContent=audioOn?'🔊':'🔇'};
+/* ================= UKURAN: tinggi isi maks 600px ================= */
+let SCALE=1,lastH=0,frameTries=0;
+const isTyping=()=>{const a=document.activeElement;return !!a&&a.tagName==='INPUT'};
+function screenH(){let v=0;try{v=window.top.innerHeight}catch(e){try{v=window.parent.innerHeight}catch(e2){}}
+  if(!v||v<320){const sh=(window.screen&&screen.availHeight)||0;v=Math.max(innerHeight,sh?Math.min(sh,900):600)}return v}
+function growFrame(H){try{const fe=window.frameElement;if(!fe)return;fe.style.height=H+'px';fe.style.minHeight=H+'px';fe.setAttribute('height',H);fe.setAttribute('scrolling','no');
+  const P=window.parent;if(P&&P.H5P&&P.H5P.instances&&P.H5P.trigger)P.H5P.instances.forEach(i=>{try{P.H5P.trigger(i,'resize')}catch(e){}});
+  if(frameTries++<4)setTimeout(()=>{try{if(Math.abs(fe.getBoundingClientRect().height-H)>2){fe.style.height=H+'px';fe.style.minHeight=H+'px'}}catch(e){}},300)}catch(e){}}
+function fit(force){
+  if(!force&&isTyping())return;
+  const W=document.documentElement.clientWidth||innerWidth;
+  const H=Math.max(300,Math.min(600,Math.round(W*16/9),screenH()-4));
+  if(Math.abs(H-lastH)>=2){lastH=H;growFrame(H)}
+  const AH=Math.max(H,Math.round(innerHeight||document.documentElement.clientHeight||H));
+  app.style.height=AH+'px';
+  const s=Math.min(W/360,H/640);SCALE=s;
+  stage.style.transform=`translate(-50%,-50%) scale(${s})`;
+  drawWorld(W,AH,s);
+}
+const rectStage=el=>{const r=el.getBoundingClientRect(),s=stage.getBoundingClientRect();return{x:(r.left-s.left)/SCALE,y:(r.top-s.top)/SCALE,w:r.width/SCALE,h:r.height/SCALE}};
 
-/* ===== Karakter ===== */
-const MOUTH={sad:'M43 48Q50 42 57 48',worry:'M43 47Q46 43 50 47T57 47',neutral:'M44 46H56',happy:'M43 43Q50 52 57 43',scared:'M44 47Q50 41 56 47'};
-function person(o={},att='viewBox="0 0 100 156"'){const{sk='#f1c9a0',hr='#2b1d14',sh='#3d7fd9',m='neutral',coat=0,gl=0,fem=0}=o,body=coat?'#fff':sh;
-  let s=`<svg ${att} aria-hidden="true"><g stroke="${INK}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">`;
-  s+=`<rect x="36" y="118" width="11" height="34" rx="4" fill="#3a4050"/><rect x="53" y="118" width="11" height="34" rx="4" fill="#3a4050"/>`;
-  if(fem)s+=`<rect x="26" y="20" width="48" height="52" rx="20" fill="${hr}"/>`;
-  s+=`<rect x="17" y="64" width="14" height="48" rx="7" fill="${body}"/><rect x="69" y="64" width="14" height="48" rx="7" fill="${body}"/><rect x="31" y="58" width="38" height="64" rx="12" fill="${body}"/><circle cx="24" cy="114" r="6" fill="${sk}"/><circle cx="76" cy="114" r="6" fill="${sk}"/>`;
-  if(coat)s+=`<path d="M42 62Q42 92 50 92Q58 92 58 62" fill="none" stroke="#5b6275" stroke-width="3"/><circle cx="50" cy="95" r="4" fill="#9aa0aa"/><path d="M44 60L50 76L56 60Z" fill="#2f9e95"/>`;
-  s+=`<circle cx="50" cy="36" r="21" fill="${sk}"/><path d="M29 34Q28 12 50 13Q72 12 71 34Q62 24 50 25Q38 24 29 34Z" fill="${hr}"/><circle cx="43" cy="37" r="2" fill="${INK}" stroke="none"/><circle cx="57" cy="37" r="2" fill="${INK}" stroke="none"/>`;
-  if(gl)s+=`<circle cx="43" cy="37" r="6.5" fill="none"/><circle cx="57" cy="37" r="6.5" fill="none"/>`;
-  if(m==='scared')s+=`<path d="M38 29L46 31M62 29L54 31" fill="none"/>`;
-  s+=`<path d="${MOUTH[m]||MOUTH.neutral}" fill="none"/>`;
-  if(m==='worry'||m==='scared')s+=`<path d="M70 26q-4 6 0 7q4-1 0-7" fill="#6fbdf0" stroke="none"/>`;
-  if(m==='sad')s+=`<circle cx="40" cy="44" r="2.2" fill="#6fbdf0" stroke="none"/>`;
-  return s+`</g></svg>`}
-const head=o=>person(o,'viewBox="27 10 46 46"');
-const DOC={coat:1,gl:1,sk:'#e8b98a',hr:'#8a909c',m:'happy'};
-const myP=()=>({coat:1,sk:'#f1c9a0',hr:'#2b1d14',fem:salam==='Ibu'?1:0,m:'happy'});
-const ME=()=>({who:'Dokter '+salam+' '+nameP,av:head(myP())});
-const FER={who:'dr. Ferdi · Kepala RS',av:head(DOC)};
-const ptZones=`<rect class="zn" data-z="0" x="28" y="10" width="44" height="50"/><rect class="zn" data-z="1" x="30" y="60" width="40" height="60"/><rect class="zn" data-z="2" x="12" y="62" width="19" height="58"/><rect class="zn" data-z="2" x="69" y="62" width="19" height="58"/>`;
-const ptSVG=p=>person(p).replace('</svg>',ptZones+'</svg>');
+/* Latar dunia (dinding, lantai, meja) digambar dalam koordinat panggung lalu diperluas ke seluruh layar */
+let worldKey='';
+function deskBand(x,w,y1){let s=`<rect x="${x}" y="470" width="${w}" height="20" fill="#d9a66e"/><rect x="${x}" y="470" width="${w}" height="3" fill="#efc48e"/><rect x="${x}" y="488" width="${w}" height="6" fill="#a8743f"/><rect x="${x}" y="494" width="${w}" height="${Math.max(0,y1-494)}" fill="#8a5a33"/>`;
+  for(let k=Math.floor(x/120);k<=Math.ceil((x+w)/120);k++)s+=`<rect x="${k*120-1}" y="500" width="2" height="${Math.max(0,y1-500)}" fill="#76492a"/>`;return s}
+function drawWorld(W,AH,s){
+  const key=W+'x'+AH+'@'+s.toFixed(4);if(key===worldKey)return;worldKey=key;
+  const L=(W-360*s)/2,T=(AH-640*s)/2,x0=-L/s,y0=-T/s,w=W/s,hh=AH/s,x1=x0+w,y1=y0+hh,vb=`${x0} ${y0} ${w} ${hh}`;
+  const ceil=c=>y0<6?`<rect x="${x0}" y="${y0}" width="${w}" height="${6-y0}" fill="${c}"/><rect x="${x0}" y="4" width="${w}" height="4" fill="rgba(0,0,0,.06)"/>`:'';
+  const lights=y=>{let o='';if(y0<-10)for(let k=Math.floor(x0/150);k<=Math.ceil(x1/150);k++)o+=`<rect x="${k*150+35}" y="${y}" width="80" height="9" rx="4" fill="#fffef5" stroke="#e3e9ea" stroke-width="2"/>`;return o};
+  /* lobi */
+  let l=`<rect x="${x0}" y="${y0}" width="${w}" height="${hh}" fill="#e3f1ee"/>`+ceil('#f6f9f9')+lights(-26);
+  for(let k=Math.floor(x0/60);k<=Math.ceil(x1/60);k++)l+=`<rect x="${k*60}" y="8" width="1.5" height="188" fill="#d6e8e4"/>`;
+  l+=`<rect x="${x0}" y="196" width="${w}" height="12" fill="#2f9e95"/><rect x="${x0}" y="208" width="${w}" height="92" fill="#cfe5e0"/><rect x="${x0}" y="296" width="${w}" height="8" fill="#93b5af"/>`;
+  if(y1>304){l+=`<rect x="${x0}" y="304" width="${w}" height="${y1-304}" fill="#dde6e7"/>`;
+    for(let y=330;y<y1;y+=34)l+=`<rect x="${x0}" y="${y}" width="${w}" height="1.5" fill="#cbd6d8"/>`;
+    for(let k=Math.floor(x0/68);k<=Math.ceil(x1/68);k++)l+=`<rect x="${k*68}" y="304" width="1.5" height="${y1-304}" fill="#cbd6d8"/>`}
+  const sL=$('#wsL');sL.setAttribute('viewBox',vb);sL.setAttribute('preserveAspectRatio','none');sL.innerHTML=l;
+  /* ruang periksa */
+  let r=`<rect x="${x0}" y="${y0}" width="${w}" height="${hh}" fill="#edf4f5"/>`+ceil('#fbfcfc')+lights(-26);
+  for(let k=Math.floor(x0/60);k<=Math.ceil(x1/60);k++)r+=`<rect x="${k*60}" y="8" width="1.5" height="232" fill="#e1ebed"/>`;
+  r+=`<rect x="${x0}" y="238" width="${w}" height="6" fill="#fafcfc"/><rect x="${x0}" y="244" width="${w}" height="56" fill="#cfe5e1"/><rect x="${x0}" y="298" width="${w}" height="8" fill="#8fb1ac"/>`;
+  r+=`<rect x="${x0}" y="306" width="${w}" height="164" fill="#d3dee0"/>`;
+  for(let y=334;y<470;y+=32)r+=`<rect x="${x0}" y="${y}" width="${w}" height="1.5" fill="#c3cfd2"/>`;
+  for(let k=Math.floor(x0/64);k<=Math.ceil(x1/64);k++)r+=`<rect x="${k*64}" y="306" width="1.5" height="164" fill="#c3cfd2"/>`;
+  r+=deskBand(x0,w,y1);
+  const sR=$('#wsR');sR.setAttribute('viewBox',vb);sR.setAttribute('preserveAspectRatio','none');sR.innerHTML=r;
+}
+function setWorld(m){$('#wLobby').classList.toggle('on',m==='lobby');$('#wRoom').classList.toggle('on',m==='room')}
+addEventListener('resize',()=>fit());
+if(window.ResizeObserver)new ResizeObserver(()=>fit()).observe(app);
+document.addEventListener('focusout',()=>setTimeout(()=>fit(true),350));
 
-/* ===== Latar ===== */
-function hallSVG(){const R=(x,y,w,h,f,r=3)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${f}"/>`,T=(x,y,t,z=10,c='#fff')=>`<text x="${x}" y="${y}" font-size="${z}" fill="${c}" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800">${t}</text>`;
-  let fl='';for(let i=-4;i<=8;i++)fl+=`<path d="M200 190L${i*60-20} 300" stroke="rgba(34,49,77,.12)" stroke-width="1.5"/>`;[206,224,250,285].forEach(y=>fl+=`<path d="M0 ${y}H400" stroke="rgba(34,49,77,.12)" stroke-width="1.5"/>`);
-  const door=(x,w,l,c)=>R(x,64,w,126,'#c4def0')+R(x+w/2-12,80,24,40,'#eaf6ff',4)+R(x,40,w,16,c,5)+T(x+w/2,52,l,9);
-  return `<svg class="bg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">${R(0,0,400,30,'#f4f7f7',0)}${[40,165,290].map(x=>R(x,8,70,10,'#fffbe8',5)).join('')}${R(0,30,400,162,'#e3f1ef',0)}${R(0,126,400,14,'#2f9e95',0)}<path d="M0 156H400" stroke="#9aa9a9" stroke-width="4"/>${door(18,60,'IGD','#e5484d')}${door(322,60,'FARMASI','#2f9e95')}${R(130,52,140,138,'#9fd0ea',4)}<path d="M200 52V190" stroke="#7aa9c4" stroke-width="3"/>${R(142,70,46,52,'#eaf6ff',4)}${R(212,70,46,52,'#eaf6ff',4)}${R(140,30,120,18,'#3d7fd9',6)}${T(200,43,'RUANG PERIKSA')}${R(100,76,18,18,'#fff',4)}<path d="M109 79V91M103 85H115" stroke="#e5484d" stroke-width="4"/><circle cx="292" cy="84" r="13" fill="#fff"/><path d="M292 84V76M292 84L298 87" stroke="${INK}" stroke-width="2"/>${R(90,168,56,12,'#8fa8b8',3)}<circle cx="330" cy="176" r="11" fill="#fff" stroke="#8fa8b8" stroke-width="3"/><circle cx="352" cy="180" r="7" fill="#fff" stroke="#8fa8b8" stroke-width="3"/>${R(0,190,400,110,'#d5e0e0',0)}${fl}</svg>`}
-const RT=[['Poli Jantung','#e8f3f6','#d94f5c'],['Poli Penyakit Dalam','#edf6ea','#2f9e95'],['IGD · Ruang Tindakan','#f6ecec','#e5484d'],['Poli Umum','#f4f0e6','#e07b3c'],['Poli Paru','#ebeff8','#3d7fd9']];
-function roomSVG(i){const[n,w,c]=RT[i];let tl='';for(let x=0;x<=800;x+=80)tl+=`<path d="M${x} 430L${400+(x-400)*1.5} 600" stroke="rgba(34,49,77,.1)" stroke-width="2"/>`;
-  return `<svg class="bg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice"><rect width="800" height="430" fill="${w}"/><rect y="300" width="800" height="26" fill="${c}" opacity=".28"/><rect y="430" width="800" height="170" fill="#c9dcdc"/>${tl}<rect width="800" height="14" fill="#fffbe8"/><rect x="0" y="0" width="64" height="430" fill="#9fd8d0"/><path d="M16 0V430M32 0V430M48 0V430" stroke="#7fc3ba" stroke-width="3"/>
-  <rect x="95" y="80" width="170" height="140" rx="8" fill="#bfe6f5"/><path d="M180 80V220M95 150H265" stroke="#fff" stroke-width="6"/><rect x="95" y="80" width="170" height="140" rx="8" fill="none" stroke="#fff" stroke-width="7"/>
-  <rect x="300" y="26" width="200" height="36" rx="10" fill="${c}"/><text x="400" y="51" text-anchor="middle" font-size="20" fill="#fff" font-family="Baloo 2,sans-serif" font-weight="800">${n}</text>
-  <rect x="590" y="90" width="120" height="170" rx="8" fill="#fff"/><circle cx="650" cy="125" r="14" fill="none" stroke="#e5484d" stroke-width="3"/><path d="M650 140V200M620 160H680M650 200L632 240M650 200L668 240" stroke="#e5484d" stroke-width="3" fill="none"/>
-  <rect x="720" y="230" width="64" height="130" rx="8" fill="#fff"/><path d="M752 258V282M740 270H764" stroke="#e5484d" stroke-width="6"/><rect x="725" y="300" width="54" height="3" fill="#dfe6ee"/>
-  <rect x="280" y="330" width="240" height="60" rx="14" fill="#fff"/><rect x="280" y="372" width="240" height="14" fill="#9fb3bf"/><rect x="300" y="386" width="10" height="46" fill="#9fb3bf"/><rect x="490" y="386" width="10" height="46" fill="#9fb3bf"/>
-  <rect x="110" y="300" width="86" height="64" rx="8" fill="#121722"/><path class="ecg" d="M120 334H140L148 316L160 352L168 334H186" fill="none" stroke="#5fd68c" stroke-width="3"/><rect x="148" y="364" width="10" height="70" fill="#9fb3bf"/>
-  <path d="M600 260V430" stroke="#9fb3bf" stroke-width="5"/><rect x="584" y="262" width="32" height="46" rx="10" fill="#cfe9ff"/><path d="M600 308V350" stroke="#6fbdf0" stroke-width="3"/></svg>`}
+/* ================= AUDIO: BGM + efek (WebAudio, tanpa file) ================= */
+const Snd=(()=>{
+  let ctx=null,mus,musG,sfx,on=true,nextT=0,step=0,NB=null;
+  const mtof=m=>440*Math.pow(2,(m-69)/12);
+  function tone(f,t,d,v,type='sine',dest,a=.008,to){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(to)o.frequency.exponentialRampToValueAtTime(to,t+a+d);
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+a+d);o.connect(g);g.connect(dest||sfx);o.start(t);o.stop(t+a+d+.05)}
+  function nz(t,d,v,type,freq,dest,q=.8){const s=ctx.createBufferSource();s.buffer=NB;const f=ctx.createBiquadFilter();f.type=type;f.frequency.value=freq;f.Q.value=q;const g=ctx.createGain();
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.003);g.gain.exponentialRampToValueAtTime(.0001,t+.003+d);s.connect(f);f.connect(g);g.connect(dest||sfx);s.start(t,Math.random()*.5);s.stop(t+d+.05)}
+  function ep(f,t,d,v){const o=ctx.createOscillator(),o2=ctx.createOscillator(),g=ctx.createGain(),g2=ctx.createGain(),lp=ctx.createBiquadFilter();
+    o.type='sine';o2.type='sine';o.frequency.value=f;o2.frequency.value=f*2.003;g2.gain.value=.2;lp.type='lowpass';lp.frequency.value=2000;
+    o.connect(g);o2.connect(g2);g2.connect(g);g.connect(lp);lp.connect(mus);
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.012);g.gain.exponentialRampToValueAtTime(v*.4,t+.25);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+    o.start(t);o2.start(t);o.stop(t+d+.05);o2.stop(t+d+.05)}
+  /* BGM santai: electric piano, bass lembut, perkusi ringan */
+  const BPM=80,CH=[[48,[60,64,67,71]],[45,[57,60,64,67]],[41,[57,60,65,69]],[43,[55,59,62,65]]];
+  const MEL=[-1,-1,79,-1,76,-1,74,72, -1,-1,72,-1,74,-1,-1,-1, -1,-1,77,-1,76,-1,74,72, -1,-1,71,-1,74,-1,-1,-1];
+  function sched(){if(!ctx||ctx.state!=='running')return;const sp=60/BPM/2;
+    if(nextT<ctx.currentTime-.2)nextT=ctx.currentTime+.05;
+    while(nextT<ctx.currentTime+.15){const bar=Math.floor(step/8)%4,s=step%8,c=CH[bar],t=nextT+(s%2?sp*.12:0);
+      if(s===0){c[1].forEach((n,k)=>ep(mtof(n),t+k*.01,2.4,.026));tone(mtof(c[0]),t,.6,.11,'triangle',mus,.006)}
+      if(s===4)c[1].slice(1).forEach((n,k)=>ep(mtof(n),t+k*.008,1,.013));
+      if(s===3)tone(mtof(c[0]+7),t,.35,.07,'triangle',mus,.006);
+      if(s===0||s===5)tone(110,t,.15,.14,'sine',mus,.002,48);
+      if(s===4)nz(t,.1,.035,'bandpass',2200,mus,.7);
+      nz(t,.02,s%2?.008:.013,'highpass',8000,mus,.5);
+      const m=MEL[step%32];if(m>0)tone(mtof(m),t,.55,.028,'triangle',mus,.012);
+      nextT+=sp;step++}}
+  function init(){if(ctx){ctx.resume&&ctx.resume();return}const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+    ctx=new AC();const comp=ctx.createDynamicsCompressor();comp.connect(ctx.destination);
+    musG=ctx.createGain();musG.gain.value=on?.55:0;musG.connect(comp);mus=ctx.createGain();mus.connect(musG);
+    sfx=ctx.createGain();sfx.gain.value=.85;sfx.connect(comp);
+    NB=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+    nextT=ctx.currentTime+.1;setInterval(sched,30);ctx.resume&&ctx.resume();
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)ctx.suspend();else ctx.resume()})}
+  const T=(f,d,o={})=>{if(!ctx)return;tone(f,ctx.currentTime+(o.t||0),d,o.v??.12,o.type||'sine',null,.008,o.to)};
+  const S={click(){T(620,.06,{v:.07})},pop(){T(420,.1,{to:900,v:.1})},whoosh(){T(200,.4,{to:1300,v:.05,type:'triangle'})},
+    good(){T(660,.13,{v:.1});T(880,.2,{v:.1,t:.1})},bad(){T(240,.25,{type:'triangle',v:.12,to:150})},
+    scan(){T(1040,.07,{v:.07,type:'triangle'});T(1390,.09,{v:.06,type:'triangle',t:.08})},
+    win(){[72,76,79,84].forEach((m,i)=>T(mtof(m),.32,{v:.09,t:i*.1,type:'triangle'}))},star(){T(1320,.14,{v:.08,type:'triangle'});T(1760,.18,{v:.07,t:.07,type:'triangle'})}};
+  return{init,S,toggle(){on=!on;if(ctx)musG.gain.setTargetAtTime(on?.55:0,ctx.currentTime,.1);return on}};
+})();
+const snd=Snd.S;
+$('#bgm').onclick=()=>{Snd.init();const on=Snd.toggle();$('#bgm').classList.toggle('off',!on);snd.click()};
 
-/* ===== Alur utilitas ===== */
-function showScene(id){$$('.scene').forEach(s=>s.classList.toggle('active',s.id===id))}
-function setPlace(t){const c=$('#place');c.classList.toggle('hide',!t);c.textContent=t?'🕒 '+t:''}
-function say(L,html){$('#sWho').textContent=L.who;$('#sAv').innerHTML=L.av;const p=$('#sTxt');p.innerHTML=html;p.classList.remove('fade');void p.offsetWidth;p.classList.add('fade')}
-function dialog(lines,final){return new Promise(res=>{const st=$('#story'),b=$('#sBtn');st.classList.add('on');let i=0;
-  const show=()=>{const L=lines[i];if(L.fn)L.fn();say(L,L.t);const last=i===lines.length-1;b.textContent=(last?final:'Lanjut')+' ▶';b.classList.remove('hide','pop');void b.offsetWidth;b.classList.add('pop');
-    b.onclick=()=>{snd.click();if(last){b.onclick=null;st.classList.remove('on');res()}else{i++;show()}}};show()})}
-async function cine(t,p,sub,fn){$('#cT').textContent=t;$('#cP').textContent=p;$('#cS').textContent=sub||'';$('#notif').classList.remove('on');$('#cine').classList.add('on');snd.whoosh();await wait(1400);fn&&fn();await wait(200);$('#cine').classList.remove('on');await wait(600)}
-let toastT;function toast(m,type){const t=$('#toast');t.className='toast on '+type;t.innerHTML=m;clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2300)}
-function modal(ic,t,p,pen){return new Promise(res=>{$('#mIc').textContent=ic;$('#mT').textContent=t;$('#mP').textContent=p;$('#mPen').textContent='🤝 Kepercayaan '+pen+'%';$('#modal').classList.add('on');$('#mBtn').onclick=()=>{snd.click();$('#modal').classList.remove('on');res()}})}
+/* ================= KARAKTER (SVG semi-realistis) ================= */
+let UID=0;
+function shade(h,p){const n=parseInt(h.slice(1),16);const f=v=>Math.max(0,Math.min(255,Math.round(p<0?v*(1+p/100):v+(255-v)*p/100)));
+  return'#'+[f(n>>16),f(n>>8&255),f(n&255)].map(v=>v.toString(16).padStart(2,'0')).join('')}
+const OL='rgba(28,34,52,.3)';
+const limb=(d,w,c)=>`<path d="${d}" fill="none" stroke="${OL}" stroke-width="${w+1.8}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+const ARM={R:{full:'M85 80 Q91 110 93 141',sh:'M85 80 Q88 92 89.5 102',lg:'M85 80 Q91 110 92.6 136',h:[93,146]},
+  Ld:{full:'M35 80 Q29 110 27 141',sh:'M35 80 Q32 92 30.5 102',lg:'M35 80 Q29 110 27.4 136',h:[27,146]},
+  Lb:{full:'M35 80 Q30 100 34 114 Q46 122 56 118',sh:'M35 80 Q32 92 32 102',lg:'M35 80 Q30 100 34 114 Q44 121 52 119',h:[59,117]},
+  Lh:{full:'M35 80 Q22 77 22 63 Q25 47 39 39',sh:'M35 80 Q28 79 25 73',lg:'M35 80 Q22 77 22 63 Q24 51 33 43',h:[42,37]}};
+const hand=(a,sk)=>`<circle cx="${a.h[0]}" cy="${a.h[1]}" r="5.7" fill="${sk}" stroke="${OL}" stroke-width="1"/><path d="M${a.h[0]-2.6} ${a.h[1]+2.4} q2.6 1.6 5.2 0" fill="none" stroke="rgba(0,0,0,.15)" stroke-width="1"/>`;
+const armPath=(a,sk,sl,longS)=>limb(a.full,10.5,sk)+limb(longS?a.lg:a.sh,longS?13:14.5,sl);
+const ITEM={
+  strip:`<g transform="rotate(-14 93 146)"><rect x="86.5" y="135" width="10.5" height="20" rx="1.6" fill="#dfe4ea" stroke="#8d99a6" stroke-width=".8"/>${[0,1,2].map(r=>[89.3,94.2].map(x=>`<circle cx="${x}" cy="${139.5+r*5}" r="1.6" fill="#fff" stroke="#b8c2cc" stroke-width=".6"/>`).join('')).join('')}</g>`,
+  box:`<rect x="84.6" y="137" width="15" height="12" rx="1.3" fill="#fff" stroke="#8d99a6" stroke-width=".8"/><rect x="84.6" y="140.6" width="15" height="3.6" fill="#e5484d"/><path d="M92.1 145.4v2.6M90.8 146.7h2.6" stroke="#e5484d" stroke-width="1"/>`,
+  bottle:`<rect x="88" y="134.4" width="10" height="15.6" rx="2.4" fill="#c27b2c" opacity=".93"/><rect x="88" y="131.2" width="10" height="4.4" rx="1.1" fill="#f6f6f6" stroke="#b8c2cc" stroke-width=".6"/><rect x="89.2" y="139" width="7.6" height="6.4" fill="#fff" opacity=".9"/><path d="M90.4 141h5M90.4 143h3.6" stroke="#c27b2c" stroke-width=".7"/>`,
+  tissue:`<path d="M85.6 141 q3-6.4 7.4-3.2 q4.2-4 7.2 1 q3 4.2-1 7.2 q-4.2 4.2-8.2 1 q-6.4 1-5.4-6z" fill="#fff" stroke="#c9d1da" stroke-width=".8"/>`};
+const BROW={neutral:['M48 34.6 Q52.5 33 57 34.4','M63 34.4 Q67.5 33 72 34.6'],happy:['M48 34 Q52.5 31.6 57 33.4','M63 33.4 Q67.5 31.6 72 34'],
+  worry:['M48 35.2 Q52.5 34.4 56.6 31.6','M63.4 31.6 Q67.5 34.4 72 35.2'],sad:['M48 36 Q52.5 35.2 56.6 32','M63.4 32 Q67.5 35.2 72 36'],
+  scared:['M48 32.2 Q52.5 29.2 57 31.4','M63 31.4 Q67.5 29.2 72 32.2']};
+function eyes(m,skD){const big=m==='scared',ry=big?3:2.35;let s='';
+  [52.5,67.5].forEach(x=>{s+=`<ellipse cx="${x}" cy="41" rx="3.7" ry="${ry}" fill="#fff"/><circle cx="${x}" cy="41.3" r="${big?1.7:2}" fill="#2a1d16"/><circle cx="${x+.75}" cy="40.4" r=".65" fill="#fff"/>
+   <path d="M${x-3.9} 40.6 Q${x} ${41-ry-1.3} ${x+3.9} 40.6" fill="none" stroke="#2a1d16" stroke-width="1.15" stroke-linecap="round"/>`;
+   if(m==='happy')s+=`<path d="M${x-3.2} 43.6 Q${x} 45.2 ${x+3.2} 43.6" fill="none" stroke="${skD}" stroke-width="1" stroke-linecap="round"/>`;
+   if(m==='sad')s+=`<path d="M${x-3.9} ${x<60?39.6:38.2} L${x+3.9} ${x<60?38.2:39.6}" stroke="${skD}" stroke-width="2.2" stroke-linecap="round"/>`;});
+  return s}
+function mouth(m){const L='#a4524a';switch(m){
+  case'happy':return `<path d="M53.4 53.8 Q60 61.8 66.6 53.8 Q60 56 53.4 53.8Z" fill="#8a3a33"/><path d="M55.2 54.6 Q60 56.4 64.8 54.6 L64.3 55.8 Q60 57 55.7 55.8Z" fill="#fff"/>`;
+  case'worry':return `<path d="M55 56.6 Q57.5 54.6 60 56 Q62.5 57.4 65 55.6" fill="none" stroke="${L}" stroke-width="1.7" stroke-linecap="round"/>`;
+  case'sad':return `<path d="M54.5 57.6 Q60 53.4 65.5 57.6" fill="none" stroke="${L}" stroke-width="1.8" stroke-linecap="round"/>`;
+  case'scared':return `<ellipse cx="60" cy="56.8" rx="3.2" ry="2.7" fill="#7a2c27"/>`;
+  default:return `<path d="M55 55.6 Q60 57 65 55.6" fill="none" stroke="${L}" stroke-width="1.7" stroke-linecap="round"/>`}}
+function person(o={},vb='0 0 120 240'){
+  const u='g'+(UID++);
+  const {sk='#f0c7a1',hr='#2b1d14',hs='short',sh='#3d7fd9',top='tee',pt='#3a4256',m='neutral',pose='down',item='',age=0,leg='',gl=0,hij='',skirt=0,longS=0,coat=0,shoe='#2a2f3a',flush=0,tie=1}=o;
+  const skD=shade(sk,-16),coatC='#fbfcfd',sl=coat?coatC:sh,LS=coat||longS;
+  let s=`<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <linearGradient id="${u}f" x1="0" x2="1"><stop offset="0" stop-color="${shade(sk,6)}"/><stop offset=".6" stop-color="${sk}"/><stop offset="1" stop-color="${shade(sk,-9)}"/></linearGradient>
+    <linearGradient id="${u}c" x1="0" x2="1"><stop offset="0" stop-color="${shade(coat?coatC:sh,8)}"/><stop offset="1" stop-color="${shade(coat?coatC:sh,-10)}"/></linearGradient></defs>`;
+  s+=`<ellipse cx="60" cy="229" rx="34" ry="5" fill="rgba(0,0,0,.16)"/>`;
+  if(hs==='long'&&!hij)s+=`<path d="M39 34 C37 12 83 12 81 34 L84 98 Q60 106 36 98Z" fill="${shade(hr,-12)}"/>`;
+  if(hs==='bun'&&!hij)s+=`<circle cx="60" cy="13" r="8.4" fill="${shade(hr,-8)}"/>`;
+  /* kaki */
+  if(skirt){s+=`<path d="M37 134 L83 134 L89 219 Q60 223 31 219Z" fill="${pt}"/><path d="M50 140 L46 219 M70 140 L74 219" stroke="${shade(pt,-16)}" stroke-width="1.2" fill="none"/><rect x="42.5" y="217.5" width="15.5" height="8.5" rx="4" fill="${shoe}"/><rect x="62" y="217.5" width="15.5" height="8.5" rx="4" fill="${shoe}"/>`}
+  else{s+=`<path d="M40 136 L59.2 136 L58.2 221 L43 221Z" fill="${pt}"/><path d="M50.5 142 L50.5 219" stroke="${shade(pt,-14)}" stroke-width="1" fill="none"/>`;
+    if(leg==='swell')s+=`<path d="M60.8 136 L80 136 L79.4 180 L61.6 180Z" fill="${shade(pt,-8)}"/><rect x="60.6" y="176.4" width="20" height="6.2" rx="2" fill="${shade(pt,-22)}"/><path d="M62.4 182 C60.6 196 61.6 208 63 219 L77.6 219 C80.6 206 81.8 193 79.8 182Z" fill="${sk}" stroke="${OL}" stroke-width=".8"/><ellipse cx="71.2" cy="199" rx="8.6" ry="11.6" fill="#d9483f" opacity=".45"/><circle cx="72" cy="197" r="3.9" fill="#f2d16b" stroke="#c0392b" stroke-width="1.2"/>`;
+    else s+=`<path d="M60.8 136 L80 136 L77 221 L61.8 221Z" fill="${shade(pt,-8)}"/><path d="M69.5 142 L69.5 219" stroke="${shade(pt,-20)}" stroke-width="1" fill="none"/>`;
+    s+=`<path d="M40.4 219.6 h18.6 q4.4 0 4.4 5.4 v2.4 h-23.6 z" fill="${shoe}"/><path d="M61 219.6 h18.6 q4.4 0 4.4 5.4 v2.4 h-23.6 z" fill="${shoe}"/>`}
+  /* badan */
+  const TB=coat?'M35 77 C39 70.5 49 70 60 70 C71 70 81 70.5 85 77 L88 170 Q60 174 32 170Z':'M35 77 C39 70.5 49 70 60 70 C71 70 81 70.5 85 77 L86.5 140 Q60 145 33.5 140Z';
+  s+=`<path d="${TB}" fill="url(#${u}c)" stroke="${OL}" stroke-width=".9"/>`;
+  s+=`<path d="M73 71 C80 71.5 83.5 73.5 85 77 L${coat?'88 170 Q80 172 74 172':'86.5 140 Q80 142 74 142.4'}Z" fill="rgba(0,0,0,.06)"/>`;
+  if(coat){s+=`<path d="M53 70.4 L60 99 L67 70.4Z" fill="${sh}"/>`;
+    if(tie)s+=`<path d="M58 72 L62 72 L61.4 75.6 L58.6 75.6Z" fill="#244f80"/><path d="M58.6 75 L61.4 75 L62.6 93 L60 97.6 L57.4 93Z" fill="#2f6fb0"/>`;
+    s+=`<path d="M53 70.4 L60 99 L50 85 L45.6 73Z" fill="#f2f5f7" stroke="#cfd6de" stroke-width=".9"/><path d="M67 70.4 L60 99 L70 85 L74.4 73Z" fill="#f2f5f7" stroke="#cfd6de" stroke-width=".9"/>
+      <path d="M60 99 V171" stroke="#cfd6de" stroke-width="1.1"/><circle cx="62.6" cy="114" r="1.2" fill="#cfd6de"/><circle cx="62.6" cy="130" r="1.2" fill="#cfd6de"/>
+      <path d="M38 132 h13 v11 h-13z M69 132 h13 v11 h-13z" fill="none" stroke="#cfd6de" stroke-width="1"/>
+      <path d="M69 95 h10.4" stroke="#cfd6de" stroke-width="1"/><rect x="71" y="89.6" width="1.7" height="6.6" fill="#2f6fb0"/><rect x="74.2" y="88.6" width="1.7" height="7.6" fill="#e5484d"/>
+      <rect x="39.6" y="89.4" width="10.4" height="13.4" rx="1.6" fill="#fff" stroke="#9fb3bf" stroke-width=".8"/><rect x="39.6" y="89.4" width="10.4" height="3.6" rx="1" fill="#2f9e95"/><circle cx="44.8" cy="96.8" r="1.9" fill="#cfd6de"/>`}
+  else if(top==='polo')s+=`<path d="M60 77 V97" stroke="${shade(sh,-28)}" stroke-width="1"/><circle cx="60" cy="84" r="1.1" fill="#fff"/><circle cx="60" cy="91" r="1.1" fill="#fff"/>`;
+  else if(top==='shirt')s+=`<path d="M60 77 V140" stroke="${shade(sh,-24)}" stroke-width="1"/>${[86,99,112,125].map(y=>`<circle cx="60" cy="${y}" r="1.1" fill="#fff"/>`).join('')}<path d="M65 92 h11 v10 q-5.5 2.4-11 0z" fill="none" stroke="${shade(sh,-24)}" stroke-width="1"/>`;
+  if(!coat&&!skirt&&(top==='polo'||top==='shirt'))s+=`<rect x="34" y="135" width="52" height="5.4" fill="${shade(pt,-35)}"/><rect x="57" y="134.8" width="6.4" height="5.8" rx="1" fill="#c9b27a"/>`;
+  /* lengan (bawah & di perut) */
+  if(pose!=='head'){const a=pose==='belly'?ARM.Lb:ARM.Ld;s+=armPath(a,sk,sl,LS)+hand(a,sk)}
+  s+=armPath(ARM.R,sk,sl,LS)+(ITEM[item]||'')+hand(ARM.R,sk);
+  if(coat)s+=`<path d="M53.2 72 C46 84 46 100 54 108 M66.8 72 C74 84 74 100 66 108" fill="none" stroke="#3a4256" stroke-width="1.9" stroke-linecap="round"/><path d="M54 108 Q60 113 66 108" fill="none" stroke="#3a4256" stroke-width="1.9"/><circle cx="60" cy="114.6" r="3.7" fill="#b8c2cc" stroke="#3a4256" stroke-width="1.3"/>`;
+  /* leher */
+  s+=`<path d="M53 52 L67 52 L67.6 72 Q60 77 52.4 72Z" fill="${skD}"/>`;
+  if(!coat&&!hij){if(top==='polo'||top==='shirt'){const c=shade(sh,top==='polo'?12:16);s+=`<path d="M51 69.6 L58.6 79 L54.6 84 L47.4 72.4Z M69 69.6 L61.4 79 L65.4 84 L72.6 72.4Z" fill="${c}" stroke="${shade(sh,-28)}" stroke-width=".9"/>`}
+    else s+=`<path d="M51.5 70.2 Q60 79 68.5 70.2" fill="none" stroke="${shade(sh,-24)}" stroke-width="2.2"/>`}
+  /* kepala */
+  if(hij){s+=`<path d="M38 30 C35 58 30 82 33 104 Q60 114 87 104 C90 82 85 58 82 30Z" fill="${hij}"/><path d="M47 72 Q51 88 47 104 M73 72 Q69 88 73 104" stroke="${shade(hij,-18)}" fill="none" stroke-width="1.4"/>
+    <path d="M60 10 C44 10 36.5 22 37 38 C37.4 52 43 64 52 69 L68 69 C77 64 82.6 52 83 38 C83.5 22 76 10 60 10Z" fill="${hij}"/>`}
+  else s+=`<ellipse cx="41.8" cy="42" rx="3.5" ry="5.6" fill="${sk}" stroke="${OL}" stroke-width=".7"/><path d="M42.6 39.4 q-1.6 2.6 0 5" fill="none" stroke="${skD}" stroke-width="1"/><ellipse cx="78.2" cy="42" rx="3.5" ry="5.6" fill="${sk}" stroke="${OL}" stroke-width=".7"/><path d="M77.4 39.4 q1.6 2.6 0 5" fill="none" stroke="${skD}" stroke-width="1"/>`;
+  s+=`<path d="M42 37 C42 22 50 17 60 17 C70 17 78 22 78 37 C78 51 71 62 60 63 C49 62 42 51 42 37Z" fill="url(#${u}f)" stroke="${OL}" stroke-width=".8"/>`;
+  s+=`<path d="M45 52 Q52 62 60 63" fill="none" stroke="rgba(0,0,0,.05)" stroke-width="3"/>`;
+  if(hij)s+=`<path d="M41.4 37 C40.4 17 79.6 17 78.6 37 C74.6 27.4 45.4 27.4 41.4 37Z" fill="${shade(hij,-10)}"/>`;
+  else if(hs==='long')s+=`<path d="M40.6 40 C38 19 48 12.6 60 12.6 C72 12.6 82 19 79.4 40 C77.6 31 73 25 67 23.6 C61 28 51 29 44.6 27.4 C42.6 30.6 41.4 35 40.6 40Z" fill="${hr}"/><path d="M40.6 38 C39.6 50 40.4 62 37.6 74 L43.6 64 C42.6 54 42.8 46 43.2 39Z M79.4 38 C80.4 50 79.6 62 82.4 74 L76.4 64 C77.4 54 77.2 46 76.8 39Z" fill="${hr}"/>`;
+  else if(hs==='bun')s+=`<path d="M41 37 C39.6 19 49 13.6 60 13.6 C71 13.6 80.4 19 79 37 C76.4 26.4 70 22.4 60 22.4 C50 22.4 43.6 26.4 41 37Z" fill="${hr}"/>`;
+  else s+=`<path d="M40.4 39 C37.4 21 46 11.4 60 11.4 C74 11.4 82.6 21 79.6 39 C78.6 32 77 28 74 25.6 C67 28.6 52 28.8 45.4 24.6 C43 28 41.4 32.6 40.4 39Z" fill="${hr}"/>`;
+  if(!hij)s+=`<path d="M48 17.4 Q56 13.8 67 15.6" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2.2" stroke-linecap="round"/>`;
+  /* wajah */
+  const bl=flush?.5:m==='happy'?.24:.13;
+  s+=`<ellipse cx="49.5" cy="49.6" rx="4.6" ry="2.8" fill="#e8655a" opacity="${bl}"/><ellipse cx="70.5" cy="49.6" rx="4.6" ry="2.8" fill="#e8655a" opacity="${bl}"/>`;
+  s+=eyes(m,skD);
+  const B=BROW[m]||BROW.neutral,bc=hij?'#2a1d16':shade(hr,-15);
+  s+=`<path d="${B[0]}" fill="none" stroke="${bc}" stroke-width="2.3" stroke-linecap="round"/><path d="${B[1]}" fill="none" stroke="${bc}" stroke-width="2.3" stroke-linecap="round"/>`;
+  s+=`<path d="M60.6 42.4 Q58.6 48.4 59.6 49.6 Q61 50.4 62.4 49.4" fill="none" stroke="${shade(sk,-28)}" stroke-width="1.3" stroke-linecap="round"/>`;
+  s+=mouth(m);
+  if(age)s+=`<path d="M53 27.6 Q60 26 67 27.6" fill="none" stroke="${skD}" stroke-width=".9" opacity=".7"/><path d="M54.2 50.8 Q52.8 54 54.6 57.4 M65.8 50.8 Q67.2 54 65.4 57.4" fill="none" stroke="${skD}" stroke-width=".9" opacity=".8"/>`;
+  if(gl)s+=`<g fill="rgba(255,255,255,.14)" stroke="#3a3f4a" stroke-width="1.3"><rect x="47.4" y="37" width="10.2" height="7.8" rx="2.6"/><rect x="62.4" y="37" width="10.2" height="7.8" rx="2.6"/><path d="M57.6 40 Q60 38.8 62.4 40" fill="none"/><path d="M47.4 39.6 L43 38.6 M72.6 39.6 L77 38.6" fill="none"/></g>`;
+  if(m==='worry'||m==='scared')s+=`<path d="M77.4 26 q-3.4 5.4 0 7.2 q3.4-1.8 0-7.2z" fill="#9bd8ff" stroke="#4aa3e0" stroke-width=".6"/>`;
+  if(m==='sad')s+=`<path d="M51 45 q-1.9 3.4 0 4.6 q1.9-1.2 0-4.6z" fill="#9bd8ff"/>`;
+  if(pose==='head')s+=armPath(ARM.Lh,sk,sl,LS)+hand(ARM.Lh,sk);
+  return s+'</svg>'}
+const head=o=>person(o,'31 8 58 58');
+const bust=o=>person(o,'22 4 76 92');
+const DOC={coat:1,sh:'#cfe3f7',sk:'#e5b689',hr:'#8d929b',hs:'short',gl:1,age:1,m:'happy'};
+const myP=(m='happy')=>salam==='Ibu'?{coat:1,sh:'#ffd9e4',sk:'#f2cba8',hr:'#22160f',hs:'bun',m,tie:0}:{coat:1,sh:'#d6ecff',sk:'#efc39b',hr:'#1c1510',hs:'short',m};
+const ME=()=>({who:'dr. '+esc(nameP),role:'Dokter jaga',av:head(myP())});
+const FER={who:'dr. Denny',role:'Kepala Klinik',av:head(DOC)};
 
-/* ===== Data ===== */
+/* ================= DEKOR PANGGUNG ================= */
+function lobbySVG(){
+  const door=(x,lb,c)=>`<rect x="${x}" y="104" width="80" height="196" rx="4" fill="#f7fbfb" stroke="#bcd3cf" stroke-width="3"/><rect x="${x+8}" y="112" width="29" height="182" rx="2" fill="#bfe1ec"/><rect x="${x+43}" y="112" width="29" height="182" rx="2" fill="#bfe1ec"/>
+    <path d="M${x+12} 200 L${x+30} 130 M${x+48} 210 L${x+66} 140" stroke="#fff" stroke-width="6" opacity=".55"/><rect x="${x+33}" y="190" width="3" height="20" rx="1.5" fill="#8fa8b0"/><rect x="${x+44}" y="190" width="3" height="20" rx="1.5" fill="#8fa8b0"/>
+    <rect x="${x}" y="80" width="80" height="20" rx="6" fill="${c}"/><text x="${x+40}" y="95" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800" font-size="13" fill="#fff">${lb}</text>`;
+  const chair=x=>`<rect x="${x}" y="306" width="34" height="8" rx="3" fill="#2f8f83"/><rect x="${x+2}" y="276" width="30" height="32" rx="6" fill="#3fb5a6"/><rect x="${x+4}" y="314" width="3" height="20" fill="#7f9aa0"/><rect x="${x+27}" y="314" width="3" height="20" fill="#7f9aa0"/>`;
+  return `<svg viewBox="0 0 360 640" xmlns="http://www.w3.org/2000/svg">
+    <rect x="96" y="40" width="168" height="40" rx="10" fill="#1f6f6a"/><rect x="104" y="47" width="26" height="26" rx="6" fill="#fff"/><path d="M117 52v16M109 60h16" stroke="#e5484d" stroke-width="5"/>
+    <text x="194" y="59" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800" font-size="15" fill="#fff">Klinik</text><text x="194" y="72" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="900" font-size="8" letter-spacing="2" fill="#bfe9e2">Sehat Sentosa</text>
+    ${door(4,'UGD','#e5484d')}${door(276,'FARMASI','#2f9e95')}
+    <g transform="translate(300 64)"><circle r="13" fill="#fff" stroke="#3a4256" stroke-width="2.5"/><path d="M0 0V-8M0 0L6 3" stroke="#3a4256" stroke-width="2" stroke-linecap="round"/></g>
+    ${chair(92)}${chair(234)}
+    <g transform="translate(330 296)"><path d="M-12 8h24l-3 -20h-18z" fill="#c9674a"/><ellipse cx="0" cy="-30" rx="7" ry="20" fill="#3ba55c" transform="rotate(-25 0 -12)"/><ellipse cx="4" cy="-34" rx="7" ry="22" fill="#2e8b4f" transform="rotate(15 0 -12)"/><ellipse cx="-6" cy="-26" rx="6" ry="16" fill="#4cc36e" transform="rotate(-50 0 -12)"/></g>
+    <ellipse cx="180" cy="452" rx="120" ry="8" fill="rgba(0,0,0,.05)"/></svg>`}
+function roomSVG(){
+  let sky='';[[204,150,18,46],[224,132,22,64],[248,160,16,36],[266,140,26,56],[294,152,18,44],[314,128,24,68]].forEach(([x,y,w,h])=>{sky+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#a9c7da"/>`;for(let yy=y+6;yy<y+h-4;yy+=9)sky+=`<rect x="${x+4}" y="${yy}" width="${w-8}" height="3" fill="#cfe3ee"/>`});
+  let bl='';for(let y=62;y<94;y+=5)bl+=`<rect x="199" y="${y}" width="144" height="3.2" fill="#ece6d6"/>`;
+  let ct='';for(let x=336;x<362;x+=8)ct+=`<path d="M${x} 44 Q${x+4} 170 ${x} 300" stroke="#7fbfb3" stroke-width="1.6" fill="none" opacity=".7"/>`;
+  return `<svg viewBox="0 0 360 640" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd4f2"/><stop offset="1" stop-color="#e6f5ff"/></linearGradient></defs>
+    <rect x="190" y="52" width="160" height="150" rx="6" fill="#fff" stroke="#d7e2e5" stroke-width="1.5"/>
+    <rect x="198" y="60" width="144" height="134" fill="url(#skyG)"/><circle cx="318" cy="112" r="10" fill="#fff6c9" opacity=".9"/>
+    ${sky}<path d="M198 194 Q220 176 240 190 Q262 172 286 188 Q310 174 342 190 V194Z" fill="#8cc9a0"/>
+    ${bl}<rect x="198" y="94" width="144" height="4" rx="2" fill="#d6cdb6"/>
+    <rect x="268" y="60" width="4" height="134" fill="#fff"/><path d="M206 180 L236 104 M290 186 L318 120" stroke="#fff" stroke-width="7" opacity=".35"/>
+    <rect x="184" y="200" width="172" height="7" rx="2" fill="#f4f7f8" stroke="#d7e2e5"/>
+    <g><rect x="270" y="250" width="96" height="22" rx="6" fill="#fff" stroke="#c9d6da" stroke-width="1.5"/><rect x="276" y="242" width="34" height="12" rx="5" fill="#f2f6f7" stroke="#c9d6da"/>
+      <rect x="270" y="270" width="96" height="12" fill="#9fb3bf"/><rect x="278" y="282" width="5" height="46" fill="#8a9ca8"/><rect x="352" y="282" width="5" height="46" fill="#8a9ca8"/><rect x="298" y="252" width="68" height="18" fill="#e9f5f3"/></g>
+    <rect x="330" y="38" width="34" height="5" rx="2" fill="#b8c7cc"/><path d="M333 43 L362 43 L362 302 L336 302 Q330 170 333 43Z" fill="#a9dcd2"/>${ct}
+    <g transform="translate(184 224)"><rect x="0" y="0" width="16" height="26" rx="4" fill="#fff" stroke="#c9d6da"/><rect x="3" y="6" width="10" height="8" rx="2" fill="#6fbdf0"/><rect x="6" y="-4" width="4" height="5" fill="#9aa5b1"/></g>
+    <ellipse cx="263" cy="452" rx="62" ry="7" fill="rgba(0,0,0,.08)"/></svg>`}
+function setDecor(m){$('#decor').innerHTML=m==='lobby'?lobbySVG():m==='room'?roomSVG():''}
+
+/* ================= ALAT (ikon meja) ================= */
+const ICON={
+  lk:`<svg viewBox="0 0 64 52"><rect x="10" y="44" width="34" height="5" rx="2" fill="#5d6876"/><path d="M20 44 Q16 30 26 22" fill="none" stroke="#5d6876" stroke-width="5" stroke-linecap="round"/><rect x="24" y="6" width="9" height="24" rx="2" fill="#3d7fd9" transform="rotate(-25 28 18)"/><rect x="19" y="2" width="9" height="6" rx="1.5" fill="#22314d" transform="rotate(-25 23 5)"/><rect x="16" y="34" width="20" height="3" rx="1.5" fill="#9aa5b1"/>
+    <g transform="translate(46 12)"><rect x="0" y="0" width="8" height="32" rx="4" fill="#e9f4ff" stroke="#7aa0d8" stroke-width="1.6"/><rect x="1.4" y="16" width="5.2" height="14.6" rx="2.6" fill="#e5484d"/><rect x="-2" y="-1" width="12" height="4" rx="1.5" fill="#7aa0d8"/></g></svg>`,
+  ob:`<svg viewBox="0 0 64 52"><rect x="14" y="14" width="24" height="34" rx="5" fill="#e98b2a" opacity=".92"/><rect x="12" y="6" width="28" height="10" rx="3" fill="#fff" stroke="#c9d1da" stroke-width="1.4"/><rect x="17" y="24" width="18" height="14" rx="2" fill="#fff"/><path d="M26 27v8M22 31h8" stroke="#e5484d" stroke-width="2.4"/>
+    <g transform="rotate(-30 50 38)"><rect x="40" y="33" width="20" height="9" rx="4.5" fill="#3d7fd9"/><rect x="50" y="33" width="10" height="9" rx="4.5" fill="#fff" stroke="#c9d1da"/></g></svg>`,
+  rs:`<svg viewBox="0 0 64 52"><rect x="6" y="20" width="6" height="28" rx="2" fill="#7b8ea0"/><rect x="52" y="28" width="6" height="20" rx="2" fill="#7b8ea0"/><rect x="8" y="30" width="48" height="10" rx="3" fill="#fff" stroke="#c9d1da" stroke-width="1.4"/><rect x="12" y="25" width="16" height="7" rx="3.5" fill="#dff3ef" stroke="#9fd0c8"/><path d="M26 28 h28 v8 h-28z" fill="#6fbdf0"/>
+    <text x="42" y="18" font-family="Baloo 2,sans-serif" font-weight="800" font-size="12" fill="#2f8f83">z</text><text x="50" y="11" font-family="Baloo 2,sans-serif" font-weight="800" font-size="9" fill="#2f8f83">z</text></svg>`};
+const ACT={lk:{ic:'🔬',lb:'Pemeriksaan Lanjutan'},rs:{ic:'🛏️',lb:'Istirahat'},ob:{ic:'💊',lb:'Obat'}};
+const TOOLLB={lk:'Pemeriksaan Lanjutan',ob:'Resepkan Obat',rs:'Cukup Istirahat'};
+
+/* ================= DATA PASIEN ================= */
 const PTS=[
- {name:'Pak Anto',role:'Pasien · 52 th',p:{sh:'#3d7fd9',m:'scared'},time:'08:00 WIB',title:'Nyeri Dada Menetap',
-  say:'Dok… dada saya sesak sejak semalam. Saya sebenarnya takut ke sini, takut disalahkan karena telat periksa.',
-  z:[['Kepala','Pusing. Tapi ia rajin mencatat tensinya selama 3 hari, datanya lengkap.'],['Dada','Jantung berdebar tiap masuk ruang periksa. Ia cemas akan disalahkan karena menunda.'],['Tangan','Menggenggam catatan keluhan dan daftar obat yang sudah ia minum. Ia ingin segera sembuh.']],
-  op:['“Ini sudah parah gara-gara telat periksa! Siapkan ruang bedah sekarang!”','(pucat, menunduk) B-bedah, Dok…? Saya jadi takut…'],
-  rs:['“Pulang dan istirahat saja di rumah. Nanti juga membaik.” (tanpa memeriksa)','Tapi Dok, dadanya… ya sudah, Dok.'],
-  ob:['“Ini obat pereda nyerinya. Kita pantau dan kontrol lagi ya.”','Terima kasih, Dok. Saya minum obatnya dan kontrol besok.'],
-  rc:['“Terima kasih sudah datang. Catatan tensimu sangat membantu. Obatnya saya sesuaikan dan kita jadwalkan kontrol.”','Wah, catatan saya dipakai! Saya lega, Dok.'],
-  rep:'Anggota tim yang takut melapor barang rusak yang membengkak, seperti Ale di video: takut disalahkan, padahal sudah menyiapkan data.'},
- {name:'Bu Rina',role:'Pasien · 45 th',p:{sh:'#e07b9a',hr:'#3a2418',m:'worry',fem:1},time:'10:00 WIB',title:'Pusing Hebat Sejak Pagi',
-  say:'Dok, kepala saya pusing sekali sejak pagi. Saya takut ini salah saya, kurang jaga pola makan.',
-  z:[['Kepala','Sudah mengukur tekanan darah dua kali. Hasilnya sama-sama tinggi.'],['Perut','Mual karena takut disalahkan soal pola makan.'],['Tangan','Membawa catatan menu makan seminggu. Ia ingin tahu cara memperbaikinya.']],
-  op:['“Pola makanmu berantakan! Sudah, harus operasi!”','(terdiam) …Maaf, Dok.'],
-  rs:['“Istirahat saja di rumah, jangan banyak pikiran.”','…Baik, Dok. Saya coba tahan dulu.'],
-  ob:['“Ini obat penurun tekanan darah. Kurangi garam, kontrol lagi ya.”','Baik, Dok. Saya akan ikuti.'],
-  rc:['“Terima kasih sudah datang cepat. Tekananmu tinggi dua kali, catatan menumu kita lihat bersama, lalu obatnya kita sesuaikan.”','Iya Dok! Saya jadi punya rencana yang jelas.'],
-  rep:'Anggota tim yang melapor hasil SO dengan selisih besar, seperti di video. Ia takut disambut “pagi-pagi udah bawa masalah”.'},
- {name:'Mas Bima',role:'Pasien · 28 th',p:{sh:'#8a6be0',hr:'#14151b',sk:'#d9a77d',m:'sad'},time:'13:00 WIB',title:'Luka Kecil di Jari',
-  say:'Dok, tangan saya gemetar. Ini cuma luka kecil di jari, tapi saya malu karena sempat saya biarkan.',
-  z:[['Kepala','Memikirkan ejekan temannya: “luka kecil aja dibiarin”. Ia takut dipermalukan.'],['Dada','Tetap datang karena tidak mau lukanya infeksi.'],['Tangan','Gemetar. Hanya satu luka kecil di jari, bagian lainnya sehat.']],
-  op:['“Luka segini dibiarkan! Kamu nggak sayang badan sendiri?!”','(menunduk) …Maaf, Dok.'],
-  rs:['“Sudah, biarkan saja. Nanti juga kering sendiri.”','…Iya, Dok. (tidak sempat cerita jarinya juga sering kesemutan)'],
-  ob:['“Lukanya dibersihkan dan diperban sekarang. Ada keluhan lain?”','Tidak ada, Dok. Terima kasih.'],
-  rc:['“Lukanya kecil, kita bersihkan. Yang penting, ada keluhan lain? Jari yang kesemutan tadi juga saya cek.”','Ada Dok, jarinya memang kesemutan. Makasih sudah ditanya!'],
-  rep:'Anggota tim yang salah menulis tanggal di laporan, seperti di video. Kesalahannya kecil, tapi bisa dipakai untuk menyerang pribadinya.'},
- {name:'Bu Sari',role:'Pasien · 38 th',p:{sh:'#2f9e95',hr:'#14151b',m:'worry',fem:1},time:'15:30 WIB',title:'Demam Belum Jelas Penyebabnya',
-  say:'Dok, perut saya mual dan demam. Penyebabnya belum ketahuan. Saya tunggu sampai jelas dulu baru periksa, ya?',
-  z:[['Kepala','Sudah punya 2 dugaan penyebab dan hasil lab awal.'],['Perut','Mual. Ia berpikir “kalau belum jelas penyakitnya, jangan dulu ke dokter”.'],['Tangan','Menyiapkan jadwal pemeriksaan 2 hari ke depan. Ia ingin penyebab ketemu dan dokter ikut memantau.']],
-  op:['“Demam belum jelas?! Dua hari ngapain saja?! Siapkan rawat inap!”','(menunduk) …Lain kali saya datang kalau sudah parah saja, Dok.'],
-  rs:['“Ya sudah, kabari kalau sudah jelas penyakitnya.”','Baik, Dok… (lain kali tunggu parah baru periksa)'],
-  ob:['“Dugaan awalnya apa? Minum penurun demam, kabari kalau ada keluhan baru.”','Ada 2 dugaan, Dok. Saya lanjutkan dan kabari lagi.'],
-  rc:['“Bagus kamu datang sebelum jelas. Dugaanmu dua, kita atur cek berkala dan obat sementara. Saya pantau.”','Lega, Dok. Ternyata nggak perlu menunggu parah dulu.'],
-  rep:'Anggota tim yang masalahnya belum ada jawabannya dan tergoda menunda lapor, seperti di video: “yang belum ada jawabannya, ditunda dulu”.'},
- {name:'Pak Doni',role:'Pasien · 47 th',p:{sh:'#f2792b',hr:'#5b3a1e',sk:'#c99870',m:'scared'},time:'18:00 WIB',title:'Sakit yang Disembunyikan',
-  say:'Dok… sebenarnya batuk saya makin parah. Tapi ke keluarga saya bilang “sehat-sehat saja”. Begitu saja ya?',
-  z:[['Kepala','Kurang tidur karena batuk malam. Hasil rontgen sudah ada di tasnya.'],['Dada','Cemas karena pernah melihat pasien lain dimarahi dokter. Ia takut.'],['Tangan','Menggenggam dua catatan: satu “sehat” untuk keluarga, satu keluhan yang sebenarnya.']],
-  op:['“Mau menyembunyikan sakit?! Pasien macam apa kamu!”','(diam) …Siap, Dok. Saya bilang sehat saja ya.'],
-  rs:['“Terserah, yang penting jangan bikin saya pusing.”','Oke, Dok. (ke keluarga tetap bilang “sehat”)'],
-  ob:['“Ceritakan apa adanya. Ini obat batuknya, kita selesaikan bersama.”','Baik, Dok. Saya cerita jujur ke keluarga.'],
-  rc:['“Terima kasih mau jujur. Rontgenmu kita lihat, obatnya disesuaikan, dan keluargamu kita jelaskan bersama.”','Dok… terima kasih. Saya nggak takut lagi.'],
-  rep:'Anggota tim yang tergoda “memoles” laporan supaya aman, seperti di video: yang jelek ditahan, jawabannya “aman dulu”. Inilah awal budaya ABS.'}
+ {name:'Pak Anto',role:'Pasien · 52 thn',time:'08:00',title:'Sakit Perut',ans:'lk',zone1:'torso',
+  p:{sk:'#e2b088',hr:'#3d3a38',hs:'short',top:'polo',sh:'#3d7fd9',pt:'#4a4f5c',pose:'belly',item:'strip',age:1,m:'worry'},
+  say:'Dok, perut saya sakit sejak semalam. Mungkin cuma masuk angin, tapi kok nggak hilang-hilang ya…',
+  z:[['Kepala','Badannya hangat. Suhu 38,2°C dan wajahnya tampak pucat.'],['Perut','Nyeri awalnya di ulu hati, kini pindah ke perut kanan bawah. Makin sakit saat ditekan lalu dilepas, dan saat batuk.'],['Tangan','Membawa obat maag dan pereda nyeri yang sudah ia minum dua hari. Nyerinya tidak membaik.']],
+  L:{lk:'“Kita cek darah lengkap dan USG perut sekarang untuk memastikan penyebabnya.”',rs:'“Pulang dan istirahat dulu. Perutnya biar tenang.”',ob:'“Ini obat maag dan pereda nyeri dosis lebih kuat. Diminum teratur ya.”'},
+  R:{lk:'Baik, Dok. Kalau memang perlu pemeriksaan lebih lanjut.',rs:'Tapi Dok, sakitnya makin menjadi… ya sudah, Dok.',ob:'Baik, Dok. (nyerinya reda sebentar, tapi malamnya makin parah)'},
+  rep:'Seperti Ale di video. Kalau penyebabnya belum pasti, gali faktanya dan koordinasi dengan bagian terkait.'},
+ {name:'Bu Rina',role:'Pasien · 45 thn',time:'10:00',title:'Pusing Sejak Pagi',ans:'ob',zone1:'torso',
+  p:{sk:'#f0c7a1',hr:'#3a2418',hs:'bun',top:'blouse',sh:'#f6d9e1',longS:1,pt:'#3b4a6b',skirt:1,pose:'head',item:'box',m:'worry',shoe:'#5a3a2e'},
+  say:'Dok, kepala saya pusing sejak pagi. Mungkin kurang tidur, atau saya terlalu banyak pikiran ya?',
+  z:[['Kepala','Pusing berat di tengkuk. Tekanan darah diukur dua kali: 170/100, keduanya tinggi.'],['Dada','Tidak nyeri dada dan tidak sesak. Tidurnya cukup 7 jam, jadi bukan soal kurang tidur.'],['Tangan','Ia punya obat tekanan darah rutin, tapi sudah 3 hari lupa meminumnya.']],
+  L:{lk:'“Kita cek darah dan rontgen kepala dulu untuk memastikan.”',rs:'“Istirahat saja di rumah, jangan banyak pikiran.”',ob:'“Ini obat penurun tekanan darah. Minum rutin tiap hari, kita kontrol lagi minggu depan.”'},
+  R:{lk:'Dicek sampai segitunya, Dok? (hasilnya normal dan pusingnya belum tertangani)',rs:'Baik, Dok. (pusingnya berlanjut dan tekanan darahnya tak terkontrol)',ob:'Oh, ternyata karena lupa minum obat ya! Terima kasih, Dok. Saya jadi agak lega.'},
+  rep:'Seperti anggota tim yang butuh bantuan. Beri arahan dan solusi yang konkret.'},
+ {name:'Mas Bima',role:'Pasien · 28 thn',time:'13:00',title:'Nyeri Punggung',ans:'rs',zone1:'torso',
+  p:{sk:'#d9a77d',hr:'#14151b',hs:'short',top:'tee',sh:'#6c5ce7',pt:'#36507a',m:'sad',shoe:'#e9eef2'},
+  say:'Dok, punggung bawah saya nyeri sejak kemarin. Takutnya ada yang serius, atau ini cuma pegal biasa ya…',
+  z:[['Kepala','Tidak demam dan tidak ada mati rasa di kaki. Ia berjalan normal.'],['Punggung','Nyeri otot saat membungkuk dan hilang saat berbaring. Tidak ada bengkak atau memar.'],['Tangan','Kemarin ia mengangkat galon dan barang berat dengan posisi salah. Belum istirahat sama sekali.']],
+  L:{lk:'“Kita cek darah dan rontgen punggung dulu.”',rs:'“Ototnya cuma tegang. Istirahat dulu dua hari, kompres dengan air hangat, dan jangan angkat yang berat-berat dulu.”',ob:'“Ini obat pereda nyeri kuat dan obat minum rutin.”'},
+  R:{lk:'Sampai dirontgen segala, Dok? Cuma pegal… (hasilnya normal, buang waktu dan biaya)',rs:'Oh, jadi cuma perlu istirahat ya. Terima kasih, Dok!',ob:'Baik, Dok. (nyerinya tertutup sebentar, tapi ototnya tetap tegang karena terus dipakai)'},
+  rep:'Seperti Ale di video yang salah menulis tanggal. Cukup diingatkan dan diperbaiki, jangan malah menyerang orangnya.'},
+ {name:'Bu Sari',role:'Pasien · 38 thn',time:'15:30',title:'Demam dan Lemas',ans:'rs',zone1:'torso',
+  p:{sk:'#f2cba8',hr:'#2a1a12',hs:'long',top:'blouse',sh:'#2f9e95',longS:1,pt:'#4b4560',skirt:1,item:'tissue',m:'worry',flush:1,shoe:'#3a2a24'},
+  say:'Dok, badan saya lemas dan agak demam. Mungkin cuma kecapekan, tapi saya agak ragu, baiknya gimana ya?',
+  z:[['Kepala','Demam 37,9°C. Tenggorokan sedikit gatal, tanpa bercak atau bengkak di amandel.'],['Badan','Pilek dan batuk kering. Nafsu makan masih baik dan tidak sesak.'],['Tangan','Dua hari lalu ia kehujanan dan teman serumahnya juga pilek. Ini baru hari kedua sakitnya.']],
+  L:{lk:'“Kita cek darah lengkap dan swab tenggorokan dulu.”',rs:'“Ini Ibu kena flu. Istirahat yang cukup, banyak minum air, dan makan-makanan yang bergizi ya.”',ob:'“Ini antibiotik dan obat kuat untuk demamnya.”'},
+  R:{lk:'Dicek semuanya, Dok? Padahal cuma pilek… (hasilnya normal, saya malah makin cemas)',rs:'Oh begitu, Dok. Jadi tenang rasanya.',ob:'Baik, Dok. (bukan obat yang dibutuhkan, tubuhnya malah lemas karena efek sampingnya)'},
+  rep:'Seperti anggota tim yang jawabannya belum ketemu dan ragu mau lapor. Tenangkan dulu, beri waktu, dan pantau terus progresnya.'},
+ {name:'Pak Doni',role:'Pasien · 47 thn',time:'18:00',title:'Kaki Bengkak dan Nyeri',ans:'lk',zone1:'legs',
+  p:{sk:'#c99870',hr:'#4a2f1a',hs:'short',top:'shirt',sh:'#f2792b',pt:'#857556',item:'bottle',leg:'swell',m:'scared',age:1},
+  say:'Dok… kaki saya agak bengkak dan nyeri. Kemaren-kemaren sempet luka, harusnya nggak kenapa-kenapa kan ya, Dok?',
+  z:[['Kepala','Demam 38,5°C dan menggigil sejak semalam.'],['Kaki','Betis kanan merah dan hangat, ada benjolan berisi nanah yang mengeras dan makin besar.'],['Tangan','Sudah 5 hari ia minum antibiotik dari warung, tapi benjolannya malah membesar.']],
+  L:{lk:'“Kita ambil sampel darah dan cek nanahnya ya, supaya tahu penyebab pastinya dan langkah penanganan apa yang paling tepat.”',rs:'“Kakinya diistirahatkan dan ditinggikan saja dulu.”',ob:'“Tambah dosis antibiotiknya dan oleskan salep.”'},
+  R:{lk:'Baik, Dok. Iya sih, sebenernya kemaren itu luka kena besi yang udah berkarat. Semoga nggak parah ya, Dok.',rs:'Baik, Dok. (bengkaknya terus membesar)',ob:'Baik, Dok. (salepnya tidak menembus, nanah menumpuk dan demamnya naik lagi)'},
+  rep:'Seperti anggota tim yang “memoles” laporan biar aman. Gali pelan-pelan, tanpa menyerang orangnya.'}
 ];
-const ACT={
- op:{ic:'🔪',lb:'Operasi',tag:'🔪 Operasi',type:'red',d:-12,
-  f:'Hmm, ini <b>Operasi</b>. Terlalu agresif, padahal pasien belum diperiksa. Pasien jadi takut dan mungkin enggan cerita lagi.',
-  mt:'Operasi: respons keras, orangnya yang diserang',mp:'Seperti respons Pak Dedi kepada Ale: laporan dibalas dengan menyalahkan pribadi. Kalau jadi pola, tim belajar menyaring laporan dan tumbuhlah budaya ABS (Asal Bapak/Ibu Senang).'},
- rs:{ic:'🛏️',lb:'Istirahat',tag:'🛏️ Istirahat',type:'yellow',d:-4,
-  f:'Ini <b>Istirahat</b> saja. Pasien pulang tanpa diperiksa, jadi keluhannya belum tertangani.',
-  mt:'Istirahat: respons acuh, laporan ditinggalkan',mp:'Seperti “udah, tinggalin aja laporannya”. Masalah tidak digarap dan pelapor merasa tidak dianggap. Tim belajar: kalau masalahnya belum kelar, mending jangan lapor dulu.'},
- ob:{ic:'💊',lb:'Obat',tag:'💊 Obat',type:'blue',d:10,
-  f:'Ini <b>Obat</b>. Pasien tertangani dan lebih tenang. Tapi coba periksa pasiennya dulu, obatnya bisa lebih tepat.',
-  mt:'Obat: respons positif, fokus ke masalah',mp:'Seperti Pak Dedi setelah jeda 3 detik: tanya faktanya, minta koordinasi, minta update. Tegas tetap boleh, asal sasarannya masalah, bukan orang.'},
- rc:{ic:'🧪',lb:'Obat Racikan',tag:'🧪 Obat Racikan',type:'blue',d:16,
-  f:'Hebat, {s} {n}! Ini <b>Obat Racikan</b>: kamu memeriksa dulu, baru memberi terapi sesuai kondisi pasien.',
-  mt:'Obat Racikan: periksa dulu, baru obati',mp:'Kamu memakai tiga pertanyaan sebelum bereaksi: apa faktanya, apa yang harus dicapai dan dijaga, apa respons paling tepat sekarang. Itu yang membuat orang berani melapor lagi.'}};
-const EFX={
- op:'⚠️ <b>Efek kebiasaan:</b> tiga kali Operasi berturut-turut! Kabar menyebar bahwa dokter jaga ini menakutkan. Pasien berikutnya akan menutup diri.',
- rs:'⚠️ <b>Efek kebiasaan:</b> tiga kali Istirahat berturut-turut! Keluhan pasien menumpuk dan kondisinya memburuk.',
- ob:'⚠️ <b>Efek kebiasaan:</b> tiga kali Obat generik berturut-turut. Pasien mulai kebal terhadap obat yang sama, perlu diperiksa dulu agar tepat.'};
-const EFXD={op:-6,rs:-6,ob:-4};
+const ZI={Kepala:'🌡️',Perut:'🩺',Dada:'🫁',Punggung:'🦴',Badan:'🩺',Kaki:'🦵',Tangan:'✋'};
+const MEAN={
+ lk:{ok:['Pemeriksaan lanjutan tepat: Gali fakta lebih dalam','Tenangkan diri dulu, lalu cari tahu faktanya.'],
+     no:['Pemeriksaan lanjutan kurang tepat','Faktanya sudah jelas. Pemeriksaan tambahan malah bikin orang merasa laporannya diragukan.']},
+ ob:{ok:['Obat tepat: Bantuan sesuai kebutuhan','Cari tahu faktanya, lalu fokus ke solusi.'],
+     no:['Obat kurang tepat','Solusi tanpa tanya fakta dulu bisa meleset dari yang dibutuhkan.']},
+ rs:{ok:['Istirahat tepat: Fokus ke faktanya',''],
+     no:['Istirahat kurang tepat','Masalahnya perlu ditangani, tapi malah ditinggal. Tim bisa belajar: mending jangan lapor.']}};
+const HAB={lk:'Periksa Lanjut',rs:'Istirahat',ob:'Obat'};
+const EFXM={lk:['Dokter serba curiga','Tiga pasien berturut-turut langsung kamu beri Pemeriksaan Lanjutan. Pasien merasa keluhannya selalu diragukan.'],
+  rs:['Pasien merasa diabaikan','Tiga pasien berturut-turut langsung kamu suruh Istirahat. Pasien merasa keluhannya tidak dianggap.'],
+  ob:['Resep serba sama','Tiga pasien berturut-turut langsung kamu beri Obat. Pasien menganggap semua keluhan dijawab dengan resep yang sama.']};
+const S={safe:0,streak:{c:null,n:0},hist:[],closedNext:false};
 
-const START=40,HAB={op:'Operasi',rs:'Istirahat',ob:'Obat'};
-const EFXM={op:['Dokter yang menakutkan','Kabar menyebar bahwa dokter jaga ini menakutkan. Pasien berikutnya akan menutup diri.'],rs:['Keluhan menumpuk','Tiga kali Istirahat berturut-turut. Keluhan pasien menumpuk dan kondisinya memburuk.'],ob:['Kebal obat','Tiga kali Obat generik berturut-turut. Pasien mulai kebal terhadap obat yang sama, perlu diperiksa dulu agar tepat.']};
-const S={safe:START,streak:{c:null,n:0},hist:[],closedNext:false};
-function chips(){const t=$('#trust');t.classList.remove('hide');t.innerHTML=`🤝 <span>${S.safe}%</span><i class="mb"><b style="width:${S.safe}%;background:${S.safe>80?'#1f9e5a':S.safe>=50?'#f5a524':'#e5484d'}"></b></i>`;
-  const h=$('#hab');if(!S.streak.c){h.classList.add('hide');return}h.classList.remove('hide');const n=Math.min(S.streak.n,3);h.innerHTML=`🔁 ${HAB[S.streak.c]} `+[0,1,2].map(i=>`<u class="${i<n?'on':''}"></u>`).join('');h.classList.toggle('warn',S.streak.n>=3)}
+/* ================= UTILITAS UI ================= */
+function hud(show){$('#hud').classList.toggle('hide',!show)}
+function setPlace(t){$('#place').innerHTML=t}
+function setTrust(){$('#tv').textContent=S.safe+'%';$('#tb').style.width=S.safe+'%'}
 function hit(id){const c=$(id);c.classList.remove('hit');void c.offsetWidth;c.classList.add('hit')}
+function habChip(){const h=$('#hab');if(!S.streak.c||S.streak.n<2){h.classList.add('hide');return}h.classList.remove('hide');const n=Math.min(S.streak.n,3);
+  h.innerHTML=`🔁 ${HAB[S.streak.c]} `+[0,1,2].map(i=>`<u class="${i<n?'on':''}"></u>`).join('');h.classList.toggle('warn',S.streak.n>=3)}
+function say(L,html){$('#sWho').innerHTML=`${L.who}${L.role?`<small>${L.role}</small>`:''}`;$('#sAv').innerHTML=L.av;const p=$('#sTxt');p.innerHTML=html;p.classList.remove('fade');void p.offsetWidth;p.classList.add('fade')}
+function dialog(lines,final){return new Promise(res=>{const st=$('#story'),b=$('#sBtn');st.classList.add('on');let i=0;
+  const show=()=>{const L=lines[i];if(L.fn)L.fn();say(L,L.t);const last=i===lines.length-1;b.textContent=(last?final:'Lanjut')+' ▶';b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop');
+    b.onclick=()=>{snd.click();if(last){b.onclick=null;st.classList.remove('on');res()}else{i++;show()}}};show()})}
+async function cine(ic,t,p,sub,fn){$('#cI').textContent=ic;$('#cT').textContent=t;$('#cP').textContent=p;$('#cS').textContent=sub||'';$('#notif').classList.remove('on');
+  $('#wCine').classList.add('on');$('#cine').classList.add('on');snd.whoosh();await wait(1500);fn&&fn();await wait(250);$('#wCine').classList.remove('on');$('#cine').classList.remove('on');await wait(550)}
+let toastT;function toast(m,type){const t=$('#toast');t.className='on '+type;t.innerHTML=m;clearTimeout(toastT);toastT=setTimeout(()=>t.className='',2400)}
+function floatText(x,y,t,c){const e=document.createElement('div');e.className='ftx';e.textContent=t;e.style.left=x+'px';e.style.top=y+'px';e.style.color=c;stage.appendChild(e);
+  e.animate([{transform:'translate(-50%,0) scale(.5)',opacity:0},{transform:'translate(-50%,-16px) scale(1.1)',opacity:1,offset:.25},{transform:'translate(-50%,-50px)',opacity:0}],{duration:1500,easing:'ease-out'}).onfinish=()=>e.remove()}
+function modal(ic,t,p,pen){return new Promise(res=>{$('#mIc').textContent=ic;$('#mT').textContent=t;$('#mP').textContent=p;$('#mPen').textContent=pen;app.classList.add('dim');$('#modal').classList.add('on');
+  $('#mBtn').onclick=()=>{snd.click();$('#modal').classList.remove('on');app.classList.remove('dim');res()}})}
+function notif(html,type){$('#nAv').innerHTML=head(DOC);$('#nTx').innerHTML=html;const n=$('#notif');n.className='on '+(type||'');}
+const hideNotif=()=>$('#notif').className='';
+let remT;function remind(t,ms){const r=$('#remind');r.innerHTML=t;r.classList.remove('on');void r.offsetWidth;r.classList.add('on');clearTimeout(remT);if(ms)remT=setTimeout(()=>r.classList.remove('on'),ms)}
+const remindOff=()=>{clearTimeout(remT);$('#remind').classList.remove('on')};
+function handAt(el,dx=0,dy=0){if(!el)return handOff();const r=rectStage(el);const h=$('#hand');h.style.transform=`translate(${r.x+r.w/2+dx}px,${r.y+r.h/2+dy}px)`;h.classList.add('on')}
+const handOff=()=>$('#hand').classList.remove('on');
 
-/* ===== Start ===== */
-$('#cM').firstElementChild.innerHTML=person({coat:1,sk:'#f1c9a0',hr:'#2b1d14',m:'happy'},'viewBox="10 8 80 90"');
-$('#cF').firstElementChild.innerHTML=person({coat:1,sk:'#f1c9a0',hr:'#2b1d14',fem:1,m:'happy'},'viewBox="10 8 80 90"');
-function chk(){$('#btnStart').disabled=!(salam&&$('#nameIn').value.trim())}
-$$('.cc').forEach(b=>b.onclick=()=>{snd.click();salam=b.dataset.s;$$('.cc').forEach(x=>x.classList.toggle('sel',x===b));chk()});
-$('#nameIn').oninput=chk;$('#nameIn').onkeydown=e=>{if(e.key==='Enter'&&!$('#btnStart').disabled)$('#btnStart').click()};
-$('#btnStart').onclick=()=>{nameP=$('#nameIn').value.trim().replace(/\s+/g,' ');snd.good();run()};
+/* ================= RUANG PERIKSA ================= */
+let phase='',found=[false,false,false],closed=false,curP=0,guideOn=false;
+function ptSVG(P,m){const p={...P.p,m:m||P.p.m};
+  const z1=P.zone1==='legs'?`<rect class="zn" data-z="1" x="36" y="142" width="48" height="84" rx="10"/>`:`<rect class="zn" data-z="1" x="31" y="70" width="58" height="66" rx="10"/>`;
+  const z2=`<rect class="zn" data-z="2" x="80" y="124" width="28" height="42" rx="10"/>`+(p.pose==='down'||!p.pose?`<rect class="zn" data-z="2" x="12" y="124" width="28" height="42" rx="10"/>`:'');
+  return person(p).replace('</svg>',`<rect class="zn" data-z="0" x="34" y="8" width="52" height="60" rx="12"/>${z1}${z2}</svg>`)}
+function renderPt(m){const P=PTS[curP];$('#pt').innerHTML=ptSVG(P,m);found.forEach((f,i)=>{if(f)$$(`#pt .zn[data-z="${i}"]`).forEach(z=>z.classList.add('done'))})}
+function buildRoom(i){const P=PTS[i];curP=i;closed=S.closedNext;S.closedNext=false;found=[false,false,false];
+  const pt=$('#pt');pt.className='fig idle';renderPt(closed?'neutral':P.p.m);
+  $('#cNo').textContent=`PASIEN ${i+1}/${PTS.length}`;$('#cName').textContent=P.name;$('#cRole').textContent=P.role;$('#cKel').innerHTML=`Keluhan: <b>${P.title}</b>`;
+  $('#slots').innerHTML=P.z.map((z,k)=>`<button class="slot" data-z="${k}"><div class="sl"><i>${ZI[z[0]]||'🩺'}</i>${z[0]}<em>BELUM</em></div><p>Sentuh bagian ini atau tubuh pasien untuk memeriksa.</p></button>`).join('');
+  $('#chart').classList.remove('nudge');
+  $('#plate').textContent='dr. '+nameP;
+  const order=['lk','ob','rs'].sort(()=>Math.random()-.5);
+  $('#tray').innerHTML=order.map(k=>`<button class="tool" data-k="${k}">${ICON[k]}<b>${TOOLLB[k]}</b></button>`).join('');
+  $('#trayHd').classList.remove('on');$('#tray').classList.remove('on');
+}
+function examine(i,ev){
+  if(phase!=='choose')return;
+  const P=PTS[curP],slot=$(`.slot[data-z="${i}"]`);
+  if(ev&&ev.target.closest('#pt')){const box=$('#pt'),r=box.getBoundingClientRect(),sc=r.width/box.offsetWidth||1;const pg=document.createElement('i');pg.className='ping';pg.style.left=(ev.clientX-r.left)/sc+'px';pg.style.top=(ev.clientY-r.top)/sc+'px';box.appendChild(pg);setTimeout(()=>pg.remove(),700)}
+  if(found[i])return;
+  if(closed){slot.classList.add('shut');$('em',slot).textContent='DITOLAK';$('p',slot).textContent='🔒 Pasien menutup diri dan memilih tidak bercerita. Kepercayaannya sudah retak.';snd.bad();return}
+  found[i]=true;snd.scan();slot.classList.add('found');$('em',slot).textContent='✓ DIPERIKSA';$('p',slot).innerHTML=fill(P.z[i][1]);
+  $$(`#pt .zn[data-z="${i}"]`).forEach(z=>z.classList.add('done'));
+  slot.animate([{background:'rgba(47,158,149,.28)'},{background:'transparent'}],{duration:900});
+  if(found.every(Boolean)){toast('🩺 Pemeriksaan lengkap!','good');snd.good()}
+  if(guideOn)guideStep();else{$('#chart').classList.remove('nudge');remindOff()}
+}
+$('#pt').addEventListener('click',e=>{const z=e.target.closest&&e.target.closest('.zn');if(z)examine(+z.dataset.z,e)});
+$('#slots').addEventListener('click',e=>{const b=e.target.closest('.slot');if(b)examine(+b.dataset.z)});
 
-/* ===== Pemeriksaan & tindakan ===== */
-let phase='',found=[false,false,false],closed=false,curP=0,order=[];
-function buildRoom(i){const P=PTS[i];$('#roomBg').innerHTML=roomSVG(i);closed=S.closedNext;S.closedNext=false;found=[false,false,false];
-  $('#pt').className='idle';$('#pt').innerHTML=ptSVG(closed?{...P.p,m:'neutral'}:P.p);$('#syms').innerHTML='';
-  $('#ptag').textContent=`${P.name} · ${P.role} · ${P.title}`;$('#plate').textContent='dr. '+nameP;$('#coach').classList.remove('on');
-  order=['op','rs','ob'].sort(()=>Math.random()-.5);
-  $('#tray').innerHTML=order.map(k=>`<button class="tool" data-k="${k}"><i>${ACT[k].ic}</i><span>${k==='op'?'Jadwalkan Operasi':k==='rs'?'Suruh Istirahat':'Resepkan Obat'}</span></button>`).join('')}
-$('#pt').addEventListener('click',e=>{const z=e.target.closest&&e.target.closest('.zn');if(!z||phase!=='choose')return;const i=+z.dataset.z,P=PTS[curP],box=$('#pt'),r=box.getBoundingClientRect(),sc=r.width/box.offsetWidth||1;
-  const pg=document.createElement('i');pg.className='ping';pg.style.left=(e.clientX-r.left)/sc+'px';pg.style.top=(e.clientY-r.top)/sc+'px';box.appendChild(pg);setTimeout(()=>pg.remove(),700);
-  if(found[i])return;found[i]=true;const d=document.createElement('div');
-  if(closed){d.className='sym shut';d.innerHTML=`<b>🩺 ${P.z[i][0]}:</b> Pasien menutup diri dan memilih tidak bercerita. Kepercayaannya sudah retak.`;found=[false,false,false]}
-  else{d.className='sym';d.innerHTML=`<b>🩺 ${P.z[i][0]}:</b> ${fill(P.z[i][1])}`;sfx(700+i*120,.12)}
-  $('#syms').appendChild(d);
-  if(!closed&&found.every(Boolean)){const b=$('.tool[data-k="ob"]');b.classList.add('rc');b.innerHTML='<i>🧪</i><span>Obat Racikan</span>';toast('🧪 Diagnosis lengkap! Resep racikan terbuka','good');snd.good()}});
-function pickAction(){return new Promise(res=>{phase='choose';$('#tray').classList.add('on');$('#coach').classList.add('on');
-  $$('.tool').forEach(b=>b.onclick=()=>{if(phase!=='choose')return;phase='';$('#tray').classList.remove('on');$('#coach').classList.remove('on');res(b.dataset.k)})})}
+/* Pemandu visual: hanya di pasien pertama */
+function guideStep(){
+  const k=found.findIndex(f=>!f);
+  if(k>=0&&!closed){$('#pt').classList.add('guide');handAt($(`#pt .zn[data-z="${k}"]`),0,4);remind('👆 Sentuh <b>'+PTS[curP].z[k][0].toLowerCase()+'</b> pasien untuk memeriksanya')}
+  else{$('#pt').classList.remove('guide');handAt($('#tray .tool:not(.x)'),0,0);remind('✅ Sekarang pilih tindakan yang paling tepat')}
+}
+function guideStop(){guideOn=false;$('#pt').classList.remove('guide');handOff();remindOff()}
+function pickAction(first){return new Promise(res=>{
+  phase='choose';$('#tray').classList.add('on');$('#trayHd').classList.add('on');
+  $('#trayHd').textContent=first?'🧰 Pilih tindakan untuk pasien:':'🔁 Coba pilih tindakan lain:';
+  if(curP===0){guideOn=true;guideStep()}
+  else if(first&&!found.some(Boolean)){remind('🩺 Ingat, periksa pasien dulu sebelum memilih tindakan!',5200);$('#chart').classList.add('nudge')}
+  $$('#tray .tool').forEach(b=>b.onclick=()=>{if(phase!=='choose')return;phase='';snd.click();guideStop();$('#chart').classList.remove('nudge');hideNotif();
+    $('#tray').classList.remove('on');$('#trayHd').classList.remove('on');res(b.dataset.k)})})}
 
-/* ===== Satu pasien ===== */
-async function playPatient(i){curP=i;const P=PTS[i];
-  await cine(P.time,RT[i][0],`Pasien ${i+1} dari ${PTS.length}`,()=>{buildRoom(i);showScene('sc-room');setPlace(P.time+' · '+RT[i][0])});
+/* ================= SATU PASIEN ================= */
+async function playPatient(i){const P=PTS[i];
+  await cine('🩺',`${P.time} WIB`,'Poli Umum',`Pasien ${i+1} dari ${PTS.length}`,()=>{
+    $('#denny').classList.add('hide');setWorld('room');setDecor('room');$('#roomUI').classList.remove('hide');buildRoom(i);$('#pt').classList.remove('hide');
+    setPlace(`🕗 ${P.time} · Pasien ${i+1}/${PTS.length}`)});
+  $('#pt').animate([{transform:'translateX(90px)',opacity:0},{transform:'none',opacity:1}],{duration:650,easing:'cubic-bezier(.22,1,.36,1)'});
   const pav=m=>head({...P.p,m});
-  await dialog([{who:P.name+' · '+P.role,av:pav(P.p.m),t:closed?'Saya baik-baik saja kok, Dok. Nggak ada keluhan… cuma mampir.':fill(P.say)}],'Lanjut');
-  const k=await pickAction();let act=k;if(k==='ob'&&!closed&&found.every(Boolean))act='rc';
-  const cat=act==='rc'?'ob':act;S.streak=S.streak.c===cat?{c:cat,n:S.streak.n+1}:{c:cat,n:1};
-  let d=ACT[act].d,ex=0;if(S.streak.n>=3&&(cat!=='ob'||act==='ob')){ex=EFXD[cat];d+=ex}if(cat==='op'&&S.streak.n>=3)S.closedNext=true;
-  const A=ACT[act],mood=act==='op'?'scared':act==='rs'?'sad':'happy';
-  await dialog([{...ME(),t:fill(P[act][0])},{who:P.name,av:pav(mood),t:fill(P[act][1]),fn:()=>{
-    const pt=$('#pt');pt.innerHTML=ptSVG({...P.p,m:mood});pt.className=act==='op'?'shake':act==='rc'?'hop':'idle';
-    S.safe=Math.max(0,Math.min(100,S.safe+d));chips();hit('#trust');hit('#hab');
-    toast(`🤝 Kepercayaan ${d>0?'+':''}${d}%`,d>0?'good':'bad');d>0?snd.good():snd.bad();
-    $('#nAv').innerHTML=head(DOC);$('#nTx').innerHTML=fill(A.f);$('#notif').classList.add('on')}}],'Lanjut');
-  S.hist.push({act,i,d,nf:found.filter(Boolean).length});
-  if(ex){$('#notif').classList.remove('on');await modal('⚠️','Efek Kebiasaan: '+EFXM[cat][0],EFXM[cat][1],ex)}
+  await dialog([{who:P.name,role:P.role,av:pav(closed?'neutral':P.p.m),t:closed?'Saya baik-baik saja kok, Dok. Nggak ada keluhan… cuma mampir.':P.say}],'Periksa');
+  let tries=0,first=null;
+  while(true){
+    const act=await pickAction(tries===0);tries++;if(!first){first=act;
+      S.streak=S.streak.c===act?{c:act,n:S.streak.n+1}:{c:act,n:1};habChip()}
+    const ok=act===P.ans,pts=tries===1?20:15;
+    const mood=ok?'happy':act==='rs'?'sad':'worry';
+    await dialog([{...ME(),t:P.L[act]},{who:P.name,role:P.role,av:pav(mood),t:P.R[act],fn:()=>{
+      renderPt(mood);$('#pt').className='fig '+(ok?'hop':'shake');
+      if(ok){S.safe=Math.min(100,S.safe+pts);setTrust();hit('#trust');snd.good();
+        toast(tries===1?'✅ Tepat di pilihan pertama!<br>😊 Kepuasan +20%':'✅ Tepat!<br>😊 Kepuasan +15%','good');
+        const r=rectStage($('#trust'));floatText(r.x+r.w/2,r.y+r.h+8,'+'+pts+'%','#1f9e5a');
+        $$('#tray .tool').forEach(b=>b.classList.toggle('ok',b.dataset.k===act));
+        notif('<b>Tepat!</b> '+MEAN[act].ok[0].replace(/^[^:]*: ?/,'').replace(/^./,c=>c.toUpperCase())+'.','good')}
+      else{snd.bad();$(`#tray .tool[data-k="${act}"]`).classList.add('x');
+        toast('⚠️ Kurang tepat<br><small>Pilih tindakan lainnya yang tepat</small>','mid');
+        notif(`<b>${MEAN[act].no[0]}.</b> Cek lagi rekam medisnya, lalu pilih tindakan lain.`,'bad')}}}],ok?'Lanjut':'Pilih lagi');
+    if(ok){S.hist.push({i,first,tries,pts,nf:found.filter(Boolean).length,closed});break}
+    renderPt(P.p.m);$('#pt').className='fig idle';
+  }
+  hideNotif();$('#pt').className='fig idle';
+  const fx=S.streak.n>=3&&i<PTS.length-1;
+  if(fx){S.closedNext=true;await modal('⚠️','Efek Kebiasaan: '+EFXM[S.streak.c][0],EFXM[S.streak.c][1],'Pasien berikutnya menutup diri');S.streak={c:null,n:0};habChip()}
 }
 
-/* ===== Alur utama ===== */
-async function run(){
-  $('#hud').style.display='';showScene('sc-open');$('#sc-open').insertAdjacentHTML('afterbegin',hallSVG());$('#openFerdi').innerHTML=person(DOC);
-  await dialog([{...FER,t:`Selamat pagi, Dokter ${salam} <b>${esc(nameP)}</b>! Saya dr. Ferdi, Kepala RS Sehat Sentosa. Hari ini kamu dokter jaga.`},
-    {...FER,t:`Akan ada <b>5 pasien</b> datang bergantian. Pilih tindakan yang paling <b>kamu banget, secara spontan ya</b>!`},
-    {...FER,t:`Satu pesan: pasien kadang <b>nggak cerita semuanya</b>. Kalau penasaran, kamu bisa memeriksanya sendiri. 😉<br>Targetnya: bikin <b>kepercayaan pasien</b> naik!`}],'Mulai Visit');
-  chips();
-  for(let i=0;i<PTS.length;i++)await playPatient(i);
-  $('#trust').classList.add('hide');$('#hab').classList.add('hide');
-  await cine('Akhir shift','Ruang Dokter','Waktunya evaluasi',()=>{setPlace('');showScene('sc-reflect');$('#sc-reflect').insertAdjacentHTML('afterbegin',hallSVG());reflect()});
-}
+/* ================= BRIEFING AWAL ================= */
+function startScreen(){return new Promise(res=>{
+  const c=document.createElement('div');c.className='card sCard';
+  c.innerHTML=`<div class="logo"><svg viewBox="0 0 40 40"><rect x="14" y="4" width="12" height="32" rx="3" fill="#fff"/><rect x="4" y="14" width="32" height="12" rx="3" fill="#fff"/><rect x="17" y="7" width="6" height="26" rx="2" fill="#e5484d"/><rect x="7" y="17" width="26" height="6" rx="2" fill="#e5484d"/></svg></div>
+    <h1>Root Cause Clinic<span>Klinik Akar Masalah</span></h1><p class="sub">Temukan faktanya, tangani masalahnya</p>
+    <div class="lbl">Selamat datang! Pilih sapaanmu dulu ya</div>
+    <div class="chars"><button class="cc" data-s="Bapak">${bust({coat:1,sh:'#d6ecff',sk:'#efc39b',hr:'#1c1510',hs:'short',m:'happy'})}Bapak</button><button class="cc" data-s="Ibu">${bust({coat:1,sh:'#ffd9e4',sk:'#f2cba8',hr:'#22160f',hs:'bun',m:'happy',tie:0})}Ibu</button></div>
+    <input id="nameIn" maxlength="18" placeholder="Ketik nama panggilanmu..." autocomplete="off" aria-label="Nama" enterkeyhint="go">
+    <div class="pv" id="pv">Pilih sapaan, lalu tulis nama panggilanmu.</div>
+    <button class="btn orange wide" id="btnStart" disabled>Mulai Gamifikasi ▶</button>
+    <div class="snd">🎧 Nyalakan suara biar makin seru</div>`;
+  $('#ui').appendChild(c);
+  c.animate([{opacity:0,transform:'translateY(-40%) scale(.94)'},{opacity:1,transform:'translateY(-50%)'}],{duration:600,easing:'cubic-bezier(.34,1.56,.64,1)'});
+  const inp=$('#nameIn'),go=$('#btnStart'),pv=$('#pv');
+  const chk=()=>{const n=inp.value.trim();go.disabled=!(salam&&n);pv.innerHTML=salam&&n?`Kamu akan dipanggil <b>${esc(salam)} ${esc(n.replace(/\s+/g,' '))}</b> 👋`:!salam?'Pilih sapaan: Bapak atau Ibu.':'Sekarang tulis nama panggilanmu.'};
+  $$('.cc',c).forEach(b=>b.onclick=()=>{Snd.init();snd.pop();salam=b.dataset.s;$$('.cc').forEach(x=>x.classList.toggle('sel',x===b));chk()});
+  inp.oninput=chk;inp.onkeydown=e=>{if(e.key==='Enter'&&!go.disabled){e.preventDefault();go.click()}};
+  go.onclick=async()=>{nameP=inp.value.trim().replace(/\s+/g,' ').slice(0,18);inp.blur();Snd.init();snd.win();
+    await c.animate([{opacity:1},{opacity:0,transform:'translateY(-46%) scale(.95)'}],{duration:280,fill:'forwards'}).finished;c.remove();fit(true);res()};
+})}
+function howTo(){return new Promise(res=>{
+  app.classList.add('dim');
+  const c=document.createElement('div');c.className='card gCard';
+  c.innerHTML=`<h2>📋 Instruksi Permainan</h2>
+    <div class="steps">
+     <div><span class="n">👂</span><div><b>Dengarkan keluhan pasien</b></div></div>
+     <div><span class="n">🩺</span><div><b>Periksa pasien</b></div></div>
+     <div><span class="n">🧰</span><div><b>Pilih tindakan untuk pasien</b></div></div>
+    </div>
+    <button class="btn orange wide" id="go2">Siap, buka praktik ▶</button>`;
+  $('#ui').appendChild(c);
+  c.animate([{opacity:0,transform:'translateY(-40%) scale(.94)'},{opacity:1,transform:'translateY(-50%)'}],{duration:550,easing:'cubic-bezier(.34,1.56,.64,1)'});
+  $('#go2').onclick=async()=>{snd.click();app.classList.remove('dim');await c.animate([{opacity:1},{opacity:0}],{duration:250,fill:'forwards'}).finished;c.remove();res()};
+})}
 
-/* ===== Kilas balik ===== */
-const CLOSING='Rasa aman tim dibangun dari cara kita merespons kabar buruk. Kalau pelapor yang diserang, tim akan belajar menyaring laporan, dan kondisi lapangan yang sebenarnya jadi tidak ketahuan. Fokus ke <b>masalahnya</b>. Tegas tetap boleh, asal bukan menyerang <b>orangnya</b>.';
-let dI=0;function reflect(){dI=0;card()}
-function card(){const N=S.hist.length+2;if(dI>=N)return final();let c,fl=false;
-  if(dI===0)c=`<div class="face"><span class="k">Plot twist 🎬</span><h3>Pasienmu sebenarnya adalah anggota tim.</h3><div class="vid" style="text-align:left">🧑‍⚕️ Dokter = kamu sebagai atasan<br>🧍 Pasien = anggota tim yang membawa kabar buruk<br>🗣️ Keluhan = laporan masalah di pekerjaan<br>🔪 Operasi = respons keras, menyerang orangnya<br>💊 Obat = respons positif, fokus ke masalah<br>🛏️ Istirahat = respons acuh, laporan diabaikan<br>🩺 Memeriksa pasien = bertanya dulu sebelum bereaksi</div><p>Yuk, lihat arti keputusanmu satu per satu.</p><button class="btn orange" id="dn">Mulai kilas balik ▶</button></div>`;
-  else if(dI<=S.hist.length){fl=true;const h=S.hist[dI-1],P=PTS[h.i],A=ACT[h.act];
-    c=`<div class="face"><span class="k">Kilas balik · Pasien ${h.i+1}</span><div class="ill">${head({...P.p,m:h.act==='rc'||h.act==='ob'?'happy':P.p.m})}</div><h3>${P.name}: ${P.title}</h3><p>Keputusanmu: <b>${A.ic} ${A.lb}</b></p><span class="tap">Ketuk kartu untuk melihat maknanya</span></div>
-    <div class="face back"><span class="k">Maknanya</span><h3>${A.mt}</h3><div class="vid">🧍 ${P.rep}</div><p>${A.mp}</p><span class="tap">🩺 Bagian yang kamu periksa: ${h.nf}/3 (tiap bagian = satu pertanyaan sebelum bereaksi)</span></div>`}
-  else c=`<div class="face"><span class="k">Inti Cerita</span><h3>Kabar buruk tetap harus naik.</h3><p>Fokus leader: <b>tangani masalah dan dapatkan fakta</b>, bukan menyerang orang yang membawa laporan.</p><div class="vid" style="text-align:left">Jeda 3 detik, lalu tanya:<br>1️⃣ Apa faktanya?<br>2️⃣ Apa yang harus dicapai dan tetap dijaga?<br>3️⃣ Apa respons paling tepat sekarang?</div><button class="btn orange" id="dn">Lihat hasil ▶</button></div>`;
-  $('#rwrap').innerHTML=`<div class="flip" id="fl"><div class="fc">${c}</div></div><div class="rnav"><div class="dots">${Array.from({length:N},(_,i)=>`<i class="${i<dI?'ok':i===dI?'on':''}"></i>`).join('')}</div><button class="btn" id="nx" ${fl?'disabled':'style="display:none"'}>Berikutnya ▶</button></div>`;
+/* ================= EVALUASI & DEBRIEFING ================= */
+let dI=0;
+function reflect(){dI=0;app.classList.add('dim');const w=document.createElement('div');w.id='rwrap';$('#ui').appendChild(w);card()}
+function card(){const N=S.hist.length+1;if(dI>=N){$('#rwrap').remove();return final()}let c,fl=false;
+  if(dI===0)c=`<div class="face"><span class="k">Evaluasi</span><h3>Pasien tadi ibarat anggota tim kamu.</h3>
+     <div class="prow">${PTS.map(P=>`<span>${head({...P.p,m:'happy'})}</span>`).join('')}</div>
+     <div class="vid">🧑‍⚕️ Dokter = Kamu sebagai atasan<br>🧍 Pasien = Anggota tim yang bawa kabar<br>🩺 Periksa dulu = Tanya fakta sebelum bereaksi</div>
+     <p>Ingat, tindakan yang tepat didasari oleh fakta. Jadi, cari tahu dulu faktanya ya.</p><button class="btn orange" id="dn">Mulai evaluasi ▶</button></div>`;
+  else{fl=true;const h=S.hist[dI-1],P=PTS[h.i],A=ACT[h.first],M=MEAN[P.ans].ok;
+    c=`<div class="face"><span class="k">Pasien ${h.i+1} dari ${PTS.length}</span><div class="pfig">${person({...P.p,m:'happy'},'14 4 92 134')}</div><h3>${P.name}: ${P.title}</h3>
+      <p>Pilihan pertamamu: <b>${A.ic} ${A.lb}</b></p>
+      <span class="res ${h.tries===1?'a':'b'}">${h.tries===1?'✅ Langsung tepat · +20%':'🔁 Tepat setelah pilih lagi · +15%'}</span>
+      <span class="tap">👆 Sentuh kartu untuk lihat maknanya</span></div>
+     <div class="face back"><span class="k">Maknanya</span><h3>${M[0]}</h3><div class="vid">🧍 ${P.rep}</div>${M[1]?`<p>${M[1]}</p>`:''}
+      ${h.tries>1?`<p class="wr">⚠️ <b>${MEAN[h.first].no[0]}.</b> ${MEAN[h.first].no[1]}</p>`:''}</div>`}
+  $('#rwrap').innerHTML=`<div class="flip" id="fl"><div class="fc">${c}</div></div><div class="rnav"><div class="dots">${Array.from({length:N},(_,i)=>`<i class="${i<dI?'ok':i===dI?'on':''}"></i>`).join('')}</div><button class="btn" id="nx" ${fl?'disabled':'style="visibility:hidden"'}>${dI===N-1?'Lanjut':'Berikutnya'} ▶</button></div>`;
+  $('#fl').animate([{opacity:0,transform:'translateY(30px) scale(.96)'},{opacity:1,transform:'none'}],{duration:450,easing:'cubic-bezier(.34,1.56,.64,1)'});
   const f=$('#fl');if(fl)f.onclick=()=>{snd.pop();f.classList.toggle('flipped');$('#nx').disabled=false};
   $('#nx').onclick=e=>{e.stopPropagation();snd.click();dI++;card()};if($('#dn'))$('#dn').onclick=e=>{e.stopPropagation();snd.click();dI++;card()}}
 
-/* ===== Hasil akhir ===== */
-function final(){showScene('sc-final');const cnt=k=>S.hist.filter(h=>h.act===k).length,sf=S.safe,st=sf>=80?3:sf>=50?2:1;
-  $('#fAv').innerHTML=head(myP());$('#fT').textContent=`Selamat, ${salam} ${nameP}!`;
-  const e=$('#fEnd');e.className='ending '+(sf>=80?'good':sf>=50?'mid':'bad');e.textContent=sf>=80?'Ending: Dokter Panutan':sf>=50?'Ending: Dokter Berkembang':'Ending: Dokter Perlu Latihan';
-  $('#fSt').innerHTML=`<div class="st"><b>${cnt('op')}</b><span>🔪 Operasi</span></div><div class="st"><b>${cnt('rs')}</b><span>🛏️ Istirahat</span></div><div class="st"><b>${cnt('ob')}</b><span>💊 Obat</span></div><div class="st"><b>${cnt('rc')}</b><span>🧪 Racikan</span></div>`;
-  $('#fTx').innerHTML=`🤝 Nilai akhir (kepercayaan pasien = rasa aman tim): <b>${sf}</b> / 100.<br>${CLOSING}`;
-  $$('#stars span').forEach((s,i)=>{if(i<st)setTimeout(()=>{s.classList.add('on');snd.pop()},400+i*350)});
-  if(st===3&&!REDUCED){const cols=['#3aa79a','#e07b3c','#ffd23f','#ff7ab8','#2ec4a6'];for(let i=0;i<50;i++){const c=document.createElement('i');c.className='confetti';c.style.left=Math.random()*100+'%';c.style.background=cols[i%5];c.style.animationDuration=(2+Math.random()*2)+'s';c.style.animationDelay=Math.random()+'s';$('#app').appendChild(c);setTimeout(()=>c.remove(),5000)}}
-  try{window.parent.postMessage('scoreBarFound','*')}catch(e){}try{window.top.postMessage('scoreBarFound','*')}catch(e){}}
+function final(){
+  app.classList.remove('dim');
+  const d=$('#denny');d.innerHTML=person(DOC);d.style.cssText='left:6px;top:46px;width:100px;height:200px';d.classList.remove('hide');
+  d.animate([{transform:'translateX(-40px)',opacity:0},{transform:'none',opacity:1}],{duration:550,easing:'cubic-bezier(.22,1,.36,1)'});
+  const b=document.createElement('div');b.className='dBub';
+  b.innerHTML=`Nah, gitu deh, ${esc(salam)} <b>${esc(nameP)}</b>! 😄<br>Pasien tadi ibarat anggota tim yang bawa kabar laporan.`;
+  $('#ui').appendChild(b);b.animate([{opacity:0,transform:'scale(.7)'},{opacity:1,transform:'none'}],{duration:450,delay:250,fill:'backwards',easing:'cubic-bezier(.34,1.56,.64,1)'});
+  const c=document.createElement('div');c.className='card dCard';
+  c.innerHTML=`<ul>
+    <li><i>📣</i><span>Kabar buruk <b>tetap harus tersampaikan/b>. Fokus kita beresin masalah dan cari faktanya, bukan nyerang yang lapor.</span></li>
+    <li><i>🙈</i><span>Kalau tiap lapor kena omel, tim bakal nyembunyiin laporan yang jelek. Itu budaya <b>ABS</b> (Asal Bapak/Ibu Senang), kita jadi nggak tahu kondisi lapangan.</span></li>
+    <li><i>⏸️</i><span>Biar nggak kepancing: <b>Tarik napas, kasih jeda 3 detik</b>, terus tanya: Apa faktanya, apa yang harus dicapai & dijaga, dan respons apa yang paling tepat.</span></li>
+    <li><i>💪</i><span><b>Tegas tetap boleh</b>, asal yang disasar masalahnya, bukan orangnya.</span></li></ul>
+    <div class="ask">Jadi, ${esc(salam)} ${esc(nameP)}, jangan lupa buat dipraktekin ya.</div>
+    <button class="btn orange wide" id="siap">💪 Ulangi gamifikasi</button>`;
+  $('#ui').appendChild(c);c.animate([{opacity:0,transform:'translateY(40px) scale(.95)'},{opacity:1,transform:'none'}],{duration:550,delay:150,fill:'backwards',easing:'cubic-bezier(.34,1.56,.64,1)'});
+  $('#siap').onclick=()=>{snd.click();location.reload()};
+  try{
+    window.parent.postMessage("scoreBarFound", "*");
+    window.top.postMessage("scoreBarFound", "*");
+  }catch(e){}
+}
 
-/* ===== Stage ===== */
-const SH=600,SMAX=900;
-function fitStage(){const a=$('#app'),vw=innerWidth,vh=innerHeight,sc=Math.min(1,vh/SH);a.style.width=Math.min(vw/sc,SMAX)+'px';a.style.top=Math.max(0,(vh-SH*sc)/2)+'px';a.style.transform='translateX(-50%) scale('+sc+')'}
-$('#sc-start').insertAdjacentHTML('afterbegin',hallSVG());$('#bd').innerHTML=hallSVG().replace('class="bg"','');
-fitStage();addEventListener('resize',fitStage);
+/* ================= ALUR UTAMA ================= */
+async function main(){
+  setWorld('lobby');setDecor('lobby');
+  await startScreen();
+  const d=$('#denny');d.innerHTML=person(DOC);d.classList.remove('hide');
+  d.animate([{transform:'translateY(40px)',opacity:0},{transform:'none',opacity:1}],{duration:600,easing:'cubic-bezier(.22,1,.36,1)'});
+  await wait(350);
+  await dialog([
+    {...FER,t:`Halo, ${salam} <b>${esc(nameP)}</b>! Saya dr. Denny, Kepala Klinik Sehat Sentosa. Hari ini ${salam} <b>${esc(nameP)}</b> bertugas sebagai dokter jaga di Poli Umum ya.`},
+    {...FER,t:`Akan ada <b>5 pasien</b> dengan keluhan yang terdengar umum. Pilih tindakan yang paling tepat: <b>Pemeriksaan Lanjutan, Resepkan Obat, atau Cukup Istirahat</b>.`},
+    {...FER,t:`Keluhan yang sama bisa punya penyebab berbeda, dan pasien kadang <b>nggak menceritakan semuanya</b>. 😉 <br>Targetnya: Kepuasan pasien <b>100%</b>!`}],'Lanjut');
+  await howTo();
+  hud(true);setTrust();
+  for(let i=0;i<PTS.length;i++)await playPatient(i);
+  $('#hab').classList.add('hide');
+  await cine('🌙','Akhir shift','Ruang Evaluasi','Waktunya evaluasi',()=>{hud(false);$('#roomUI').classList.add('hide');$('#pt').classList.add('hide');setWorld('lobby');setDecor('lobby')});
+  reflect();
+}
+fit(true);
+main().catch(e=>console.error(e));
+})();
 </script>
 </body>
 </html>
